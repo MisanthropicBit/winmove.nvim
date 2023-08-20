@@ -6,10 +6,19 @@ local function complete()
         "down",
         "up",
         "right",
+        "split_left",
+        "split_down",
+        "split_up",
+        "split_right",
         "far_left",
         "far_down",
         "far_up",
         "far_right",
+        "column_left",
+        "column_down",
+        "column_up",
+        "column_right",
+        "resize",
         "start",
         "quit",
         "version",
@@ -33,18 +42,8 @@ local function winmove_command(options)
     if arg == "version" then
         vim.print(winmove.version())
     elseif arg == "start" then
-        if winmove.move_mode_activated() then
-            vim.api.nvim_err_writeln("Window move mode is already activated")
-            return
-        end
-
         winmove.start_move_mode()
     elseif arg == "quit" then
-        if not winmove.move_mode_activated() then
-            vim.api.nvim_err_writeln("Window move mode is not activated")
-            return
-        end
-
         winmove.stop_move_mode()
     else
         local dir = arg_to_dir(arg)

@@ -8,7 +8,10 @@ local config = require("winmove.config")
 
 local api = vim.api
 
-local win_highlights = nil
+local win_highlights = {
+    move = {},
+    resize = {},
+}
 local saved_win_highlights = nil
 
 local groups = {
@@ -46,11 +49,14 @@ local function process_true_color(truecolor, termcolor)
     if truecolor then
         if not has_bit and not termcolor then
             bit_warn()
-            return nil
+
+            return termcolor
         end
 
         return rgb_as_hex(colors_number_to_rgb(truecolor))
     end
+
+    return termcolor
 end
 
 --- Get a highlight's colors
@@ -65,14 +71,25 @@ local function get_highlight(name)
     return colors
 end
 
+local function set_highlight(group, colors)
+    local gui = vim.o.termguicolors and "gui" or ""
+
+    vim.cmd(("hi default %s %s %s"):format(
+        group,
+        colors.fg and (gui .. "fg=" .. colors.fg) or "",
+        colors.bg and (gui .. "bg=" .. colors.bg) or ""
+    ))
+end
+
 ---@param win_id integer
-function highlight.highlight_window(win_id)
-    if not api.nvim_win_is_valid(win_id) then
+---@param mode winmove.Mode
+function highlight.highlight_window(win_id, mode)
+    if not api.nvim_win_is_valid(win_id) or mode == 0 then
         return
     end
 
     saved_win_highlights = vim.wo[win_id].winhighlight
-    vim.wo[win_id].winhighlight = win_highlights
+    vim.wo[win_id].winhighlight = win_highlights[mode]
 end
 
 ---@param win_id integer
@@ -80,34 +97,31 @@ function highlight.unhighlight_window(win_id)
     vim.wo[win_id].winhighlight = saved_win_highlights
 end
 
-local function set_highlight(group, colors)
-    local gui = vim.o.termguicolors and "gui" or ""
-
-    vim.cmd(("hi %s %s %s"):format(
-        group,
-        colors.fg and (gui .. "fg=" .. colors.fg) or "",
-        colors.bg and (gui .. "bg=" .. colors.bg) or ""
-    ))
-end
-
 function highlight.setup()
-    local colors = get_highlight(config.hl_group)
-    local highlights = {}
+    for _, mode in pairs({ "move", "resize" }) do
+        local color = get_highlight(config.highlights[mode])
 
-    for _, group in ipairs(groups) do
-        local winmove_group  = "Winmove" .. group
-        set_highlight(winmove_group, colors)
-        table.insert(highlights, ("%s:%s"):format(group, winmove_group))
+        for _, group in ipairs(groups) do
+            local _mode = mode == "move" and "Move" or "Resize"
+            local winmove_group  = "Winmove" .. _mode .. group
+            set_highlight(winmove_group, color)
+            table.insert(win_highlights[mode], ("%s:%s"):format(group, winmove_group))
+        end
     end
 
-    win_highlights = table.concat(highlights, ",")
-end
+    ---@diagnostic disable-next-line:param-type-mismatch
+    win_highlights.move = table.concat(win_highlights.move, ",")
 
-api.nvim_create_autocmd("Colorscheme", {
-    pattern = "*",
-    desc = "Update Winmove highlights when colorscheme is changed",
-    callback = highlight.setup,
-})
+    ---@diagnostic disable-next-line:param-type-mismatch
+    win_highlights.resize = table.concat(win_highlights.resize, ",")
+
+    -- TODO: Handle changing colorscheme during active modes
+    api.nvim_create_autocmd("Colorscheme", {
+        pattern = "*",
+        desc = "Update Winmove highlights when colorscheme is changed",
+        callback = highlight.setup,
+    })
+end
 
 highlight.setup()
 

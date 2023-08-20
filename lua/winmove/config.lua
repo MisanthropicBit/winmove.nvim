@@ -16,35 +16,55 @@ local config = {}
 ---@field help         string
 ---@field quit         string
 
+---@class winmove.Highlights
+---@field move string
+---@field resize string
+
 ---@class winmove.Config
----@field hl_group    string
+---@field highlights  winmove.Highlights
 ---@field wrap_around boolean
 ---@field mappings    winmove.ConfigMappings
 
 ---@type winmove.Config
 local default_config = {
     -- TODO: Move into move_mode key if we get top-level options
-    hl_group = "Search",
+    highlights = {
+        move = "Search",
+        resize = "Title",
+    },
     wrap_around = true,
     mappings = {
-        left = "h",
-        down = "j",
-        up = "k",
-        right = "l",
-        far_left = "H",
-        far_down = "J",
-        far_up = "K",
-        far_right = "L",
-        split_left = "sh",
-        split_down = "sj",
-        split_up = "sk",
-        split_right = "sl",
         help = "?",
         quit = "q",
-        column_left = "<c-h>",
-        column_down = "<c-j>",
-        column_up = "<c-k>",
-        column_right = "<c-l>",
+        quitall = "Q",
+        move = {
+            left = "h",
+            down = "j",
+            up = "k",
+            right = "l",
+            far_left = "H",
+            far_down = "J",
+            far_up = "K",
+            far_right = "L",
+            split_left = "sh",
+            split_down = "sj",
+            split_up = "sk",
+            split_right = "sl",
+            help = "?",
+            quit = "q",
+            column_left = "<c-h>",
+            column_down = "<c-j>",
+            column_up = "<c-k>",
+            column_right = "<c-l>",
+        },
+        resize = {
+            left = "h",
+            down = "j",
+            up = "k",
+            right = "l",
+            help = "?",
+            quit = "q",
+        }
     }
 }
 
