@@ -1,30 +1,38 @@
 local winmove = {}
 
 local config = require("winmove.config")
-local core = require("winmove.core")
+local move = require("winmove.move")
+local resize = require("winmove.resize")
 local highlight = require("winmove.highlight")
 local util = require("winmove.util")
+local string_util = require("winmove.util.string")
 
 local api = vim.api
 local winmove_version = "0.1.0"
 local augroup = nil
 
+---@enum winmove.Mode
+winmove.mode = {
+    None = "none",
+    Move = "move",
+    Resize = "resize",
+}
+
 ---@class winmove.State
+---@field mode winmove.Mode
 ---@field win_id integer?
 ---@field bufnr integer?
 ---@field mappings table?
 ---@field saved_mappings table?
+
+---@type winmove.State
 local state = {
+    mode = winmove.mode.None,
     win_id = nil,
     bufnr = nil,
     mappings = nil,
     saved_mappings = nil,
 }
-
----@alias winmove.ModeState { mode: winmove.Mode, state: winmove.State }
-
----@type winmove.ModeState[]
-local mode_states = {}
 
 local function push_state(win_id, bufnr, mappings, saved_mappings)
     state = {
@@ -45,49 +53,33 @@ local function clear_state()
     }
 end
 
----@enum winmove.Mode
-winmove.mode = {
-    None = "none",
-    Move = "move",
-    Resize = "reize",
-}
-
-local function push_mode(new_mode, win_id, bufnr, mappings, saved_mappings)
-    local new_state = {
-        win_id = win_id,
-        bufnr = bufnr,
-        mappings = mappings,
-        saved_mappings = saved_mappings,
-    }
-
-    for idx, mode in ipairs(mode_states) do
-        -- Remove the mode from its current position and insert it at the end
-        if mode == new_mode then
-            table.remove(mode_states, idx)
-            table.insert(mode_states, { mode = new_mode, state = new_state })
-            return
-        end
-    end
-
-    table.insert(mode_states, { mode = new_mode, state = new_state })
-end
-
-local function get_mode()
-    return mode_states[#mode_states] and mode_states[#mode_states].mode or winmove.mode.None
+--- Set the current mode
+---@param mode winmove.Mode
+---@param win_id integer
+---@param bufnr integer
+---@param mappings table
+---@param saved_mappings table
+local function set_mode(mode, win_id, bufnr, mappings, saved_mappings)
+    state.mode = mode
+    state.win_id = win_id
+    state.bufnr = bufnr
+    state.mappings = mappings
+    state.saved_mappings = saved_mappings
 end
 
 ---@type fun(mode: winmove.Mode)
 local start_mode
 
-local function drop_mode()
-    table.remove(mode_states)
-    local mode_state = mode_states[#mode_states]
-    local mode = mode_state.mode
+---@type fun(mode: winmove.Mode)
+local stop_mode
 
-    if mode ~= nil and mode ~= winmove.mode.None then
-        -- Start the new current mode
-        start_mode(mode)
-    end
+--- Quit the current mode
+local function quit_mode()
+    state.mode = winmove.mode.None
+    state.win_id = nil
+    state.bufnr = nil
+    state.mappings = nil
+    state.saved_mappings = nil
 end
 
 function winmove.version()
@@ -128,15 +120,15 @@ end
 ---@param dir winmove.Direction
 function winmove.move_window(source_win_id, dir)
     -- Only one window
-    if core.move.window_count() == 1 then
+    if move.window_count() == 1 then
         return
     end
 
-    local target_win_id = core.move.get_neighbor(dir)
+    local target_win_id = move.get_neighbor(dir)
 
     if target_win_id == nil then
         if config.wrap_around then
-            target_win_id = core.move.get_wraparound_neighbor(dir)
+            target_win_id = move.get_wraparound_neighbor(dir)
             dir = util.win.reverse_direction(dir)
         else
             return
@@ -144,9 +136,9 @@ function winmove.move_window(source_win_id, dir)
     end
 
     ---@diagnostic disable-next-line:param-type-mismatch
-    if not core.move.are_siblings(source_win_id, target_win_id) then
+    if not move.are_siblings(source_win_id, target_win_id) then
         ---@diagnostic disable-next-line:param-type-mismatch
-        dir = core.move.get_sibling_relative_dir(source_win_id, target_win_id, dir)
+        dir = move.get_sibling_relative_dir(source_win_id, target_win_id, dir)
     end
 
     util.win.wincall_no_events(
@@ -162,15 +154,15 @@ end
 ---@param dir winmove.Direction
 function winmove.split_into(source_win_id, dir)
     -- Only one window
-    if core.move.window_count() == 1 then
+    if move.window_count() == 1 then
         return
     end
 
-    local target_win_id = core.move.get_neighbor(dir)
+    local target_win_id = move.get_neighbor(dir)
 
     if target_win_id == nil then
         if config.wrap_around then
-            target_win_id = core.move.get_wraparound_neighbor(dir)
+            target_win_id = move.get_wraparound_neighbor(dir)
         else
             return
         end
@@ -182,9 +174,9 @@ function winmove.split_into(source_win_id, dir)
     }
 
     ---@diagnostic disable-next-line:param-type-mismatch
-    if core.move.are_siblings(source_win_id, target_win_id) then
+    if move.are_siblings(source_win_id, target_win_id) then
         ---@diagnostic disable-next-line:param-type-mismatch
-        local reldir = core.move.get_sibling_relative_dir(source_win_id, target_win_id, dir)
+        local reldir = move.get_sibling_relative_dir(source_win_id, target_win_id, dir)
 
         split_options.vertical = not split_options.vertical
         split_options.rightbelow = reldir == "l" or reldir == "j"
@@ -247,7 +239,7 @@ end
 
 -- TODO: Rename function
 function winmove.move_into_col_or_row(win_id, dir)
-    local parent_node = core.move.get_leaf_parent(win_id)
+    local parent_node = move.get_leaf_parent(win_id)
 
     if parent_node == nil then
         return
@@ -262,14 +254,14 @@ function winmove.move_into_col_or_row(win_id, dir)
         first_child = parent_node[2][1][2]
     end
 
-    if core.move.are_siblings(win_id, first_child) then
+    if move.are_siblings(win_id, first_child) then
         -- Nodes are siblings, move window out into a row or column
         first_child = parent_node[2][1][2]
     else
         -- Source window and target are not siblings so split on the other
         -- side of the target to move beyond it
         dir = util.win.reverse_direction(dir)
-        local target_node_parent = core.move.get_leaf_parent(win_id)
+        local target_node_parent = move.get_leaf_parent(win_id)
         first_child = target_node_parent[2][1][2]
     end
 
@@ -295,7 +287,8 @@ function winmove.move_into_col_or_row(win_id, dir)
     end
 end
 
-function winmove.show_help() end
+---@param mode winmove.Mode
+function winmove.show_help(mode) end
 
 -- local keymap_funcs = {
 --     left = { winmove.move_window, "h" },
@@ -354,8 +347,11 @@ local function move_mode_key_handler(keys, win_id)
         winmove.move_into_col_or_row(win_id, "k")
     elseif keys == mappings.column_right then
         winmove.move_into_col_or_row(win_id, "l")
+    elseif keys == mappings.resize_mode then
+        stop_mode(winmove.mode.Move)
+        start_mode(winmove.mode.Resize)
     elseif keys == config.mappings.help then
-        winmove.show_help()
+        winmove.show_help(winmove.mode.Move)
     end
 end
 
@@ -373,6 +369,9 @@ local function resize_mode_key_handler(keys, win_id)
         winmove.resize_window(win_id, "k", count)
     elseif keys == mappings.right then
         winmove.resize_window(win_id, "l", count)
+    elseif keys == mappings.move_mode then
+        stop_mode(winmove.mode.Resize)
+        start_mode(winmove.mode.Move)
     elseif keys == config.mappings.help then
         winmove.show_help()
     end
@@ -422,26 +421,17 @@ local function get_existing_buffer_keymaps(bufnr)
     return keymaps
 end
 
---- Whether or not a string has a prefix
----@param str string
----@param prefix string
----@return boolean
-local function has_prefix(str, prefix)
-    return str:sub(1, #prefix) == prefix
-end
-
 --- Generate keymap descriptions for all move mode mappings
 ---@param name string
 ---@return string
 local function generate_keymap_description(name)
     -- TODO: Handle typos and superfluous elements
-    if name == "quit" then
-        return "Quit move mode"
-    elseif name == "help" then
+    -- TODO: Handle column mappings
+    if name == "help" then
         return "Show help"
-    elseif has_prefix(name, "split") then
+    elseif string_util.has_prefix(name, "split") then
         return ("Split a window %s into another window"):format(name)
-    elseif has_prefix(name, "far") then
+    elseif string_util.has_prefix(name, "far") then
         return ("Move a window as far %s as possible and maximize it"):format(name)
     else
         return "Move a window " .. name
@@ -452,6 +442,10 @@ end
 local keymap_descriptions = {}
 
 for name, _ in pairs(config.mappings.move) do
+    keymap_descriptions[name] = generate_keymap_description(name)
+end
+
+for name, _ in pairs(config.mappings.resize) do
     keymap_descriptions[name] = generate_keymap_description(name)
 end
 
@@ -482,54 +476,82 @@ local function set_mappings(win_id, bufnr, mode, mappings)
     local handler = create_pcall_mode_key_handler(mode)
 
     for name, map in pairs(mappings) do
-        local desc = keymap_descriptions[name]
-        vim.print("stop_" .. mode .. "_mode")
-        local func = map ~= mappings.quit and handler or winmove["stop_" .. mode .. "_mode"]
+        set_mode_keymap(win_id, bufnr, map, handler, keymap_descriptions[name])
 
-        set_mode_keymap(win_id, bufnr, map, func, desc)
-
-        local existing_keymap = existing_buf_keymaps[bufnr]
+        -- TODO: Check that a mapping already exists instead of getting all maps
+        local existing_keymap = existing_buf_keymaps[map]
 
         if existing_keymap then
             table.insert(saved_buf_keymaps, existing_keymap)
         end
     end
 
+    set_mode_keymap(
+        win_id,
+        bufnr,
+        config.mappings.quit,
+        winmove["stop_" .. mode .. "_mode"],
+        "Quit " .. mode .. " mode"
+    )
+
+    set_mode_keymap(
+        win_id,
+        bufnr,
+        config.mappings.help,
+        function() winmove.show_help(mode) end,
+        "Show help"
+    )
+
+    set_mode_keymap(
+        win_id,
+        bufnr,
+        config.mappings.toggle_mode,
+        winmove.toggle_mode,
+        "Toggle between modes"
+    )
+
     return saved_buf_keymaps
 end
 
+--- Delete mode keymaps and restore previous buffer keymaps
 local function restore_mappings()
+    if not api.nvim_buf_is_valid(state.bufnr) then
+        return
+    end
+
     -- Remove winmove keymaps
     for _, map in pairs(state.mappings) do
         api.nvim_buf_del_keymap(state.bufnr, "n", map)
     end
 
+    api.nvim_buf_del_keymap(state.bufnr, "n", config.mappings.quit)
+    api.nvim_buf_del_keymap(state.bufnr, "n", config.mappings.help)
+    api.nvim_buf_del_keymap(state.bufnr, "n", config.mappings.toggle_mode)
+
     -- Restore old keymaps
     for _, map in pairs(state.saved_mappings) do
-        if api.nvim_buf_is_valid(state.bufnr) then
-            api.nvim_set_keymap(state.bufnr, "n", map.lhs, map.rhs, {
-                expr = map.expr,
-                callback = map.callback,
-                noremap = map.noremap,
-                script = map.script,
-                silent = map.silent,
-                nowait = map.nowait,
-            })
-        end
+        api.nvim_set_keymap(state.bufnr, "n", map.lhs, map.rhs, {
+            expr = map.expr,
+            callback = map.callback,
+            noremap = map.noremap,
+            script = map.script,
+            silent = map.silent,
+            nowait = map.nowait,
+        })
     end
-
-    clear_state()
 end
 
 ---@param mode winmove.Mode
 start_mode = function(mode)
-    if core.move.window_count() == 1 then
+    if move.window_count() == 1 then
         vim.api.nvim_err_writeln("Only one window")
         return
     end
 
+    local titlecase_mode = string_util.titlecase(mode)
+
     if winmove.current_mode() == mode then
-        vim.api.nvim_err_writeln("Move mode already activated")
+        vim.api.nvim_err_writeln(titlecase_mode .. " mode already activated")
         return
     end
 
@@ -539,33 +561,43 @@ start_mode = function(mode)
 
     highlight.highlight_window(cur_win_id, mode)
     local saved_buf_keymaps = set_mappings(cur_win_id, bufnr, mode, mappings)
-    push_mode(mode, cur_win_id, bufnr, mappings, saved_buf_keymaps)
+    set_mode(mode, cur_win_id, bufnr, mappings, saved_buf_keymaps)
 
     -- TODO: Check augroup?
     api.nvim_exec_autocmds("User", {
-        pattern = "Winmove" .. mode .. "ModeStart",
+        pattern = "Winmove" .. titlecase_mode .. "ModeStart",
         group = augroup,
         modeline = false,
     })
 end
 
 ---@param mode winmove.Mode
-local function stop_mode(mode)
+stop_mode = function(mode)
+    local titlecase_mode = string_util.titlecase(mode)
+
     if winmove.current_mode() ~= mode then
-        vim.api.nvim_err_writeln("Window " .. mode .. " mode is not activated")
+        vim.api.nvim_err_writeln("Window " .. titlecase_mode .. " mode is not activated")
         return
     end
 
     highlight.unhighlight_window(state.win_id)
     restore_mappings()
+    quit_mode()
 
+    -- TODO: Check augroup?
     api.nvim_exec_autocmds("User", {
-        pattern = "Winmove" .. mode .. "ModeEnd",
+        pattern = "Winmove" .. titlecase_mode .. "ModeEnd",
         group = augroup,
         modeline = false,
     })
+end
 
-    drop_mode()
+function winmove.toggle_mode()
+    local mode = winmove.current_mode()
+    local new_mode = mode == winmove.mode.Move and winmove.mode.Resize or winmove.mode.Move
+
+    stop_mode(mode)
+    start_mode(new_mode)
 end
 
 function winmove.start_move_mode()
@@ -585,7 +617,7 @@ function winmove.stop_resize_mode()
 end
 
 function winmove.current_mode()
-    return get_mode()
+    return state.mode
 end
 
 function winmove.setup(user_config)

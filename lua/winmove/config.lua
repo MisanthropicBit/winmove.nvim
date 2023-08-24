@@ -1,6 +1,6 @@
 local config = {}
 
----@class winmove.ConfigMappings
+---@class winmove.ConfigMoveModeMappings
 ---@field left         string
 ---@field down         string
 ---@field up           string
@@ -13,8 +13,20 @@ local config = {}
 ---@field column_down  string
 ---@field column_up    string
 ---@field column_right string
----@field help         string
----@field quit         string
+
+---@class winmove.ConfigResizeModeMappings
+---@field left         string
+---@field down         string
+---@field up           string
+---@field right        string
+
+---@class winmove.ConfigModeMappings
+---@field help        string
+---@field quit        string
+---@field quitall     string
+---@field toggle_mode string
+---@field move        winmove.ConfigMoveModeMappings
+---@field resize      winmove.ConfigResizeModeMappings
 
 ---@class winmove.Highlights
 ---@field move string
@@ -23,7 +35,7 @@ local config = {}
 ---@class winmove.Config
 ---@field highlights  winmove.Highlights
 ---@field wrap_around boolean
----@field mappings    winmove.ConfigMappings
+---@field mappings    winmove.ConfigModeMappings
 
 ---@type winmove.Config
 local default_config = {
@@ -37,6 +49,7 @@ local default_config = {
         help = "?",
         quit = "q",
         quitall = "Q",
+        toggle_mode = "<tab>",
         move = {
             left = "h",
             down = "j",
@@ -50,8 +63,7 @@ local default_config = {
             split_down = "sj",
             split_up = "sk",
             split_right = "sl",
-            help = "?",
-            quit = "q",
+            resize_mode = "r",
             column_left = "<c-h>",
             column_down = "<c-j>",
             column_up = "<c-k>",
@@ -62,8 +74,7 @@ local default_config = {
             down = "j",
             up = "k",
             right = "l",
-            help = "?",
-            quit = "q",
+            move_mode = "m",
         }
     }
 }
@@ -71,6 +82,7 @@ local default_config = {
 --- Validate a config
 ---@param _config winmove.Config
 local function validate_config(_config)
+    -- FIX: Validation
     vim.validate({
         mappings = { _config.mappings, "table", true },
         ["mappings.left"] = { _config.mappings.left, "string", true },
@@ -92,6 +104,12 @@ end
 ---@param user_config? winmove.Config
 function config.setup(user_config)
     _user_config = vim.tbl_deep_extend("keep", user_config or {}, default_config)
+
+    local global_options = vim.g.winmove
+
+    if global_options and type(global_options) == "table" then
+        _user_config = vim.tbl_deep_extend("keep", global_options, _user_config)
+    end
 
     validate_config(_user_config)
 end

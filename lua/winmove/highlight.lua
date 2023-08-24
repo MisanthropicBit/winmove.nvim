@@ -3,18 +3,21 @@
 
 local highlight = {}
 
-local has_bit, bit = pcall(require, "bit")
 local config = require("winmove.config")
+local string_util = require("winmove.util.string")
 
 local api = vim.api
 
+-- Window higlights per mode
 local win_highlights = {
     move = {},
     resize = {},
 }
+
 local saved_win_highlights = nil
 
-local groups = {
+-- Highlight groups to create winmove versions of
+local highlight_groups = {
     "Normal",
     "CursorLine",
     "CursorLineNr",
@@ -26,53 +29,42 @@ local groups = {
     "LineNrBelow",
 }
 
-local function bit_warn()
-    api.nvim_echo({{
-        "Cannot use highlight group without bit library",
-        "Warning",
-    }}, false, {})
-end
+--- Process a color definition, getting either the rgb true color or terminal
+--- color, whichever is available
+---@param color { guifg?: integer, guibg?: integer, ctermfg?: string, ctermbg?: string }
+---@param type "fg" | "bg"
+---@return string
+local function process_color(color, type)
+    local truecolor = color[type] ---@cast truecolor integer
 
-local function colors_number_to_rgb(color)
-    local r = bit.band(bit.rshift(color, 16), 0xff)
-    local g = bit.band(bit.rshift(color, 8), 0xff)
-    local b = bit.band(bit.rshift(color, 0), 0xff)
-
-    return r, g, b
-end
-
-local function rgb_as_hex(r, g, b)
-    return ("#%02x%02x%02x"):format(r, g, b)
-end
-
-local function process_true_color(truecolor, termcolor)
     if truecolor then
-        if not has_bit and not termcolor then
-            bit_warn()
-
-            return termcolor
-        end
-
         return rgb_as_hex(colors_number_to_rgb(truecolor))
     end
 
-    return termcolor
+    ---@diagnostic disable-next-line:return-type-mismatch
+    return color["cterm" .. type]
 end
 
 --- Get a highlight's colors
 ---@param name string
----@return table | nil
+---@return table
 local function get_highlight(name)
-    local colors = api.nvim_get_hl(0, { name = name, link = false })
+    local id = vim.fn.synIDtrans(api.nvim_get_hl_id_by_name(name))
 
-    colors.fg = process_true_color(colors.fg, colors.ctermfg)
-    colors.bg = process_true_color(colors.bg, colors.ctermbg)
+    vim.print("before", colors)
+    colors.fg = process_color(colors, "fg")
+    colors.bg = process_color(colors, "bg")
+    vim.print("after", colors)
 
     return colors
 end
 
+--- Set highlight for a group
+---@param group string
+---@param colors { fg: string, bg: string }
 local function set_highlight(group, colors)
     local gui = vim.o.termguicolors and "gui" or ""
+    vim.print(group, colors)
 
     vim.cmd(("hi default %s %s %s"):format(
         group,
@@ -84,43 +76,57 @@ end
 ---@param win_id integer
 ---@param mode winmove.Mode
 function highlight.highlight_window(win_id, mode)
-    if not api.nvim_win_is_valid(win_id) or mode == 0 then
+    if not api.nvim_win_is_valid(win_id) or mode == "none" then
         return
     end
 
     saved_win_highlights = vim.wo[win_id].winhighlight
+    vim.print(saved_win_highlights)
+    vim.print(type(saved_win_highlights))
+    vim.print(win_highlights[mode])
     vim.wo[win_id].winhighlight = win_highlights[mode]
 end
 
 ---@param win_id integer
 function highlight.unhighlight_window(win_id)
-    vim.wo[win_id].winhighlight = saved_win_highlights
+    if not api.nvim_win_is_valid(win_id) then
+        return
+    end
+
+    vim.wo[win_id].winhighlight = "" -- saved_win_highlights or ""
+end
+
+--- Generate group highlights for a mode
+---@param mode winmove.Mode
+---@param groups string[]
+local function generate_highlights(mode, groups)
+    local highlights = {}
+    local color = config.highlights[mode] -- get_highlight(config.highlights[mode])
+
+    -- TODO: Support custom highlights if config.highlights[mode] is a table
+    for _, group in ipairs(groups) do
+        local titlecase_mode = string_util.titlecase(mode)
+        local winmove_group  = "Winmove" .. titlecase_mode .. group
+
+        vim.cmd(("hi default link %s %s"):format(winmove_group, color))
+
+        -- set_highlight(winmove_group, color)
+        table.insert(highlights, ("%s:%s"):format(group, winmove_group))
+    end
+
+    return table.concat(highlights, ",")
 end
 
 function highlight.setup()
-    for _, mode in pairs({ "move", "resize" }) do
-        local color = get_highlight(config.highlights[mode])
+    win_highlights.move = generate_highlights("move", highlight_groups)
+    win_highlights.resize = generate_highlights("resize", highlight_groups)
 
-        for _, group in ipairs(groups) do
-            local _mode = mode == "move" and "Move" or "Resize"
-            local winmove_group  = "Winmove" .. _mode .. group
-            set_highlight(winmove_group, color)
-            table.insert(win_highlights[mode], ("%s:%s"):format(group, winmove_group))
-        end
-    end
-
-    ---@diagnostic disable-next-line:param-type-mismatch
-    win_highlights.move = table.concat(win_highlights.move, ",")
-
-    ---@diagnostic disable-next-line:param-type-mismatch
-    win_highlights.resize = table.concat(win_highlights.resize, ",")
-
-    -- TODO: Handle changing colorscheme during active modes
-    api.nvim_create_autocmd("Colorscheme", {
-        pattern = "*",
-        desc = "Update Winmove highlights when colorscheme is changed",
-        callback = highlight.setup,
-    })
+    -- -- TODO: Handle changing colorscheme during active modes
+    -- api.nvim_create_autocmd("Colorscheme", {
+    --     pattern = "*",
+    --     desc = "Update Winmove highlights when colorscheme is changed",
+    --     callback = highlight.setup,
+    -- })
 end
 
 highlight.setup()

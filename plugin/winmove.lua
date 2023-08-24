@@ -18,8 +18,8 @@ local function complete()
         "column_down",
         "column_up",
         "column_right",
+        "move",
         "resize",
-        "start",
         "quit",
         "version",
     }
@@ -41,7 +41,7 @@ local function winmove_command(options)
 
     if arg == "version" then
         vim.print(winmove.version())
-    elseif arg == "start" then
+    elseif arg == "move" then
         winmove.start_move_mode()
     elseif arg == "quit" then
         winmove.stop_move_mode()

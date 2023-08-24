@@ -1,4 +1,6 @@
-local core = {}
+local move = {}
+
+local util = require("winmove.util")
 
 ---@param winnr integer
 ---@return integer
@@ -26,14 +28,14 @@ local function window_bounding_box(win_id)
 end
 
 ---@return integer
-function core.window_count()
+function move.window_count()
     return vim.fn.winnr('$')
 end
 
 --- Returns the possible window handle of a neighbor
 ---@param dir winmove.Direction
 ---@return integer?
-function core.get_neighbor(dir)
+function move.get_neighbor(dir)
     local neighbor = vim.fn.winnr(dir)
     local cur_win_nr = vim.fn.winnr()
 
@@ -44,17 +46,17 @@ end
 --- was to wrap around
 ---@param dir winmove.Direction
 ---@return integer?
-function core.get_wraparound_neighbor(dir)
-    if core.window_count() == 1 then
+function move.get_wraparound_neighbor(dir)
+    if move.window_count() == 1 then
         return nil
     end
 
     local count = 1
-    local opposite_dir = core.reverse_direction(dir)
+    local opposite_dir = move.reverse_direction(dir)
     local prev_win_nr = vim.fn.winnr()
     local neighbor = nil
 
-    while count <= core.window_count() do
+    while count <= move.window_count() do
         neighbor = vim.fn.winnr(("%d%s"):format(count, opposite_dir))
 
         if neighbor == prev_win_nr then
@@ -72,7 +74,7 @@ end
 ---@param win_id1 integer
 ---@param win_id2 integer
 ---@return boolean
-function core.are_siblings(win_id1, win_id2)
+function move.are_siblings(win_id1, win_id2)
     local layout = vim.fn.winlayout()
 
     local function _are_siblings(node, parent, win_id)
@@ -104,10 +106,10 @@ end
 ---@param target_win_id integer
 ---@param dir winmove.Direction
 ---@return winmove.Direction
-function core.get_sibling_relative_dir(source_win_id, target_win_id, dir)
+function move.get_sibling_relative_dir(source_win_id, target_win_id, dir)
     local grow, gcol = get_cursor_screen_position(source_win_id)
     local bbox = window_bounding_box(target_win_id)
-    local vertical = core.is_vertical(dir)
+    local vertical = util.win.is_vertical(dir)
     local pos = 0
     local extents = {} ---@type table<integer>
     local dirs = {} ---@type table<winmove.Direction>
@@ -133,7 +135,7 @@ end
 --- Get a leaf's parent or nil if it is not found
 ---@param win_id integer
 ---@return table?
-function core.get_leaf_parent(win_id)
+function move.get_leaf_parent(win_id)
     local layout = vim.fn.winlayout()
 
     ---@return table?
@@ -161,4 +163,4 @@ function core.get_leaf_parent(win_id)
 end
 
 
-return core
+return move
