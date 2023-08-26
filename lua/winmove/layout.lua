@@ -1,6 +1,6 @@
-local move = {}
+local layout = {}
 
-local util = require("winmove.util")
+local winutil = require("winmove.winutil")
 
 ---@param winnr integer
 ---@return integer
@@ -27,15 +27,10 @@ local function window_bounding_box(win_id)
     }
 end
 
----@return integer
-function move.window_count()
-    return vim.fn.winnr('$')
-end
-
 --- Returns the possible window handle of a neighbor
 ---@param dir winmove.Direction
 ---@return integer?
-function move.get_neighbor(dir)
+function layout.get_neighbor(dir)
     local neighbor = vim.fn.winnr(dir)
     local cur_win_nr = vim.fn.winnr()
 
@@ -46,17 +41,17 @@ end
 --- was to wrap around
 ---@param dir winmove.Direction
 ---@return integer?
-function move.get_wraparound_neighbor(dir)
-    if move.window_count() == 1 then
+function layout.get_wraparound_neighbor(dir)
+    if layout.window_count() == 1 then
         return nil
     end
 
     local count = 1
-    local opposite_dir = move.reverse_direction(dir)
+    local opposite_dir = winutil.reverse_direction(dir)
     local prev_win_nr = vim.fn.winnr()
     local neighbor = nil
 
-    while count <= move.window_count() do
+    while count <= layout.window_count() do
         neighbor = vim.fn.winnr(("%d%s"):format(count, opposite_dir))
 
         if neighbor == prev_win_nr then
@@ -74,8 +69,8 @@ end
 ---@param win_id1 integer
 ---@param win_id2 integer
 ---@return boolean
-function move.are_siblings(win_id1, win_id2)
-    local layout = vim.fn.winlayout()
+function layout.are_siblings(win_id1, win_id2)
+    local win_layout = vim.fn.winlayout()
 
     local function _are_siblings(node, parent, win_id)
         local type, data = unpack(node)
@@ -97,7 +92,7 @@ function move.are_siblings(win_id1, win_id2)
         end
     end
 
-    return _are_siblings(layout, nil, win_id1)
+    return _are_siblings(win_layout, nil, win_id1)
 end
 
 --- Find the relative direction of a move/split based on the cursor's distance
@@ -106,10 +101,10 @@ end
 ---@param target_win_id integer
 ---@param dir winmove.Direction
 ---@return winmove.Direction
-function move.get_sibling_relative_dir(source_win_id, target_win_id, dir)
+function layout.get_sibling_relative_dir(source_win_id, target_win_id, dir)
     local grow, gcol = get_cursor_screen_position(source_win_id)
     local bbox = window_bounding_box(target_win_id)
-    local vertical = util.win.is_vertical(dir)
+    local vertical = winutil.is_vertical(dir)
     local pos = 0
     local extents = {} ---@type table<integer>
     local dirs = {} ---@type table<winmove.Direction>
@@ -132,11 +127,42 @@ function move.get_sibling_relative_dir(source_win_id, target_win_id, dir)
     return reldir
 end
 
+--- Is a window an ancestor of another window
+---@param win_id1 integer
+---@param win_id2 integer
+function layout.is_ancestor(win_id1, win_id2)
+    local root = vim.fn.winlayout()
+    local ancestor_found = false
+
+    local function _is_ancestor(node, win_id)
+        local type, data = unpack(node)
+
+        if type == "leaf" then
+            if ancestor_found then
+                return data == win_id2
+            else
+                ancestor_found = data == win_id1
+                return false
+            end
+        else
+            for _, child in ipairs(data) do
+                if _is_ancestor(child, win_id) then
+                    if ancestor_found then
+                        return true
+                    end
+                end
+            end
+        end
+    end
+
+    return _is_ancestor(root, win_id1)
+end
+
 --- Get a leaf's parent or nil if it is not found
 ---@param win_id integer
 ---@return table?
-function move.get_leaf_parent(win_id)
-    local layout = vim.fn.winlayout()
+function layout.get_leaf_parent(win_id)
+    local win_layout = vim.fn.winlayout()
 
     ---@return table?
     local function _find(node, parent)
@@ -159,8 +185,7 @@ function move.get_leaf_parent(win_id)
         return nil
     end
 
-    return _find(layout, nil)
+    return _find(win_layout, nil)
 end
 
-
-return move
+return layout

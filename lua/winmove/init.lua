@@ -4,8 +4,9 @@ local config = require("winmove.config")
 local move = require("winmove.move")
 local resize = require("winmove.resize")
 local highlight = require("winmove.highlight")
-local util = require("winmove.util")
-local string_util = require("winmove.util.string")
+local layout = require("winmove.layout")
+local str = require("winmove.str")
+local winutil = require("winmove.winutil")
 
 local api = vim.api
 local winmove_version = "0.1.0"
@@ -95,7 +96,7 @@ end
 ---@field right integer
 
 -- local function move_siblings(source_win, target_win, dir)
---     local vertical = util.win.is_vertical(reldir)
+--     local vertical = winutil.is_vertical(reldir)
 --     local rightbelow = reldir == "j" or reldir == "l"
 
 --     if dir == "j" then
@@ -109,8 +110,8 @@ end
 -- end
 
 local function move_window(source_win_id, target_win_id, dir)
-    util.win.wincall_no_events(vim.fn.win_splitmove, source_win_id, target_win_id, {
-        vertical = util.win.is_vertical(dir),
+    winutil.wincall_no_events(vim.fn.win_splitmove, source_win_id, target_win_id, {
+        vertical = winutil.is_vertical(dir),
         rightbelow = dir == "h" or dir == "k",
     })
 end
@@ -120,32 +121,32 @@ end
 ---@param dir winmove.Direction
 function winmove.move_window(source_win_id, dir)
     -- Only one window
-    if move.window_count() == 1 then
+    if winutil.window_count() == 1 then
         return
     end
 
-    local target_win_id = move.get_neighbor(dir)
+    local target_win_id = layout.get_neighbor(dir)
 
     if target_win_id == nil then
         if config.wrap_around then
-            target_win_id = move.get_wraparound_neighbor(dir)
-            dir = util.win.reverse_direction(dir)
+            target_win_id = layout.get_wraparound_neighbor(dir)
+            dir = winutil.reverse_direction(dir)
         else
             return
         end
     end
 
     ---@diagnostic disable-next-line:param-type-mismatch
-    if not move.are_siblings(source_win_id, target_win_id) then
+    if not layout.are_siblings(source_win_id, target_win_id) then
         ---@diagnostic disable-next-line:param-type-mismatch
-        dir = move.get_sibling_relative_dir(source_win_id, target_win_id, dir)
+        dir = layout.get_sibling_relative_dir(source_win_id, target_win_id, dir)
     end
 
-    util.win.wincall_no_events(
+    winutil.wincall_no_events(
         vim.fn.win_splitmove,
         source_win_id,
         target_win_id,
-        { vertical = util.win.is_vertical(dir), rightbelow = dir == "j" or dir == "l" }
+        { vertical = winutil.is_vertical(dir), rightbelow = dir == "j" or dir == "l" }
     )
 end
 
@@ -154,41 +155,41 @@ end
 ---@param dir winmove.Direction
 function winmove.split_into(source_win_id, dir)
     -- Only one window
-    if move.window_count() == 1 then
+    if winutil.window_count() == 1 then
         return
     end
 
-    local target_win_id = move.get_neighbor(dir)
+    local target_win_id = layout.get_neighbor(dir)
 
     if target_win_id == nil then
         if config.wrap_around then
-            target_win_id = move.get_wraparound_neighbor(dir)
+            target_win_id = layout.get_wraparound_neighbor(dir)
         else
             return
         end
     end
 
     local split_options = {
-        vertical = util.win.is_vertical(dir),
+        vertical = winutil.is_vertical(dir),
         rightbelow = dir == "h" or dir == "k",
     }
 
     ---@diagnostic disable-next-line:param-type-mismatch
-    if move.are_siblings(source_win_id, target_win_id) then
+    if layout.are_siblings(source_win_id, target_win_id) then
         ---@diagnostic disable-next-line:param-type-mismatch
-        local reldir = move.get_sibling_relative_dir(source_win_id, target_win_id, dir)
+        local reldir = layout.get_sibling_relative_dir(source_win_id, target_win_id, dir)
 
         split_options.vertical = not split_options.vertical
         split_options.rightbelow = reldir == "l" or reldir == "j"
     end
 
-    util.win.wincall_no_events(vim.fn.win_splitmove, source_win_id, target_win_id, split_options)
+    winutil.wincall_no_events(vim.fn.win_splitmove, source_win_id, target_win_id, split_options)
 end
 
 ---@diagnostic disable-next-line:unused-local
 function winmove.move_far(source_win_id, dir)
     -- TODO: Is this necessary?
-    util.win.wincall_no_events(function()
+    winutil.wincall_no_events(function()
         vim.cmd("wincmd " .. dir:upper())
     end)
 end
@@ -254,23 +255,23 @@ function winmove.move_into_col_or_row(win_id, dir)
         first_child = parent_node[2][1][2]
     end
 
-    if move.are_siblings(win_id, first_child) then
+    if layout.are_siblings(win_id, first_child) then
         -- Nodes are siblings, move window out into a row or column
         first_child = parent_node[2][1][2]
     else
         -- Source window and target are not siblings so split on the other
         -- side of the target to move beyond it
-        dir = util.win.reverse_direction(dir)
-        local target_node_parent = move.get_leaf_parent(win_id)
+        dir = winutil.reverse_direction(dir)
+        local target_node_parent = layout.get_leaf_parent(win_id)
         first_child = target_node_parent[2][1][2]
     end
 
     -- Split with the first child node in the parent
-    util.win.wincall_no_events(
+    winutil.wincall_no_events(
         vim.fn.win_splitmove,
         win_id,
         first_child,
-        { vertical = util.win.is_vertical(dir), rightbelow = dir == "l" or dir == "j" }
+        { vertical = winutil.is_vertical(dir), rightbelow = dir == "l" or dir == "j" }
     )
 
     for _, node in ipairs(parent_node[2]) do
@@ -279,8 +280,8 @@ function winmove.move_into_col_or_row(win_id, dir)
         -- Don't split the current window again
         if node_win_id ~= win_id and node_win_id ~= first_child then
             vim.print(node[2])
-            util.win.wincall_no_events(vim.fn.win_splitmove, node_win_id, first_child, {
-                vertical = not util.win.is_vertical(dir),
+            winutil.wincall_no_events(vim.fn.win_splitmove, node_win_id, first_child, {
+                vertical = not winutil.is_vertical(dir),
                 rightbelow = dir == "l" or dir == "j",
             })
         end
@@ -429,9 +430,9 @@ local function generate_keymap_description(name)
     -- TODO: Handle column mappings
     if name == "help" then
         return "Show help"
-    elseif string_util.has_prefix(name, "split") then
+    elseif str.has_prefix(name, "split") then
         return ("Split a window %s into another window"):format(name)
-    elseif string_util.has_prefix(name, "far") then
+    elseif str.has_prefix(name, "far") then
         return ("Move a window as far %s as possible and maximize it"):format(name)
     else
         return "Move a window " .. name
@@ -543,7 +544,7 @@ end
 
 ---@param mode winmove.Mode
 start_mode = function(mode)
-    if move.window_count() == 1 then
+    if winutil.window_count() == 1 then
         vim.api.nvim_err_writeln("Only one window")
         return
     end
@@ -573,7 +574,7 @@ end
 
 ---@param mode winmove.Mode
 stop_mode = function(mode)
-    local titlecase_mode = string_util.titlecase(mode)
+    local titlecase_mode = str.titlecase(mode)
 
     if winmove.current_mode() ~= mode then
         vim.api.nvim_err_writeln("Window " .. titlecase_mode .. " mode is not activated")
