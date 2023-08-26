@@ -10,7 +10,9 @@ local winutil = require("winmove.winutil")
 
 local api = vim.api
 local winmove_version = "0.1.0"
+
 local augroup = nil
+local winleave_autocmd = nil
 
 ---@enum winmove.Mode
 winmove.mode = {
@@ -570,6 +572,15 @@ start_mode = function(mode)
         group = augroup,
         modeline = false,
     })
+
+    winleave_autocmd = api.nvim_create_autocmd("WinLeave", {
+        callback = function()
+            stop_mode(mode)
+            return true
+        end,
+        group = augroup,
+        desc = "Quits " .. mode .. " when leaving the window",
+    })
 end
 
 ---@param mode winmove.Mode
@@ -584,6 +595,11 @@ stop_mode = function(mode)
     highlight.unhighlight_window(state.win_id)
     restore_mappings()
     quit_mode()
+
+    if winleave_autocmd then
+        pcall(api.nvim_del_autocmd, winleave_autocmd)
+        winleave_autocmd = nil
+    end
 
     -- TODO: Check augroup?
     api.nvim_exec_autocmds("User", {
