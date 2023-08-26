@@ -23,7 +23,6 @@ local config = {}
 ---@class winmove.ConfigModeMappings
 ---@field help        string
 ---@field quit        string
----@field quitall     string
 ---@field toggle_mode string
 ---@field move        winmove.ConfigMoveModeMappings
 ---@field resize      winmove.ConfigResizeModeMappings
@@ -39,16 +38,17 @@ local config = {}
 
 ---@type winmove.Config
 local default_config = {
+    -- TODO: Move everything into top-level "move" and "resize" tables?
     -- TODO: Move into move_mode key if we get top-level options
     highlights = {
         move = "Search",
-        resize = "Title",
+        resize = "Substitute",
     },
     wrap_around = true,
+    default_resize_count = 3,
     mappings = {
         help = "?",
         quit = "q",
-        quitall = "Q",
         toggle_mode = "<tab>",
         move = {
             left = "h",
