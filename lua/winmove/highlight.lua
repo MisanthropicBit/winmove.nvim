@@ -81,9 +81,6 @@ function highlight.highlight_window(win_id, mode)
     end
 
     saved_win_highlights = vim.wo[win_id].winhighlight
-    vim.print(saved_win_highlights)
-    vim.print(type(saved_win_highlights))
-    vim.print(win_highlights[mode])
     vim.wo[win_id].winhighlight = win_highlights[mode]
 end
 
@@ -93,7 +90,7 @@ function highlight.unhighlight_window(win_id)
         return
     end
 
-    vim.wo[win_id].winhighlight = "" -- saved_win_highlights or ""
+    vim.wo[win_id].winhighlight = saved_win_highlights
 end
 
 --- Generate group highlights for a mode
