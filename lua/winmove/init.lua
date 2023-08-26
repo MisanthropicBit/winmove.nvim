@@ -551,14 +551,20 @@ start_mode = function(mode)
         return
     end
 
-    local titlecase_mode = string_util.titlecase(mode)
+    local cur_win_id = api.nvim_get_current_win()
+
+    if mode == winmove.mode.Move and winutil.is_floating_window(cur_win_id) then
+        vim.api.nvim_err_writeln("Cannot " .. mode .. " floating window")
+        return
+    end
+
+    local titlecase_mode = str.titlecase(mode)
 
     if winmove.current_mode() == mode then
         vim.api.nvim_err_writeln(titlecase_mode .. " mode already activated")
         return
     end
 
-    local cur_win_id = api.nvim_get_current_win()
     local bufnr = api.nvim_get_current_buf()
     local mappings = config.mappings[mode]
 
