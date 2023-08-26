@@ -3,7 +3,7 @@
   <h1>winmove.nvim</h1>
   <p><i>Easily move windows around</i></p>
   <p>
-    <img src="https://img.shields.io/badge/version-0.1.1-blue?style=flat-square" />
+    <img src="https://img.shields.io/badge/version-0.1.0-blue?style=flat-square" />
     <a href="https://img.shields.io/github/actions/workflow/status/MisanthropicBit/winmove.nvim/ci.yml?branch=master&style=flat-square">
         <img src="https://img.shields.io/github/actions/workflow/status/MisanthropicBit/winmove.nvim/ci.yml?branch=master&style=flat-square" />
     </a>
@@ -14,7 +14,7 @@
   <br />
 </div>
 
-A plugin that makes it easy to rearrange windows ([showcase](#showcase)).
+A plugin that makes it easy to rearrange and resize windows ([showcase](#showcase)).
 
 ## Installing
 
