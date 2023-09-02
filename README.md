@@ -7,8 +7,8 @@
     <a href="https://luarocks.org/modules/MisanthropicBit/winmove.nvim">
         <img src="https://img.shields.io/luarocks/v/MisanthropicBit/winmove.nvim?logo=lua&color=purple" />
     </a>
-    <a href="https://img.shields.io/github/actions/workflow/status/MisanthropicBit/winmove.nvim/ci.yml?branch=master&style=flat-square">
-        <img src="https://img.shields.io/github/actions/workflow/status/MisanthropicBit/winmove.nvim/ci.yml?branch=master&style=flat-square" />
+    <a href="/.github/workflows/tests.yml">
+        <img src="https://img.shields.io/github/actions/workflow/status/MisanthropicBit/winmove.nvim/tests.yml?branch=master&style=flat-square" />
     </a>
     <a href="/LICENSE">
         <img src="https://img.shields.io/github/license/MisanthropicBit/winmove.nvim?style=flat-square" />
