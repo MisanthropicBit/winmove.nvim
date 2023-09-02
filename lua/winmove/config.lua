@@ -170,8 +170,12 @@ function config.setup(user_config)
 
     local global_options = vim.g.winmove
 
-    if global_options and type(global_options) == "table" then
-        _user_config = vim.tbl_deep_extend("keep", global_options, _user_config)
+    if global_options then
+        if type(global_options) == "table" then
+            _user_config = vim.tbl_deep_extend("keep", global_options, _user_config)
+        else
+            error("vim.g.winmove is not a table")
+        end
     end
 
     validate_config(_user_config)
