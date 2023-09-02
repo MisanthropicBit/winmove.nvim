@@ -30,13 +30,14 @@ local config_loaded = false
 ---@field resize      winmove.ConfigResizeModeMappings
 
 ---@class winmove.Highlights
----@field move string
+---@field move   string
 ---@field resize string
 
 ---@class winmove.Config
----@field highlights  winmove.Highlights
----@field wrap_around boolean
----@field mappings    winmove.ConfigModeMappings
+---@field highlights           winmove.Highlights
+---@field wrap_around          boolean
+---@field default_resize_count integer
+---@field mappings             winmove.ConfigModeMappings
 
 ---@type winmove.Config
 local default_config = {
@@ -81,16 +82,76 @@ local default_config = {
     }
 }
 
+--- Validate keys in a table
+---@param specs table<any>
+---@return fun(tbl: table): boolean, any?
+local function validate_keys(specs)
+    return function(tbl)
+        for _, spec in ipairs(specs) do
+            local key = spec[1]
+
+            local validated, error = pcall(vim.validate, {
+                [key] = { tbl[key], spec[2], spec[3] and true }
+            })
+
+            if not validated then
+                return validated, error
+            end
+        end
+
+        return true
+    end
+end
+
 --- Validate a config
 ---@param _config winmove.Config
 local function validate_config(_config)
-    -- FIX: Validation
     vim.validate({
-        mappings = { _config.mappings, "table", true },
-        ["mappings.left"] = { _config.mappings.left, "string", true },
-        ["mappings.down"] = { _config.mappings.down, "string", true },
-        ["mappings.up"] = { _config.mappings.up, "string", true },
-        ["mappings.right"] = { _config.mappings.right, "string", true },
+        highlights = {
+            _config.highlights,
+            validate_keys({
+                { "move", "string" },
+                { "resize", "string" },
+            }),
+        },
+        wrap_around = { _config.wrap_around, "boolean" },
+        default_resize_count = { _config.default_resize_count, "number" },
+        mappings = {
+            _config.mappings,
+            validate_keys({
+                { "help",        "string" },
+                { "quit",        "string" },
+                { "toggle_mode", "string" },
+            })
+        },
+        ["mappings.move"] = {
+            _config.mappings.move,
+            validate_keys({
+                { "left",        "string" },
+                { "down",        "string" },
+                { "up",          "string" },
+                { "right",       "string" },
+                { "far_left",    "string" },
+                { "far_down",    "string" },
+                { "far_up",      "string" },
+                { "far_right",   "string" },
+                { "split_left",  "string" },
+                { "split_down",  "string" },
+                { "split_up",    "string" },
+                { "split_right", "string" },
+                { "resize_mode", "string" },
+            })
+        },
+        ["mappings.resize"] = {
+            _config.mappings.resize,
+            validate_keys({
+                { "left",      "string" },
+                { "down",      "string" },
+                { "up",        "string" },
+                { "right",     "string" },
+                { "move_mode", "string" },
+            })
+        },
     })
 end
 
