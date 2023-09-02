@@ -19,3 +19,4 @@ jobs:
           directories: |
             lua
             tests
+          configpath: ".luarc.json"
