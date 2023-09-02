@@ -1,5 +1,7 @@
 local config = {}
 
+local config_loaded = false
+
 ---@class winmove.ConfigMoveModeMappings
 ---@field left         string
 ---@field down         string
@@ -112,10 +114,16 @@ function config.setup(user_config)
     end
 
     validate_config(_user_config)
+    config_loaded = true
 end
 
 setmetatable(config, {
     __index = function(_, key)
+        -- Lazily load configuration so there is no need to call seutp explicitly
+        if not config_loaded then
+            config.setup()
+        end
+
         return _user_config[key]
     end,
 })
