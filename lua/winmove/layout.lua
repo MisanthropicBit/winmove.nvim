@@ -42,7 +42,7 @@ end
 ---@param dir winmove.Direction
 ---@return integer?
 function layout.get_wraparound_neighbor(dir)
-    if layout.window_count() == 1 then
+    if winutil.window_count() == 1 then
         return nil
     end
 
@@ -51,7 +51,7 @@ function layout.get_wraparound_neighbor(dir)
     local prev_win_nr = vim.fn.winnr()
     local neighbor = nil
 
-    while count <= layout.window_count() do
+    while count <= winutil.window_count() do
         neighbor = vim.fn.winnr(("%d%s"):format(count, opposite_dir))
 
         if neighbor == prev_win_nr then
