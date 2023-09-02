@@ -507,7 +507,13 @@ local function set_mappings(win_id, bufnr, mode, mappings)
         winmove.show_help(mode)
     end, "Show help")
 
-    set_mode_keymap(win_id, bufnr, config.mappings.toggle_mode, winmove.toggle_mode, "Toggle between modes")
+    set_mode_keymap(
+        win_id,
+        bufnr,
+        config.mappings.toggle_mode,
+        winmove.toggle_mode,
+        "Toggle between modes"
+    )
 
     return saved_buf_keymaps
 end
