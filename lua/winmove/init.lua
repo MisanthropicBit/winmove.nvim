@@ -1,7 +1,6 @@
 local winmove = {}
 
 local config = require("winmove.config")
-local move = require("winmove.move")
 local resize = require("winmove.resize")
 local highlight = require("winmove.highlight")
 local layout = require("winmove.layout")
