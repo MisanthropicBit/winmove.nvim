@@ -357,32 +357,32 @@ local function move_mode_key_handler(keys, win_id)
     elseif keys == mappings.column_right then
         winmove.move_into_col_or_row(win_id, "l")
     elseif keys == mappings.resize_mode then
-        stop_mode(winmove.mode.Move)
-        start_mode(winmove.mode.Resize)
-    elseif keys == config.mappings.help then
-        winmove.show_help(winmove.mode.Move)
+        winmove.toggle_mode()
     end
 end
 
 ---@param keys string
 ---@param win_id integer
 local function resize_mode_key_handler(keys, win_id)
-    local count = vim.v.count1
+    local count = vim.v.count
+
+    -- If no count is provided use the default count otherwise use the provided count
+    if count == 0 then
+        count = config.default_resize_count
+    end
+
     local mappings = config.mappings.resize
 
     if keys == mappings.left then
-        winmove.resize_window(win_id, "h", count)
+        resize.resize_window(win_id, "h", count, "top_left")
     elseif keys == mappings.down then
-        winmove.resize_window(win_id, "j", count)
+        resize.resize_window(win_id, "j", count, "top_left")
     elseif keys == mappings.up then
-        winmove.resize_window(win_id, "k", count)
+        resize.resize_window(win_id, "k", count, "top_left")
     elseif keys == mappings.right then
-        winmove.resize_window(win_id, "l", count)
+        resize.resize_window(win_id, "l", count, "top_left")
     elseif keys == mappings.move_mode then
-        stop_mode(winmove.mode.Resize)
-        start_mode(winmove.mode.Move)
-    elseif keys == config.mappings.help then
-        winmove.show_help()
+        winmove.toggle_mode()
     end
 end
 
@@ -487,7 +487,6 @@ local function set_mappings(win_id, bufnr, mode, mappings)
     for name, map in pairs(mappings) do
         set_mode_keymap(win_id, bufnr, map, handler, keymap_descriptions[name])
 
-        -- TODO: Check that a mapping already exists instead of getting all maps
         local existing_keymap = existing_buf_keymaps[map]
 
         if existing_keymap then
