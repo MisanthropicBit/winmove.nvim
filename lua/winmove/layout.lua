@@ -23,7 +23,7 @@ local function window_bounding_box(win_id)
         top = win_row,
         left = win_col,
         bottom = win_row + win_height,
-        right = win_col + win_width
+        right = win_col + win_width,
     }
 end
 

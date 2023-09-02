@@ -66,11 +66,13 @@ local function set_highlight(group, colors)
     local gui = vim.o.termguicolors and "gui" or ""
     vim.print(group, colors)
 
-    vim.cmd(("hi default %s %s %s"):format(
-        group,
-        colors.fg and (gui .. "fg=" .. colors.fg) or "",
-        colors.bg and (gui .. "bg=" .. colors.bg) or ""
-    ))
+    vim.cmd(
+        ("hi default %s %s %s"):format(
+            group,
+            colors.fg and (gui .. "fg=" .. colors.fg) or "",
+            colors.bg and (gui .. "bg=" .. colors.bg) or ""
+        )
+    )
 end
 
 ---@param win_id integer
@@ -103,7 +105,7 @@ local function generate_highlights(mode, groups)
     -- TODO: Support custom highlights if config.highlights[mode] is a table
     for _, group in ipairs(groups) do
         local titlecase_mode = string_util.titlecase(mode)
-        local winmove_group  = "Winmove" .. titlecase_mode .. group
+        local winmove_group = "Winmove" .. titlecase_mode .. group
 
         vim.cmd(("hi default link %s %s"):format(winmove_group, color))
 

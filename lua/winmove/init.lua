@@ -503,21 +503,11 @@ local function set_mappings(win_id, bufnr, mode, mappings)
         "Quit " .. mode .. " mode"
     )
 
-    set_mode_keymap(
-        win_id,
-        bufnr,
-        config.mappings.help,
-        function() winmove.show_help(mode) end,
-        "Show help"
-    )
+    set_mode_keymap(win_id, bufnr, config.mappings.help, function()
+        winmove.show_help(mode)
+    end, "Show help")
 
-    set_mode_keymap(
-        win_id,
-        bufnr,
-        config.mappings.toggle_mode,
-        winmove.toggle_mode,
-        "Toggle between modes"
-    )
+    set_mode_keymap(win_id, bufnr, config.mappings.toggle_mode, winmove.toggle_mode, "Toggle between modes")
 
     return saved_buf_keymaps
 end

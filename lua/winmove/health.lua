@@ -7,10 +7,12 @@ function health.check()
 
     if not has_bit then
         vim.health.report_warn(
-            "A bit library is not available: Cannot use rgb hex colors (like \"#3d59a1\") for highlighting windows.", {
-            "Build neovim with luajit",
-            "Use neovim v0.9.0+ which includes a bit library",
-        })
+            'A bit library is not available: Cannot use rgb hex colors (like "#3d59a1") for highlighting windows.',
+            {
+                "Build neovim with luajit",
+                "Use neovim v0.9.0+ which includes a bit library",
+            }
+        )
     else
         vim.health.report_ok("A bit library is available")
     end

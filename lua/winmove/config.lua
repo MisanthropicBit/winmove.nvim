@@ -78,8 +78,8 @@ local default_config = {
             up = "k",
             right = "l",
             move_mode = "m",
-        }
-    }
+        },
+    },
 }
 
 --- Validate keys in a table
@@ -91,7 +91,7 @@ local function validate_keys(specs)
             local key = spec[1]
 
             local validated, error = pcall(vim.validate, {
-                [key] = { tbl[key], spec[2], spec[3] and true }
+                [key] = { tbl[key], spec[2], spec[3] and true },
             })
 
             if not validated then
@@ -119,38 +119,38 @@ local function validate_config(_config)
         mappings = {
             _config.mappings,
             validate_keys({
-                { "help",        "string" },
-                { "quit",        "string" },
+                { "help", "string" },
+                { "quit", "string" },
                 { "toggle_mode", "string" },
-            })
+            }),
         },
         ["mappings.move"] = {
             _config.mappings.move,
             validate_keys({
-                { "left",        "string" },
-                { "down",        "string" },
-                { "up",          "string" },
-                { "right",       "string" },
-                { "far_left",    "string" },
-                { "far_down",    "string" },
-                { "far_up",      "string" },
-                { "far_right",   "string" },
-                { "split_left",  "string" },
-                { "split_down",  "string" },
-                { "split_up",    "string" },
+                { "left", "string" },
+                { "down", "string" },
+                { "up", "string" },
+                { "right", "string" },
+                { "far_left", "string" },
+                { "far_down", "string" },
+                { "far_up", "string" },
+                { "far_right", "string" },
+                { "split_left", "string" },
+                { "split_down", "string" },
+                { "split_up", "string" },
                 { "split_right", "string" },
                 { "resize_mode", "string" },
-            })
+            }),
         },
         ["mappings.resize"] = {
             _config.mappings.resize,
             validate_keys({
-                { "left",      "string" },
-                { "down",      "string" },
-                { "up",        "string" },
-                { "right",     "string" },
+                { "left", "string" },
+                { "down", "string" },
+                { "up", "string" },
+                { "right", "string" },
                 { "move_mode", "string" },
-            })
+            }),
         },
     })
 end

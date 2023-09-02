@@ -2,15 +2,15 @@ local winutil = {}
 
 ---@return integer
 function winutil.window_count()
-    return vim.fn.winnr('$')
+    return vim.fn.winnr("$")
 end
 
 ---@param win_id integer
 ---@return boolean
 function winutil.is_floating_window(win_id)
-  local win_config = vim.api.nvim_win_get_config(win_id)
+    local win_config = vim.api.nvim_win_get_config(win_id)
 
-  return win_config and (win_config.relative ~= "" or not win_config.relative)
+    return win_config and (win_config.relative ~= "" or not win_config.relative)
 end
 
 --- Call a window-related function in the current window without triggering any events
