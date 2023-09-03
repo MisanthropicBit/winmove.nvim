@@ -11,19 +11,22 @@ local config_loaded = false
 ---@field far_down     string
 ---@field far_up       string
 ---@field far_right    string
----@field column_left  string
----@field column_down  string
----@field column_up    string
----@field column_right string
+---@field split_left  string
+---@field split_down  string
+---@field split_up    string
+---@field split_right string
+---@field resize_mode string
 
 ---@class winmove.ConfigResizeModeMappings
 ---@field left         string
 ---@field down         string
 ---@field up           string
 ---@field right        string
+---@field move_mode    string
 
 ---@class winmove.ConfigModeMappings
 ---@field help        string
+---@field help_close  string
 ---@field quit        string
 ---@field toggle_mode string
 ---@field move        winmove.ConfigMoveModeMappings
@@ -51,6 +54,7 @@ local default_config = {
     default_resize_count = 3,
     mappings = {
         help = "?",
+        help_close = "q",
         quit = "q",
         toggle_mode = "<tab>",
         move = {
@@ -67,10 +71,6 @@ local default_config = {
             split_up = "sk",
             split_right = "sl",
             resize_mode = "r",
-            column_left = "<c-h>",
-            column_down = "<c-j>",
-            column_up = "<c-k>",
-            column_right = "<c-l>",
         },
         resize = {
             left = "h",
@@ -81,6 +81,48 @@ local default_config = {
         },
     },
 }
+
+local mapping_descriptions = {
+    help = "Show help",
+    help_close = "Close help",
+    quit = "Quit current mode",
+    toggle_mode = "Toggle between modes",
+    move = {
+        left = "Move a window left",
+        down = "Move a window down",
+        up = "Move a window up",
+        right = "Move a window right",
+        far_left = "Move a window far left and maximize it",
+        far_down = "Move a window far down and maximize it",
+        far_up = "Move a window far up and maximize it",
+        far_right = "Move a window far right and maximize it",
+        split_left = "Split a window left into another window",
+        split_down = "Split a window down into another window",
+        split_up = "Split a window up into another window",
+        split_right = "Split a window right into another window",
+        resize_mode = "Switch to resize mode",
+    },
+    resize = {
+        left = "Resize window left",
+        down = "Resize window down",
+        up = "Resize window up",
+        right = "Resize window right",
+        move_mode = "Switch to move mode",
+    },
+}
+
+--- Get the description of a keymap
+---@param name string
+---@param mode winmove.Mode?
+---@return string
+function config.get_keymap_description(name, mode)
+    if mode == "none" or mode == nil then
+        ---@diagnostic disable-next-line:return-type-mismatch
+        return mapping_descriptions[name]
+    else
+        return mapping_descriptions[mode][name]
+    end
+end
 
 --- Validate keys in a table
 ---@param specs table<any>
@@ -120,6 +162,7 @@ local function validate_config(_config)
             _config.mappings,
             validate_keys({
                 { "help", "string" },
+                { "help_close", "string" },
                 { "quit", "string" },
                 { "toggle_mode", "string" },
             }),

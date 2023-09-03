@@ -36,25 +36,6 @@ local state = {
     saved_mappings = nil,
 }
 
-local function push_state(win_id, bufnr, mappings, saved_mappings)
-    state = {
-        win_id = win_id,
-        bufnr = bufnr,
-        mappings = mappings,
-        saved_mappings = saved_mappings,
-    }
-end
-
-local function clear_state()
-    -- TODO: Might not be valid
-    state = {
-        win_id = nil,
-        bufnr = nil,
-        mappings = nil,
-        saved_mappings = nil,
-    }
-end
-
 --- Set the current mode
 ---@param mode winmove.Mode
 ---@param win_id integer
@@ -95,27 +76,6 @@ end
 ---@field left integer
 ---@field bottom integer
 ---@field right integer
-
--- local function move_siblings(source_win, target_win, dir)
---     local vertical = winutil.is_vertical(reldir)
---     local rightbelow = reldir == "j" or reldir == "l"
-
---     if dir == "j" then
---     end
-
---     vim.fn.win_splitmove(
---         vim.api.nvim_win_get_number(source_win),
---         vim.api.nvim_win_get_number(target_win),
---         { vertical = vertical, rightbelow = rightbelow }
---     )
--- end
-
-local function move_window(source_win_id, target_win_id, dir)
-    winutil.wincall_no_events(vim.fn.win_splitmove, source_win_id, target_win_id, {
-        vertical = winutil.is_vertical(dir),
-        rightbelow = dir == "h" or dir == "k",
-    })
-end
 
 --- Move a window in a given direction
 ---@param source_win_id integer
@@ -202,128 +162,11 @@ function winmove.move_far(source_win_id, dir)
     end)
 end
 
-local move_column
-
---- Recursively move a row into a target window
----@param target_win_id integer
----@param dir winmove.Direction
----@param row table
-local function move_row(target_win_id, dir, row)
-    for _, node in ipairs(row) do
-        local type, data = unpack(node)
-
-        if type == "leaf" then
-            move_window(data, target_win_id, dir)
-
-            -- Set this node as the target window and put siblings to the right
-            target_win_id, dir = data, "l"
-        elseif type == "row" then
-            assert(false, "Row inside row?")
-        elseif type == "col" then
-            move_column(target_win_id, dir, node)
-        end
-    end
-end
-
---- Recursively move a column into a target window
----@param target_win_id integer
----@param dir winmove.Direction
----@param column table
-move_column = function(target_win_id, dir, column)
-    for _, node in ipairs(column) do
-        local type, data = unpack(node)
-
-        if type == "leaf" then
-            move_window(data, target_win_id, dir)
-
-            -- Set this node as the target window and put siblings below
-            target_win_id, dir = data, "j"
-        elseif type == "row" then
-            move_row(target_win_id, dir, node)
-        elseif type == "col" then
-            assert(false, "Column inside column?")
-        end
-    end
-end
-
--- TODO: Rename function
-function winmove.move_into_col_or_row(win_id, dir)
-    local parent_node = move.get_leaf_parent(win_id)
-
-    if parent_node == nil then
-        return
-    end
-
-    local first_child = nil
-
-    if #parent_node[2] == 1 then
-        -- Only one leaf in parent node
-        first_child = parent_node[2][1][2]
-    else
-        first_child = parent_node[2][1][2]
-    end
-
-    if layout.are_siblings(win_id, first_child) then
-        -- Nodes are siblings, move window out into a row or column
-        first_child = parent_node[2][1][2]
-    else
-        -- Source window and target are not siblings so split on the other
-        -- side of the target to move beyond it
-        dir = winutil.reverse_direction(dir)
-        local target_node_parent = layout.get_leaf_parent(win_id)
-        first_child = target_node_parent[2][1][2]
-    end
-
-    -- Split with the first child node in the parent
-    winutil.wincall_no_events(
-        vim.fn.win_splitmove,
-        win_id,
-        first_child,
-        { vertical = winutil.is_vertical(dir), rightbelow = dir == "l" or dir == "j" }
-    )
-
-    for _, node in ipairs(parent_node[2]) do
-        local node_win_id = node[2]
-
-        -- Don't split the current window again
-        if node_win_id ~= win_id and node_win_id ~= first_child then
-            vim.print(node[2])
-            winutil.wincall_no_events(vim.fn.win_splitmove, node_win_id, first_child, {
-                vertical = not winutil.is_vertical(dir),
-                rightbelow = dir == "l" or dir == "j",
-            })
-        end
-    end
-end
-
----@param mode winmove.Mode
-function winmove.show_help(mode) end
-
--- local keymap_funcs = {
---     left = { winmove.move_window, "h" },
---     down = { winmove.move_window, "j" },
---     up = { winmove.move_window, "k" },
---     right = { winmove.move_window, "l" },
---     split_left = { winmove.move_window, "h" },
---     split_down = { winmove.move_window, "j" },
---     split_up = { winmove.move_window, "k" },
---     split_right = { winmove.move_window, "l" },
---     far_left = { winmove.move_window, "h" },
---     far_down = { winmove.move_window, "j" },
---     far_up = { winmove.move_window, "k" },
---     far_right = { winmove.move_window, "l" },
---     column_left = { winmove.move_window, "h" },
---     column_down = { winmove.move_window, "j" },
---     column_up = { winmove.move_window, "k" },
---     column_right = { winmove.move_window, "l" },
--- }
-
 ---@param keys string
 ---@param win_id integer
 local function move_mode_key_handler(keys, win_id)
     local mappings = config.mappings.move
 
-    -- TODO: Clean up this big if
     if keys == mappings.left then
         winmove.move_window(win_id, "h")
     elseif keys == mappings.down then
@@ -348,14 +191,6 @@ local function move_mode_key_handler(keys, win_id)
         winmove.move_far(win_id, "k")
     elseif keys == mappings.far_right then
         winmove.move_far(win_id, "l")
-    elseif keys == mappings.column_left then
-        winmove.move_into_col_or_row(win_id, "h")
-    elseif keys == mappings.column_down then
-        winmove.move_into_col_or_row(win_id, "j")
-    elseif keys == mappings.column_up then
-        winmove.move_into_col_or_row(win_id, "k")
-    elseif keys == mappings.column_right then
-        winmove.move_into_col_or_row(win_id, "l")
     elseif keys == mappings.resize_mode then
         winmove.toggle_mode()
     end
@@ -430,34 +265,6 @@ local function get_existing_buffer_keymaps(bufnr)
     return keymaps
 end
 
---- Generate keymap descriptions for all move mode mappings
----@param name string
----@return string
-local function generate_keymap_description(name)
-    -- TODO: Handle typos and superfluous elements
-    -- TODO: Handle column mappings
-    if name == "help" then
-        return "Show help"
-    elseif str.has_prefix(name, "split") then
-        return ("Split a window %s into another window"):format(name)
-    elseif str.has_prefix(name, "far") then
-        return ("Move a window as far %s as possible and maximize it"):format(name)
-    else
-        return "Move a window " .. name
-    end
-end
-
--- Auto-generate keymap descriptions for all mappings
-local keymap_descriptions = {}
-
-for name, _ in pairs(config.mappings.move) do
-    keymap_descriptions[name] = generate_keymap_description(name)
-end
-
-for name, _ in pairs(config.mappings.resize) do
-    keymap_descriptions[name] = generate_keymap_description(name)
-end
-
 local function create_pcall_mode_key_handler(mode)
     local handler = mode == winmove.mode.Move and move_mode_key_handler or resize_mode_key_handler
 
@@ -485,7 +292,8 @@ local function set_mappings(win_id, bufnr, mode, mappings)
     local handler = create_pcall_mode_key_handler(mode)
 
     for name, map in pairs(mappings) do
-        set_mode_keymap(win_id, bufnr, map, handler, keymap_descriptions[name])
+        local description = config.get_keymap_description(name, mode)
+        set_mode_keymap(win_id, bufnr, map, handler, description)
 
         local existing_keymap = existing_buf_keymaps[map]
 
@@ -494,24 +302,29 @@ local function set_mappings(win_id, bufnr, mode, mappings)
         end
     end
 
+    set_mode_keymap(win_id, bufnr, config.mappings.help, function()
+        float.open(mode)
+    end, config.get_keymap_description("help")
+)
+
+    set_mode_keymap(win_id, bufnr, config.mappings.help_close, function()
+        float.close()
+    end, config.get_keymap_description("help_close"))
+
     set_mode_keymap(
         win_id,
         bufnr,
         config.mappings.quit,
         winmove["stop_" .. mode .. "_mode"],
-        "Quit " .. mode .. " mode"
+        config.get_keymap_description("quit")
     )
-
-    set_mode_keymap(win_id, bufnr, config.mappings.help, function()
-        winmove.show_help(mode)
-    end, "Show help")
 
     set_mode_keymap(
         win_id,
         bufnr,
         config.mappings.toggle_mode,
         winmove.toggle_mode,
-        "Toggle between modes"
+        config.get_keymap_description("toggle_mode")
     )
 
     return saved_buf_keymaps
@@ -528,8 +341,9 @@ local function restore_mappings()
         api.nvim_buf_del_keymap(state.bufnr, "n", map)
     end
 
-    api.nvim_buf_del_keymap(state.bufnr, "n", config.mappings.quit)
     api.nvim_buf_del_keymap(state.bufnr, "n", config.mappings.help)
+    api.nvim_buf_del_keymap(state.bufnr, "n", config.mappings.help_close)
+    api.nvim_buf_del_keymap(state.bufnr, "n", config.mappings.quit)
     api.nvim_buf_del_keymap(state.bufnr, "n", config.mappings.toggle_mode)
 
     -- Restore old keymaps
