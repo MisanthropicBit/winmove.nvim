@@ -342,7 +342,7 @@ local function restore_mappings()
 
     -- Restore old keymaps
     for _, map in pairs(state.saved_mappings) do
-        api.nvim_set_keymap(state.bufnr, "n", map.lhs, map.rhs, {
+        api.nvim_buf_set_keymap(state.bufnr, "n", map.lhs, map.rhs, {
             expr = map.expr,
             callback = map.callback,
             noremap = map.noremap,
