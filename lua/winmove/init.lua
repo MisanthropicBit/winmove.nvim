@@ -304,12 +304,7 @@ local function set_mappings(win_id, bufnr, mode, mappings)
 
     set_mode_keymap(win_id, bufnr, config.mappings.help, function()
         float.open(mode)
-    end, config.get_keymap_description("help")
-)
-
-    set_mode_keymap(win_id, bufnr, config.mappings.help_close, function()
-        float.close()
-    end, config.get_keymap_description("help_close"))
+    end, config.get_keymap_description("help"))
 
     set_mode_keymap(
         win_id,
@@ -342,7 +337,6 @@ local function restore_mappings()
     end
 
     api.nvim_buf_del_keymap(state.bufnr, "n", config.mappings.help)
-    api.nvim_buf_del_keymap(state.bufnr, "n", config.mappings.help_close)
     api.nvim_buf_del_keymap(state.bufnr, "n", config.mappings.quit)
     api.nvim_buf_del_keymap(state.bufnr, "n", config.mappings.toggle_mode)
 
