@@ -147,8 +147,10 @@ end
 
 --- Validate a config
 ---@param _config winmove.Config
-local function validate_config(_config)
-    vim.validate({
+---@return boolean
+---@return any?
+function config.validate(_config)
+    return pcall(vim.validate, {
         highlights = {
             _config.highlights,
             validate_keys({
@@ -221,7 +223,16 @@ function config.setup(user_config)
         end
     end
 
-    validate_config(_user_config)
+    local ok, error = config.validate(_user_config)
+
+    if not ok then
+        vim.api.nvim_echo({
+            { "[winmove.nvim]:", "ErrorMsg" },
+            { " Errors found in config: " .. error },
+        }, true, {})
+        return
+    end
+
     config_loaded = true
 end
 

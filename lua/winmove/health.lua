@@ -1,5 +1,7 @@
 local health = {}
 
+local config = require("winmove.config")
+
 function health.check()
     vim.health.report_start("winmove")
 
@@ -21,6 +23,14 @@ function health.check()
         vim.health.report_error("win_splitmove not available")
     else
         vim.health.report_ok("win_splitmove is available")
+    end
+
+    local ok, error = config.validate(config)
+
+    if not ok then
+        vim.health.report_error("config has errors: " .. error)
+    else
+        vim.health.report_ok("found no errors in config")
     end
 end
 
