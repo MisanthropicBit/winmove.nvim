@@ -4,6 +4,7 @@ local config = require("winmove.config")
 local resize = require("winmove.resize")
 local highlight = require("winmove.highlight")
 local layout = require("winmove.layout")
+local resize = require("winmove.resize")
 local str = require("winmove.str")
 local winutil = require("winmove.winutil")
 
@@ -40,13 +41,11 @@ local state = {
 ---@param mode winmove.Mode
 ---@param win_id integer
 ---@param bufnr integer
----@param mappings table
 ---@param saved_mappings table
-local function set_mode(mode, win_id, bufnr, mappings, saved_mappings)
+local function set_mode(mode, win_id, bufnr, saved_mappings)
     state.mode = mode
     state.win_id = win_id
     state.bufnr = bufnr
-    state.mappings = mappings
     state.saved_mappings = saved_mappings
 end
 
@@ -61,7 +60,6 @@ local function quit_mode()
     state.mode = winmove.mode.None
     state.win_id = nil
     state.bufnr = nil
-    state.mappings = nil
     state.saved_mappings = nil
 end
 
@@ -285,18 +283,19 @@ end
 ---@param win_id integer
 ---@param bufnr integer
 ---@param mode winmove.Mode
----@param mappings table
-local function set_mappings(win_id, bufnr, mode, mappings)
+local function set_mappings(win_id, bufnr, mode)
     local existing_buf_keymaps = get_existing_buffer_keymaps(bufnr)
     local saved_buf_keymaps = {}
     local handler = create_pcall_mode_key_handler(mode)
 
-    for name, map in pairs(mappings) do
+    for name, map in pairs(config.mappings[mode]) do
         local description = config.get_keymap_description(name, mode)
         set_mode_keymap(win_id, bufnr, map, handler, description)
 
         local existing_keymap = existing_buf_keymaps[map]
 
+        -- Save any existing user-defined keymap that we override so we can
+        -- restore it later
         if existing_keymap then
             table.insert(saved_buf_keymaps, existing_keymap)
         end
@@ -326,13 +325,14 @@ local function set_mappings(win_id, bufnr, mode, mappings)
 end
 
 --- Delete mode keymaps and restore previous buffer keymaps
-local function restore_mappings()
+---@param mode winmove.Mode
+local function restore_mappings(mode)
     if not api.nvim_buf_is_valid(state.bufnr) then
         return
     end
 
     -- Remove winmove keymaps
-    for _, map in pairs(state.mappings) do
+    for _, map in pairs(config.mappings[mode]) do
         api.nvim_buf_del_keymap(state.bufnr, "n", map)
     end
 
@@ -375,11 +375,10 @@ start_mode = function(mode)
     end
 
     local bufnr = api.nvim_get_current_buf()
-    local mappings = config.mappings[mode]
+    local saved_buf_keymaps = set_mappings(cur_win_id, bufnr, mode)
 
     highlight.highlight_window(cur_win_id, mode)
-    local saved_buf_keymaps = set_mappings(cur_win_id, bufnr, mode, mappings)
-    set_mode(mode, cur_win_id, bufnr, mappings, saved_buf_keymaps)
+    set_mode(mode, cur_win_id, bufnr, saved_buf_keymaps)
 
     -- TODO: Check augroup?
     api.nvim_exec_autocmds("User", {
@@ -388,10 +387,16 @@ start_mode = function(mode)
         modeline = false,
     })
 
-    winleave_autocmd = api.nvim_create_autocmd("WinLeave", {
+    winleave_autocmd = api.nvim_create_autocmd("WinEnter", {
         callback = function()
-            stop_mode(mode)
-            return true
+            local win_id = api.nvim_get_current_win()
+
+            -- Do not stop the current mode if we are entering the window we are
+            -- moving/resizing or if we are entering the help window
+            if win_id ~= cur_win_id and not float.is_help_window(win_id) then
+                stop_mode(mode)
+                return true
+            end
         end,
         group = augroup,
         desc = "Quits " .. mode .. " when leaving the window",
@@ -408,7 +413,7 @@ stop_mode = function(mode)
     end
 
     highlight.unhighlight_window(state.win_id)
-    restore_mappings()
+    restore_mappings(mode)
     quit_mode()
 
     if winleave_autocmd then
