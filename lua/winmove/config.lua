@@ -150,11 +150,12 @@ end
 ---@return boolean
 ---@return any?
 function config.validate(_config)
+    -- stylua: ignore start
     return pcall(vim.validate, {
         highlights = {
             _config.highlights,
             validate_keys({
-                { "move", "string" },
+                { "move",   "string" },
                 { "resize", "string" },
             }),
         },
@@ -163,26 +164,26 @@ function config.validate(_config)
         mappings = {
             _config.mappings,
             validate_keys({
-                { "help", "string" },
-                { "help_close", "string" },
-                { "quit", "string" },
+                { "help",        "string" },
+                { "help_close",  "string" },
+                { "quit",        "string" },
                 { "toggle_mode", "string" },
             }),
         },
         ["mappings.move"] = {
             _config.mappings.move,
             validate_keys({
-                { "left", "string" },
-                { "down", "string" },
-                { "up", "string" },
-                { "right", "string" },
-                { "far_left", "string" },
-                { "far_down", "string" },
-                { "far_up", "string" },
-                { "far_right", "string" },
-                { "split_left", "string" },
-                { "split_down", "string" },
-                { "split_up", "string" },
+                { "left",        "string" },
+                { "down",        "string" },
+                { "up",          "string" },
+                { "right",       "string" },
+                { "far_left",    "string" },
+                { "far_down",    "string" },
+                { "far_up",      "string" },
+                { "far_right",   "string" },
+                { "split_left",  "string" },
+                { "split_down",  "string" },
+                { "split_up",    "string" },
                 { "split_right", "string" },
                 { "resize_mode", "string" },
             }),
@@ -190,14 +191,15 @@ function config.validate(_config)
         ["mappings.resize"] = {
             _config.mappings.resize,
             validate_keys({
-                { "left", "string" },
-                { "down", "string" },
-                { "up", "string" },
-                { "right", "string" },
+                { "left",      "string" },
+                { "down",      "string" },
+                { "up",        "string" },
+                { "right",     "string" },
                 { "move_mode", "string" },
             }),
         },
     })
+    -- stylua: ignore end
 end
 
 ---@type winmove.Config
