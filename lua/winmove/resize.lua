@@ -46,6 +46,17 @@ end
 ---@param anchor winmove.Anchor
 function resize.resize_window(win_id, dir, count, anchor)
     local vertical = winutil.is_vertical(dir)
+
+    if vertical then
+        if winutil.is_full_width(win_id) then
+            return
+        end
+    else
+        if winutil.is_full_height(win_id) then
+            return
+        end
+    end
+
     local sign = (dir == "l" or dir == "j") and "+" or "-" ---@type winmove.Sign
 
     sign = check_edge("j", dir, sign)
