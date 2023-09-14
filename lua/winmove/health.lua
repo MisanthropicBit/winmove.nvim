@@ -20,7 +20,7 @@ function health.check()
     end
 
     if not vim.fn.win_splitmove then
-        vim.health.report_error("win_splitmove not available")
+        vim.health.report_error("win_splitmove is not available")
     else
         vim.health.report_ok("win_splitmove is available")
     end
