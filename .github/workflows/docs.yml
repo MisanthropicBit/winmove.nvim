@@ -1,0 +1,36 @@
+name: autogen-docs
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    name: generate docs
+    steps:
+      - uses: actions/checkout@v3
+      - name: panvimdoc
+        uses: kdheepak/panvimdoc@v3.0.6
+        with:
+          vimdoc: winmove
+          pandoc: "README.md"
+          version: "NVIM >= v0.8.0"
+          toc: true
+          description: "Easily move and resize windows"
+          demojify: false
+          dedupsubheadings: true
+          treesitter: true
+          ignorerawblocks: true
+          docmapping: false
+          docmappingprojectname: true
+          shiftheadinglevelby: 0
+          incrementheadinglevelby: 0
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        if: github.ref == 'refs/heads/master'
+        with:
+          commit_message: "Auto-generate docs"
+          commit_user_name: "github-actions[bot]"
+          commit_user_email: "github-actions[bot]@users.noreply.github.com"
+          commit_author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
