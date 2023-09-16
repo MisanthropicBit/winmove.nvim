@@ -1,7 +1,7 @@
 <div align="center">
   <br />
   <h1>winmove.nvim</h1>
-  <p><i>A plugin that makes it easy to move and resize windows</i></p>
+  <p><i>Easily move and resize windows</i></p>
   <p>
     <img src="https://img.shields.io/badge/version-0.1.0-blue?style=flat-square" />
     <a href="https://luarocks.org/modules/MisanthropicBit/winmove.nvim">
