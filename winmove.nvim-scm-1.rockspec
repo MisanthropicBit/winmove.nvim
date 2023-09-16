@@ -4,7 +4,7 @@ package = 'nvim-dap'
 version = _MODREV .. _SPECREV
 
 description = {
-  summary = 'A plugin that makes it easy to rearrange and resize windows',
+  summary = 'Easily move and resize windows',
   detailed = [[]],
   labels = {
     'neovim',
