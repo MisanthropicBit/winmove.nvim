@@ -15,14 +15,12 @@ local config_loaded = false
 ---@field split_down  string
 ---@field split_up    string
 ---@field split_right string
----@field resize_mode string
 
 ---@class winmove.ConfigResizeModeMappings
 ---@field left         string
 ---@field down         string
 ---@field up           string
 ---@field right        string
----@field move_mode    string
 
 ---@class winmove.ConfigModeMappings
 ---@field help        string
@@ -70,14 +68,12 @@ local default_config = {
             split_down = "sj",
             split_up = "sk",
             split_right = "sl",
-            resize_mode = "r",
         },
         resize = {
             left = "h",
             down = "j",
             up = "k",
             right = "l",
-            move_mode = "m",
         },
     },
 }
@@ -100,14 +96,12 @@ local mapping_descriptions = {
         split_down = "Split a window down into another window",
         split_up = "Split a window up into another window",
         split_right = "Split a window right into another window",
-        resize_mode = "Switch to resize mode",
     },
     resize = {
         left = "Resize window left",
         down = "Resize window down",
         up = "Resize window up",
         right = "Resize window right",
-        move_mode = "Switch to move mode",
     },
 }
 
@@ -185,7 +179,6 @@ function config.validate(_config)
                 { "split_down",  "string" },
                 { "split_up",    "string" },
                 { "split_right", "string" },
-                { "resize_mode", "string" },
             }),
         },
         ["mappings.resize"] = {
@@ -195,7 +188,6 @@ function config.validate(_config)
                 { "down",      "string" },
                 { "up",        "string" },
                 { "right",     "string" },
-                { "move_mode", "string" },
             }),
         },
     })

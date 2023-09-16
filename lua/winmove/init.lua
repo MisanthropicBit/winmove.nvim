@@ -405,10 +405,8 @@ end
 
 ---@param mode winmove.Mode
 stop_mode = function(mode)
-    local titlecase_mode = str.titlecase(mode)
-
     if winmove.current_mode() ~= mode then
-        vim.api.nvim_err_writeln("Window " .. titlecase_mode .. " mode is not activated")
+        vim.api.nvim_err_writeln("Window " .. mode .. " mode is not activated")
         return
     end
 
@@ -420,6 +418,8 @@ stop_mode = function(mode)
         pcall(api.nvim_del_autocmd, winleave_autocmd)
         winleave_autocmd = nil
     end
+
+    local titlecase_mode = str.titlecase(mode)
 
     -- TODO: Check augroup?
     api.nvim_exec_autocmds("User", {
