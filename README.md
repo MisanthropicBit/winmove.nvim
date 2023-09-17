@@ -163,3 +163,8 @@ in this situtation and created my own plugin.
 ### Split into other windows
 
 ### Works with asynchronous output
+
+## Similar projects
+
+* [winshift.nvim](https://github.com/sindrets/winshift.nvim)
+* [vim-tradewinds](https://github.com/andymass/vim-tradewinds)
