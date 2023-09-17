@@ -5,7 +5,7 @@ local float = require("winmove.float")
 local highlight = require("winmove.highlight")
 local layout = require("winmove.layout")
 local resize = require("winmove.resize")
-local str = require("winmove.str")
+local str = require("winmove.util.str")
 local winutil = require("winmove.winutil")
 
 local api = vim.api
@@ -25,28 +25,26 @@ winmove.mode = {
 ---@field mode winmove.Mode
 ---@field win_id integer?
 ---@field bufnr integer?
----@field mappings table?
----@field saved_mappings table?
+---@field saved_keymaps table?
 
 ---@type winmove.State
 local state = {
     mode = winmove.mode.None,
     win_id = nil,
     bufnr = nil,
-    mappings = nil,
-    saved_mappings = nil,
+    saved_keymaps = nil,
 }
 
 --- Set the current mode
 ---@param mode winmove.Mode
 ---@param win_id integer
 ---@param bufnr integer
----@param saved_mappings table
-local function set_mode(mode, win_id, bufnr, saved_mappings)
+---@param saved_keymaps table
+local function set_mode(mode, win_id, bufnr, saved_keymaps)
     state.mode = mode
     state.win_id = win_id
     state.bufnr = bufnr
-    state.saved_mappings = saved_mappings
+    state.saved_keymaps = saved_keymaps
 end
 
 ---@type fun(mode: winmove.Mode)
@@ -60,7 +58,7 @@ local function quit_mode()
     state.mode = winmove.mode.None
     state.win_id = nil
     state.bufnr = nil
-    state.saved_mappings = nil
+    state.saved_keymaps = nil
 end
 
 function winmove.version()
@@ -68,12 +66,6 @@ function winmove.version()
 end
 
 ---@alias winmove.Direction "h" | "j" | "k" | "l"
-
----@class winmove.BoundingBox
----@field top integer
----@field left integer
----@field bottom integer
----@field right integer
 
 --- Move a window in a given direction
 ---@param source_win_id integer
@@ -163,33 +155,33 @@ end
 ---@param keys string
 ---@param win_id integer
 local function move_mode_key_handler(keys, win_id)
-    local mappings = config.mappings.move
+    local keymaps = config.keymaps.move
 
-    if keys == mappings.left then
+    if keys == keymaps.left then
         winmove.move_window(win_id, "h")
-    elseif keys == mappings.down then
+    elseif keys == keymaps.down then
         winmove.move_window(win_id, "j")
-    elseif keys == mappings.up then
+    elseif keys == keymaps.up then
         winmove.move_window(win_id, "k")
-    elseif keys == mappings.right then
+    elseif keys == keymaps.right then
         winmove.move_window(win_id, "l")
-    elseif keys == mappings.split_left then
+    elseif keys == keymaps.split_left then
         winmove.split_into(win_id, "h")
-    elseif keys == mappings.split_down then
+    elseif keys == keymaps.split_down then
         winmove.split_into(win_id, "j")
-    elseif keys == mappings.split_up then
+    elseif keys == keymaps.split_up then
         winmove.split_into(win_id, "k")
-    elseif keys == mappings.split_right then
+    elseif keys == keymaps.split_right then
         winmove.split_into(win_id, "l")
-    elseif keys == mappings.far_left then
+    elseif keys == keymaps.far_left then
         winmove.move_far(win_id, "h")
-    elseif keys == mappings.far_down then
+    elseif keys == keymaps.far_down then
         winmove.move_far(win_id, "j")
-    elseif keys == mappings.far_up then
+    elseif keys == keymaps.far_up then
         winmove.move_far(win_id, "k")
-    elseif keys == mappings.far_right then
+    elseif keys == keymaps.far_right then
         winmove.move_far(win_id, "l")
-    elseif keys == mappings.resize_mode then
+    elseif keys == keymaps.resize_mode then
         winmove.toggle_mode()
     end
 end
@@ -204,17 +196,17 @@ local function resize_mode_key_handler(keys, win_id)
         count = config.default_resize_count
     end
 
-    local mappings = config.mappings.resize
+    local keymaps = config.keymaps.resize
 
-    if keys == mappings.left then
+    if keys == keymaps.left then
         resize.resize_window(win_id, "h", count, "top_left")
-    elseif keys == mappings.down then
+    elseif keys == keymaps.down then
         resize.resize_window(win_id, "j", count, "top_left")
-    elseif keys == mappings.up then
+    elseif keys == keymaps.up then
         resize.resize_window(win_id, "k", count, "top_left")
-    elseif keys == mappings.right then
+    elseif keys == keymaps.right then
         resize.resize_window(win_id, "l", count, "top_left")
-    elseif keys == mappings.move_mode then
+    elseif keys == keymaps.move_mode then
         winmove.toggle_mode()
     end
 end
@@ -283,12 +275,12 @@ end
 ---@param win_id integer
 ---@param bufnr integer
 ---@param mode winmove.Mode
-local function set_mappings(win_id, bufnr, mode)
+local function set_keymaps(win_id, bufnr, mode)
     local existing_buf_keymaps = get_existing_buffer_keymaps(bufnr)
     local saved_buf_keymaps = {}
     local handler = create_pcall_mode_key_handler(mode)
 
-    for name, map in pairs(config.mappings[mode]) do
+    for name, map in pairs(config.keymaps[mode]) do
         local description = config.get_keymap_description(name, mode)
         set_mode_keymap(win_id, bufnr, map, handler, description)
 
@@ -301,14 +293,14 @@ local function set_mappings(win_id, bufnr, mode)
         end
     end
 
-    set_mode_keymap(win_id, bufnr, config.mappings.help, function()
+    set_mode_keymap(win_id, bufnr, config.keymaps.help, function()
         float.open(mode)
     end, config.get_keymap_description("help"))
 
     set_mode_keymap(
         win_id,
         bufnr,
-        config.mappings.quit,
+        config.keymaps.quit,
         winmove["stop_" .. mode .. "_mode"],
         config.get_keymap_description("quit")
     )
@@ -316,7 +308,7 @@ local function set_mappings(win_id, bufnr, mode)
     set_mode_keymap(
         win_id,
         bufnr,
-        config.mappings.toggle_mode,
+        config.keymaps.toggle_mode,
         winmove.toggle_mode,
         config.get_keymap_description("toggle_mode")
     )
@@ -326,22 +318,22 @@ end
 
 --- Delete mode keymaps and restore previous buffer keymaps
 ---@param mode winmove.Mode
-local function restore_mappings(mode)
+local function restore_keymaps(mode)
     if not api.nvim_buf_is_valid(state.bufnr) then
         return
     end
 
     -- Remove winmove keymaps
-    for _, map in pairs(config.mappings[mode]) do
+    for _, map in pairs(config.keymaps[mode]) do
         api.nvim_buf_del_keymap(state.bufnr, "n", map)
     end
 
-    api.nvim_buf_del_keymap(state.bufnr, "n", config.mappings.help)
-    api.nvim_buf_del_keymap(state.bufnr, "n", config.mappings.quit)
-    api.nvim_buf_del_keymap(state.bufnr, "n", config.mappings.toggle_mode)
+    api.nvim_buf_del_keymap(state.bufnr, "n", config.keymaps.help)
+    api.nvim_buf_del_keymap(state.bufnr, "n", config.keymaps.quit)
+    api.nvim_buf_del_keymap(state.bufnr, "n", config.keymaps.toggle_mode)
 
     -- Restore old keymaps
-    for _, map in pairs(state.saved_mappings) do
+    for _, map in pairs(state.saved_keymaps) do
         api.nvim_buf_set_keymap(state.bufnr, "n", map.lhs, map.rhs, {
             expr = map.expr,
             callback = map.callback,
@@ -375,7 +367,7 @@ start_mode = function(mode)
     end
 
     local bufnr = api.nvim_get_current_buf()
-    local saved_buf_keymaps = set_mappings(cur_win_id, bufnr, mode)
+    local saved_buf_keymaps = set_keymaps(cur_win_id, bufnr, mode)
 
     highlight.highlight_window(cur_win_id, mode)
     set_mode(mode, cur_win_id, bufnr, saved_buf_keymaps)
@@ -423,7 +415,7 @@ stop_mode = function(mode)
     end
 
     highlight.unhighlight_window(state.win_id)
-    restore_mappings(mode)
+    restore_keymaps(mode)
     quit_mode()
 
     if winenter_autocmd then

@@ -21,7 +21,7 @@ See the [showcase](#showcase) for recordings of using `winmove`.
 
 ## Requirements
 
-* Neovim 0.8.0+
+* Neovim 0.5.0+
 
 ## Installing
 
@@ -52,7 +52,7 @@ require('winmove').setup({ -- Or pass the table to vim.g.winmove
     },
     wrap_around = true, -- Wrap around edges when moving windows
     default_resize_count = 3, -- Default amount to resize windows
-    mappings = {
+    keymaps = {
         help = "?", -- Open floating window with help for the current mode
         help_close = "q", -- Close the floating help window
         quit = "q", -- Quit current mode
@@ -96,7 +96,7 @@ move` or `:Winmove resize`.
 > [this example](#moving-using-relative-cursor-position) for a visual explanation.
 
 The `Winmove` command also takes arguments for moving windows that correspond to
-the `config.mappings.move` key passed to the `setup` function, e.g. `:Winmove
+the `config.keymaps.move` key passed to the `setup` function, e.g. `:Winmove
 far_right`. You can also quit the current mode using `:Winmove quit`.
 
 ## Autocommands

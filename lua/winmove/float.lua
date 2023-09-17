@@ -103,11 +103,11 @@ end
 ---@param mode winmove.Mode
 function float.open(mode)
     local lines = {}
-    local mappings = config.mappings[mode]
+    local keymaps = config.keymaps[mode]
     local max_widths = {}
     local spacing = (" "):rep(4)
 
-    for action, target in pairs(mappings) do
+    for action, target in pairs(keymaps) do
         local desc_mode = action ~= "help_close" and mode or nil
         local desc = config.get_keymap_description(action, desc_mode)
         local line = { target, spacing, desc }
@@ -127,7 +127,7 @@ function float.open(mode)
     vim.list_extend(lines, {
         {},
         {
-            config.mappings["help_close"],
+            config.keymaps["help_close"],
             spacing,
             config.get_keymap_description("help_close"),
         },
@@ -158,7 +158,7 @@ function float.open(mode)
     api.nvim_set_current_win(win_id)
 
     ---@diagnostic disable-next-line: param-type-mismatch
-    api.nvim_buf_set_keymap(buffer, "n", config.mappings["help_close"], "", {
+    api.nvim_buf_set_keymap(buffer, "n", config.keymaps["help_close"], "", {
         desc = config.get_keymap_description("help_close"),
         callback = float.close,
     })

@@ -62,15 +62,17 @@ end
 function winutil.editor_height()
     local height = vim.o.lines - vim.o.cmdheight
 
-    -- Subtract 1 if tabline is visible
-    if vim.o.showtabline == 2 or (vim.o.showtabline == 1 and #vim.api.nvim_list_tabpages() > 1) then
+    local showtabline = vim.o.showtabline
+
+    -- Subtract 1 if the tabline is visible
+    if showtabline == 2 or (showtabline == 1 and #vim.api.nvim_list_tabpages() > 1) then
         height = height - 1
     end
 
-    -- Subtract 1 if statusline is visible
-    if
-        vim.o.laststatus >= 2 or (vim.o.laststatus == 1 and #vim.api.nvim_tabpage_list_wins(0) > 1)
-    then
+    local laststatus = vim.o.laststatus
+
+    -- Subtract 1 if the statusline is visible
+    if laststatus >= 2 or (laststatus == 1 and #vim.api.nvim_tabpage_list_wins(0) > 1) then
         height = height - 1
     end
 

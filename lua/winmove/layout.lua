@@ -2,6 +2,12 @@ local layout = {}
 
 local winutil = require("winmove.winutil")
 
+---@class winmove.BoundingBox
+---@field top integer
+---@field left integer
+---@field bottom integer
+---@field right integer
+
 ---@param winnr integer
 ---@return integer
 ---@return integer
@@ -125,37 +131,6 @@ function layout.get_sibling_relative_dir(source_win_id, target_win_id, dir)
     local reldir = dirs[dist1 < dist2 and 1 or 2] ---@type winmove.Direction
 
     return reldir
-end
-
---- Is a window an ancestor of another window
----@param win_id1 integer
----@param win_id2 integer
-function layout.is_ancestor(win_id1, win_id2)
-    local root = vim.fn.winlayout()
-    local ancestor_found = false
-
-    local function _is_ancestor(node, win_id)
-        local type, data = unpack(node)
-
-        if type == "leaf" then
-            if ancestor_found then
-                return data == win_id2
-            else
-                ancestor_found = data == win_id1
-                return false
-            end
-        else
-            for _, child in ipairs(data) do
-                if _is_ancestor(child, win_id) then
-                    if ancestor_found then
-                        return true
-                    end
-                end
-            end
-        end
-    end
-
-    return _is_ancestor(root, win_id1)
 end
 
 --- Get a leaf's parent or nil if it is not found
