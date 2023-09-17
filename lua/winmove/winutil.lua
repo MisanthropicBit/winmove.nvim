@@ -22,8 +22,14 @@ function winutil.wincall_no_events(func, ...)
     vim.opt_global.eventignore = {
         "WinEnter",
         "WinLeave",
+        "WinNew",
         "WinScrolled",
         "WinResized",
+        "WinClosed",
+        "BufWinEnter",
+        "BufWinLeave",
+        "BufEnter",
+        "BufLeave",
     }
 
     func(...)
