@@ -1,5 +1,6 @@
 local winmove = require("winmove")
 
+local message = require("winmove.message")
 local command_args = {
     "left",
     "down",
@@ -47,7 +48,7 @@ local function winmove_command(options)
         winmove.stop_move_mode()
     else
         if command_args[arg] == nil then
-            vim.api.nvim_err_writeln(("Invalid argument '%s'"):format(arg))
+            message.error(("Invalid argument '%s'"):format(arg))
             return
         end
 

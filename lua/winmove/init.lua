@@ -4,6 +4,7 @@ local config = require("winmove.config")
 local float = require("winmove.float")
 local highlight = require("winmove.highlight")
 local layout = require("winmove.layout")
+local message = require("winmove.message")
 local resize = require("winmove.resize")
 local str = require("winmove.util.str")
 local winutil = require("winmove.winutil")
@@ -264,8 +265,7 @@ local function create_pcall_mode_key_handler(mode)
         if not ok then
             -- There was an error in the call, restore keymaps and quit move mode
             winmove["stop_" .. mode .. "_mode"]()
-
-            api.nvim_err_writeln(("winmove got error in mode '%s': %s"):format(mode, error))
+            message.error((("winmove got error in mode '%s': %s"):format(mode, error)))
         end
     end
 end
@@ -348,21 +348,21 @@ end
 ---@param mode winmove.Mode
 start_mode = function(mode)
     if winutil.window_count() == 1 then
-        vim.api.nvim_err_writeln("Only one window")
+        message.error("Only one window")
         return
     end
 
     local cur_win_id = api.nvim_get_current_win()
 
     if mode == winmove.mode.Move and winutil.is_floating_window(cur_win_id) then
-        vim.api.nvim_err_writeln("Cannot " .. mode .. " floating window")
+        message.error("Cannot " .. mode .. " floating window")
         return
     end
 
     local titlecase_mode = str.titlecase(mode)
 
     if winmove.current_mode() == mode then
-        vim.api.nvim_err_writeln(titlecase_mode .. " mode already activated")
+        message.error(titlecase_mode .. " mode already activated")
         return
     end
 
@@ -410,7 +410,7 @@ end
 ---@param mode winmove.Mode
 stop_mode = function(mode)
     if winmove.current_mode() ~= mode then
-        vim.api.nvim_err_writeln("Window " .. mode .. " mode is not activated")
+        message.error("Window " .. mode .. " mode is not activated")
         return
     end
 

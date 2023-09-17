@@ -1,5 +1,7 @@
 local config = {}
 
+local message = require("winmove.message")
+
 local config_loaded = false
 
 ---@class winmove.ConfigMoveModeKeymaps
@@ -226,10 +228,7 @@ function config.setup(user_config)
     local ok, error = config.validate(_user_config)
 
     if not ok then
-        vim.api.nvim_echo({
-            { "[winmove.nvim]:", "ErrorMsg" },
-            { " Errors found in config: " .. error },
-        }, true, {})
+        message.error("Errors found in config: " .. error)
         return
     end
 

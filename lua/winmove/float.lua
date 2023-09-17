@@ -2,6 +2,7 @@
 local float = {}
 
 local config = require("winmove.config")
+local message = require("winmove.message")
 local winutil = require("winmove.winutil")
 
 local api = vim.api
@@ -80,7 +81,7 @@ local function open_centered_float(title, lines, options)
     local ok, win_id = pcall(api.nvim_open_win, buffer, false, win_options)
 
     if not ok then
-        vim.api.nvim_err_writeln("Failed to open help: " .. win_id)
+        message.error("Failed to open help: " .. win_id)
         return
     end
 
