@@ -2,7 +2,7 @@ local config = {}
 
 local config_loaded = false
 
----@class winmove.ConfigMoveModeMappings
+---@class winmove.ConfigMoveModeKeymaps
 ---@field left         string
 ---@field down         string
 ---@field up           string
@@ -16,19 +16,19 @@ local config_loaded = false
 ---@field split_up    string
 ---@field split_right string
 
----@class winmove.ConfigResizeModeMappings
+---@class winmove.ConfigResizeModeKeymaps
 ---@field left         string
 ---@field down         string
 ---@field up           string
 ---@field right        string
 
----@class winmove.ConfigModeMappings
+---@class winmove.ConfigModeKeymaps
 ---@field help        string
 ---@field help_close  string
 ---@field quit        string
 ---@field toggle_mode string
----@field move        winmove.ConfigMoveModeMappings
----@field resize      winmove.ConfigResizeModeMappings
+---@field move        winmove.ConfigMoveModeKeymaps
+---@field resize      winmove.ConfigResizeModeKeymaps
 
 ---@class winmove.Highlights
 ---@field move   string
@@ -38,7 +38,7 @@ local config_loaded = false
 ---@field highlights           winmove.Highlights
 ---@field wrap_around          boolean
 ---@field default_resize_count integer
----@field mappings             winmove.ConfigModeMappings
+---@field keymaps              winmove.ConfigModeKeymaps
 
 ---@type winmove.Config
 local default_config = {
@@ -50,7 +50,7 @@ local default_config = {
     },
     wrap_around = true,
     default_resize_count = 3,
-    mappings = {
+    keymaps = {
         help = "?",
         help_close = "q",
         quit = "q",
@@ -153,10 +153,16 @@ function config.validate(_config)
                 { "resize", "string" },
             }),
         },
-        wrap_around = { _config.wrap_around, "boolean" },
-        default_resize_count = { _config.default_resize_count, "number" },
-        mappings = {
-            _config.mappings,
+        wrap_around = {
+            _config.wrap_around,
+            "boolean",
+        },
+        default_resize_count = {
+            _config.default_resize_count,
+            "number",
+        },
+        keymaps = {
+            _config.keymaps,
             validate_keys({
                 { "help",        "string" },
                 { "help_close",  "string" },
@@ -164,8 +170,8 @@ function config.validate(_config)
                 { "toggle_mode", "string" },
             }),
         },
-        ["mappings.move"] = {
-            _config.mappings.move,
+        ["keymaps.move"] = {
+            _config.keymaps.move,
             validate_keys({
                 { "left",        "string" },
                 { "down",        "string" },
@@ -181,8 +187,8 @@ function config.validate(_config)
                 { "split_right", "string" },
             }),
         },
-        ["mappings.resize"] = {
-            _config.mappings.resize,
+        ["keymaps.resize"] = {
+            _config.keymaps.resize,
             validate_keys({
                 { "left",      "string" },
                 { "down",      "string" },
