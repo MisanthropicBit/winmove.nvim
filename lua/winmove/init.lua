@@ -12,7 +12,7 @@ local api = vim.api
 local winmove_version = "0.1.0"
 
 local augroup = nil
-local winleave_autocmd = nil
+local winenter_autocmd = nil
 
 ---@enum winmove.Mode
 winmove.mode = {
@@ -387,7 +387,7 @@ start_mode = function(mode)
         modeline = false,
     })
 
-    winleave_autocmd = api.nvim_create_autocmd("WinEnter", {
+    winenter_autocmd = api.nvim_create_autocmd("WinEnter", {
         callback = function()
             local win_id = api.nvim_get_current_win()
 
@@ -400,6 +400,18 @@ start_mode = function(mode)
         end,
         group = augroup,
         desc = "Quits " .. mode .. " when leaving the window",
+    })
+
+    -- If we enter a new window, unhighlight the window since there is a bug
+    -- where the winhighlight option can leak into other windows:
+    -- https://github.com/neovim/neovim/issues/18283
+    api.nvim_create_autocmd("WinNew", {
+        callback = function()
+            highlight.unhighlight_window(api.nvim_get_current_win())
+        end,
+        once = true,
+        group = augroup,
+        desc = "Remove highlighting from any new window because the winhighlight option can leak into other windows",
     })
 end
 
@@ -414,9 +426,9 @@ stop_mode = function(mode)
     restore_mappings(mode)
     quit_mode()
 
-    if winleave_autocmd then
-        pcall(api.nvim_del_autocmd, winleave_autocmd)
-        winleave_autocmd = nil
+    if winenter_autocmd then
+        pcall(api.nvim_del_autocmd, winenter_autocmd)
+        winenter_autocmd = nil
     end
 
     local titlecase_mode = str.titlecase(mode)
