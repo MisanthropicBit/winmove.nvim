@@ -12,8 +12,8 @@ local winutil = require("winmove.winutil")
 local api = vim.api
 local winmove_version = "0.1.0"
 
-local augroup = nil
-local winenter_autocmd = nil
+local augroup = api.nvim_create_augroup("Winmove", { clear = true })
+local autocmds = {}
 
 ---@enum winmove.Mode
 winmove.mode = {
@@ -372,39 +372,51 @@ start_mode = function(mode)
     highlight.highlight_window(cur_win_id, mode)
     set_mode(mode, cur_win_id, bufnr, saved_buf_keymaps)
 
-    -- TODO: Check augroup?
     api.nvim_exec_autocmds("User", {
         pattern = "Winmove" .. titlecase_mode .. "ModeStart",
         group = augroup,
         modeline = false,
     })
 
-    winenter_autocmd = api.nvim_create_autocmd("WinEnter", {
-        callback = function()
-            local win_id = api.nvim_get_current_win()
+    table.insert(
+        autocmds,
+        api.nvim_create_autocmd("WinEnter", {
+            callback = function()
+                local win_id = api.nvim_get_current_win()
 
-            -- Do not stop the current mode if we are entering the window we are
-            -- moving/resizing or if we are entering the help window
-            if win_id ~= cur_win_id and not float.is_help_window(win_id) then
-                stop_mode(mode)
-                return true
-            end
-        end,
-        group = augroup,
-        desc = "Quits " .. mode .. " when leaving the window",
-    })
+                -- Do not stop the current mode if we are entering the window we are
+                -- moving/resizing or if we are entering the help window
+                if win_id ~= cur_win_id and not float.is_help_window(win_id) then
+                    stop_mode(mode)
+                    return true
+                end
+            end,
+            group = augroup,
+            desc = "Quits " .. mode .. " when leaving the window",
+        })
+    )
 
     -- If we enter a new window, unhighlight the window since there is a bug
     -- where the winhighlight option can leak into other windows:
     -- https://github.com/neovim/neovim/issues/18283
-    api.nvim_create_autocmd("WinNew", {
-        callback = function()
-            highlight.unhighlight_window(api.nvim_get_current_win())
-        end,
-        once = true,
-        group = augroup,
-        desc = "Remove highlighting from any new window because the winhighlight option can leak into other windows",
-    })
+    table.insert(
+        autocmds,
+        api.nvim_create_autocmd("WinNew", {
+            callback = function()
+                local win_id = api.nvim_get_current_win()
+
+                -- Clear the winhighlight option if the winmove highlighting
+                -- has leaked into the new window
+                if highlight.has_winmove_highlight(win_id, mode) then
+                    highlight.unhighlight_window(win_id)
+                end
+
+                return true
+            end,
+            group = augroup,
+            desc = "Remove highlighting from any new window because the winhighlight option can leak into other windows",
+        })
+    )
 end
 
 ---@param mode winmove.Mode
@@ -418,16 +430,14 @@ stop_mode = function(mode)
     restore_keymaps(mode)
     quit_mode()
 
-    if winenter_autocmd then
-        pcall(api.nvim_del_autocmd, winenter_autocmd)
-        winenter_autocmd = nil
+    for _, autocmd in ipairs(autocmds) do
+        pcall(api.nvim_del_autocmd, autocmd)
     end
 
-    local titlecase_mode = str.titlecase(mode)
+    autocmds = {}
 
-    -- TODO: Check augroup?
     api.nvim_exec_autocmds("User", {
-        pattern = "Winmove" .. titlecase_mode .. "ModeEnd",
+        pattern = "Winmove" .. str.titlecase(mode) .. "ModeEnd",
         group = augroup,
         modeline = false,
     })

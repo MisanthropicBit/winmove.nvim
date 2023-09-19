@@ -49,6 +49,16 @@ function highlight.unhighlight_window(win_id)
     vim.wo[win_id].winhighlight = saved_win_highlights
 end
 
+---@param win_id integer
+---@param mode winmove.Mode
+function highlight.has_winmove_highlight(win_id, mode)
+    if not api.nvim_win_is_valid(win_id) then
+        return
+    end
+
+    return vim.wo[win_id].winhighlight == win_highlights[mode]
+end
+
 --- Generate group highlights for a mode
 ---@param mode winmove.Mode
 ---@param groups string[]
