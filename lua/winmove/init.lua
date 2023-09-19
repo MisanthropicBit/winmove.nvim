@@ -72,7 +72,6 @@ end
 ---@param source_win_id integer
 ---@param dir winmove.Direction
 function winmove.move_window(source_win_id, dir)
-    -- Only one window
     if winutil.window_count() == 1 then
         return
     end
@@ -113,7 +112,6 @@ end
 ---@param source_win_id integer
 ---@param dir winmove.Direction
 function winmove.split_into(source_win_id, dir)
-    -- Only one window
     if winutil.window_count() == 1 then
         return
     end
@@ -147,7 +145,6 @@ end
 
 ---@diagnostic disable-next-line:unused-local
 function winmove.move_far(source_win_id, dir)
-    -- TODO: Is this necessary?
     winutil.wincall_no_events(function()
         vim.cmd("wincmd " .. dir:upper())
     end)
@@ -265,7 +262,7 @@ local function create_pcall_mode_key_handler(mode)
         if not ok then
             -- There was an error in the call, restore keymaps and quit move mode
             winmove["stop_" .. mode .. "_mode"]()
-            message.error((("winmove got error in mode '%s': %s"):format(mode, error)))
+            message.error((("winmove got error in '%s' mode: %s"):format(mode, error)))
         end
     end
 end
@@ -477,6 +474,7 @@ function winmove.setup(user_config)
 
     augroup = api.nvim_create_augroup("winmove-augroup", { clear = true })
 
+    -- TODO: Make it so that users don't need to call the setup function
     for _, mode in ipairs(winmove.mode) do
         if mode ~= winmove.mode.None then
             api.nvim_create_autocmd("User", {
