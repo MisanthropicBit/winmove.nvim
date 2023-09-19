@@ -1,4 +1,3 @@
--- TODO: Better types
 local float = {}
 
 local config = require("winmove.config")
@@ -10,14 +9,19 @@ local has_title = vim.fn.has("nvim-0.9.0") == 1
 
 local float_win_id = nil ---@type integer?
 
----@type table<string, any>
+---@class FloatOptions
+---@field padding integer?
+---@field width integer
+---@field title_alignment string?
+
+---@type table<string, boolean | string>
 local window_options = {
     wrap = false,
     signcolumn = "no",
     foldenable = false,
 }
 
----
+--- Pad an array of lines and prepare each line for insertion into a buffer
 ---@param lines string[][]
 ---@param padding integer
 ---@return string[]
@@ -43,7 +47,7 @@ end
 
 ---@param title string | string[]
 ---@param lines any[]
----@param options table<string, any>?
+---@param options FloatOptions?
 ---@return integer?
 ---@return integer?
 local function open_centered_float(title, lines, options)
