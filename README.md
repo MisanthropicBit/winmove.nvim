@@ -19,6 +19,20 @@
 
 See the [showcase](#showcase) for recordings of using `winmove`.
 
+<!-- panvimdoc-ignore-start -->
+
+- [Requirements](#requirements)
+- [Installing](#installing)
+- [Setup](#setup)
+- [Commands](#commands)
+- [Autocommands](#autocommands)
+- [Public API](#public-api)
+- [FAQ](#faq)
+- [Showcase](#showcase)
+- [Similar projects](#similar-projects)
+
+<!-- panvimdoc-ignore-end -->
+
 ## Requirements
 
 * Neovim 0.5.0+
