@@ -120,7 +120,14 @@ function winmove.split_into(source_win_id, dir)
 
     if target_win_id == nil then
         if config.wrap_around then
-            target_win_id = layout.get_wraparound_neighbor(dir)
+            local new_target_win_id = layout.get_wraparound_neighbor(dir)
+
+            if new_target_win_id == source_win_id then
+                -- The window is full width/height
+                return
+            end
+            target_win_id = new_target_win_id
+            dir = winutil.reverse_direction(dir)
         else
             return
         end
