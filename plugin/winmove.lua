@@ -1,6 +1,9 @@
 local winmove = require("winmove")
+local resize = require("winmove.resize")
+local str = require("winmove.util.str")
 
 local message = require("winmove.message")
+
 local command_args = {
     "left",
     "down",
@@ -14,6 +17,10 @@ local command_args = {
     "far_down",
     "far_up",
     "far_right",
+    "resize_left",
+    "resize_down",
+    "resize_up",
+    "resize_right",
     "move",
     "resize",
     "quit",
@@ -32,7 +39,31 @@ local function arg_to_dir(arg)
        down = "j",
        up = "k",
        right = "l",
+       split_left = "h",
+       split_down = "j",
+       split_up = "k",
+       split_right = "l",
+       far_left = "h",
+       far_down = "j",
+       far_up = "k",
+       far_right = "l",
+       resize_left = "h",
+       resize_down = "j",
+       resize_up = "k",
+       resize_right = "l",
    })[arg]
+end
+
+---@param arg string
+---@return string?
+local function get_command(arg)
+    for _, command_arg in ipairs(command_args) do
+        if arg == command_arg then
+            return arg
+        end
+    end
+
+    return nil
 end
 
 local function winmove_command(options)
@@ -45,18 +76,26 @@ local function winmove_command(options)
     elseif arg == "resize" then
         winmove.start_resize_mode()
     elseif arg == "quit" then
-        winmove.stop_move_mode()
+        winmove["stop_" .. winmove.current_mode() .. "_mode"]()
     else
-        if command_args[arg] == nil then
+        local command = get_command(arg)
+
+        if command == nil then
             message.error(("Invalid argument '%s'"):format(arg))
             return
         end
 
+        local win_id = vim.api.nvim_get_current_win()
         local dir = arg_to_dir(arg)
 
-        if arg then
-            local cur_win_id = vim.api.nvim_get_current_win()
-            winmove.move_window(cur_win_id, dir)
+        if str.has_prefix(command, "resize") then
+            resize.resize_window(win_id, dir, 3)
+        elseif str.has_prefix(command, "split") then
+            winmove.split_into(win_id, dir)
+        elseif str.has_prefix(command, "far") then
+            winmove.move_far(win_id, dir)
+        else
+            winmove.move_window(win_id, dir)
         end
     end
 end
