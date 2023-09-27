@@ -38,8 +38,7 @@ SETUP                                                          *winmove-setup*
 
 If you are content with the defaults, you don’t need to call the `setup`
 function. Otherwise, either call `winmove.setup` with your desired options or
-set `vim.g.winmove` to your desired options. Defaults are shown below. Refer to
-the docs <doc/winmove.txt> for more help.
+set `vim.g.winmove` to your desired options. Defaults are shown below.
 
 >lua
     require('winmove').setup({ -- Or pass the table to vim.g.winmove
