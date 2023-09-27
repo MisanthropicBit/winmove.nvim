@@ -477,7 +477,6 @@ end
 
 function winmove.setup(user_config)
     config.setup(user_config)
-    highlight.setup()
 end
 
 return winmove

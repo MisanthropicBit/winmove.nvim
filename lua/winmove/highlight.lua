@@ -10,8 +10,8 @@ local api = vim.api
 
 -- Window higlights per mode
 local win_highlights = {
-    move = "",
-    resize = "",
+    move = nil,
+    resize = nil,
 }
 
 local saved_win_highlights = nil
@@ -29,11 +29,33 @@ local highlight_groups = {
     "LineNrBelow",
 }
 
+--- Generate group highlights for a mode
+---@param mode winmove.Mode
+---@param groups string[]
+local function generate_highlights(mode, groups)
+    local highlights = {}
+    local color = config.highlights[mode]
+
+    for _, group in ipairs(groups) do
+        local titlecase_mode = str.titlecase(mode)
+        local winmove_group = "Winmove" .. titlecase_mode .. group
+
+        vim.cmd(("hi default link %s %s"):format(winmove_group, color))
+        table.insert(highlights, ("%s:%s"):format(group, winmove_group))
+    end
+
+    return table.concat(highlights, ",")
+end
+
 ---@param win_id integer
 ---@param mode winmove.Mode
 function highlight.highlight_window(win_id, mode)
     if not api.nvim_win_is_valid(win_id) or mode == "none" then
         return
+    end
+
+    if not win_highlights[mode] then
+        win_highlights[mode] = generate_highlights(mode, highlight_groups)
     end
 
     saved_win_highlights = vim.wo[win_id].winhighlight
@@ -57,30 +79,6 @@ function highlight.has_winmove_highlight(win_id, mode)
     end
 
     return vim.wo[win_id].winhighlight == win_highlights[mode]
-end
-
---- Generate group highlights for a mode
----@param mode winmove.Mode
----@param groups string[]
-local function generate_highlights(mode, groups)
-    local highlights = {}
-    local color = config.highlights[mode]
-
-    -- NOTE: Support custom highlights if config.highlights[mode] is a table
-    for _, group in ipairs(groups) do
-        local titlecase_mode = str.titlecase(mode)
-        local winmove_group = "Winmove" .. titlecase_mode .. group
-
-        vim.cmd(("hi default link %s %s"):format(winmove_group, color))
-        table.insert(highlights, ("%s:%s"):format(group, winmove_group))
-    end
-
-    return table.concat(highlights, ",")
-end
-
-function highlight.setup()
-    win_highlights.move = generate_highlights("move", highlight_groups)
-    win_highlights.resize = generate_highlights("resize", highlight_groups)
 end
 
 return highlight
