@@ -17,9 +17,13 @@
   <br />
 </div>
 
-See the [showcase](#showcase) for recordings of using `winmove`.
-
 <!-- panvimdoc-ignore-start -->
+
+<div align="center">
+
+🚧 **This plugin is under development** 🚧
+
+</div>
 
 - [Requirements](#requirements)
 - [Installing](#installing)
