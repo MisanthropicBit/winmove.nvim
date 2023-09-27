@@ -46,14 +46,10 @@ describe("plugin", function()
         it("handles invalid arguments", function()
             vim.cmd("Winmove nope")
 
-            assert.stub(vim.api.nvim_echo).was.called_with(
-                {
-                    { "[winmove.nvim]:", "ErrorMsg" },
-                    { " Invalid argument 'nope'" },
-                },
-                true,
-                {}
-            )
+            assert.stub(vim.api.nvim_echo).was.called_with({
+                { "[winmove.nvim]:",         "ErrorMsg" },
+                { " Invalid argument 'nope'" },
+            }, true, {})
         end)
     end)
 end)

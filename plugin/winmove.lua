@@ -70,7 +70,7 @@ local function winmove_command(options)
     local arg = options.fargs[1]
 
     if arg == "version" then
-        vim.print(winmove.version())
+        vim.pretty_print(winmove.version())
     elseif arg == "move" then
         winmove.start_move_mode()
     elseif arg == "resize" then
