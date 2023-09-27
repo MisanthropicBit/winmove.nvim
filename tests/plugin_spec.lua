@@ -34,7 +34,7 @@ describe("plugin", function()
 
         it("starts resize mode", function()
             given("", function()
-                vim.cmd("new") -- Create another buffer to activate move mode
+                vim.cmd("new") -- Create another buffer to activate resize mode
                 vim.cmd("Winmove resize")
 
                 assert.are.same(winmove.current_mode(), "resize")
@@ -47,7 +47,7 @@ describe("plugin", function()
             vim.cmd("Winmove nope")
 
             assert.stub(vim.api.nvim_echo).was.called_with({
-                { "[winmove.nvim]:",         "ErrorMsg" },
+                { "[winmove.nvim]:", "ErrorMsg" },
                 { " Invalid argument 'nope'" },
             }, true, {})
         end)
