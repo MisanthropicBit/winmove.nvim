@@ -377,9 +377,9 @@ start_mode = function(mode)
     set_mode(mode, cur_win_id, bufnr, saved_buf_keymaps)
 
     api.nvim_exec_autocmds("User", {
-        pattern = "Winmove" .. titlecase_mode .. "ModeStart",
-        group = augroup,
+        pattern = "WinmoveModeStart",
         modeline = false,
+        data = { mode = mode },
     })
 
     table.insert(
@@ -441,9 +441,9 @@ stop_mode = function(mode)
     autocmds = {}
 
     api.nvim_exec_autocmds("User", {
-        pattern = "Winmove" .. str.titlecase(mode) .. "ModeEnd",
-        group = augroup,
+        pattern = "WinmoveModeEnd",
         modeline = false,
+        data = { mode = mode },
     })
 end
 
@@ -478,25 +478,6 @@ end
 function winmove.setup(user_config)
     config.setup(user_config)
     highlight.setup()
-
-    augroup = api.nvim_create_augroup("winmove-augroup", { clear = true })
-
-    -- TODO: Make it so that users don't need to call the setup function
-    for _, mode in ipairs(winmove.mode) do
-        if mode ~= winmove.mode.None then
-            api.nvim_create_autocmd("User", {
-                pattern = "Winmove" .. mode .. "ModeStart",
-                group = augroup,
-                desc = "User autocmd that is triggered when " .. mode .. " mode starts",
-            })
-
-            api.nvim_create_autocmd("User", {
-                pattern = "Winmove" .. mode .. "ModeEnd",
-                group = augroup,
-                desc = "User autocmd that is triggered when " .. mode .. " mode ends",
-            })
-        end
-    end
 end
 
 return winmove

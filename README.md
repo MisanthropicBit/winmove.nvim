@@ -117,15 +117,19 @@ far_right`. You can also quit the current mode using `:Winmove quit`.
 
 You can define autocommands for when modes start and end.
 
-* `"WinmoveMoveModeStart"`
-* `"WinmoveMoveModeEnd"`
-* `"WinmoveResizeModeStart"`
-* `"WinmoveResizeModeEnd"`
+* `"WinmoveModeStart"`
+* `"WinmoveModeEnd"`
 
 ```lua
-vim.api.nvim_create_autocmd("WinmoveMoveModeStart", {
-    callback = function()
-        vim.notify("Move mode started", vim.log.levels.INFO)
+vim.api.nvim_create_autocmd("WinmoveModeStart", {
+    callback = function(event)
+        vim.print("Started ".. event.data.mode .. "mode")
+    end,
+})
+
+vim.api.nvim_create_autocmd("WinmoveModeEnd", {
+    callback = function(event)
+        vim.print("Ended ".. event.data.mode .. "mode")
     end,
 })
 ```
