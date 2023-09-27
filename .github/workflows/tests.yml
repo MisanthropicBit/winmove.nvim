@@ -32,6 +32,5 @@ jobs:
         with:
           neovim: true
           version: ${{ matrix.neovim_version }}
-
       - name: Run tests
         run: ./tests/run_tests.sh
