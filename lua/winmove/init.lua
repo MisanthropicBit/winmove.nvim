@@ -68,6 +68,12 @@ end
 ---@param dir winmove.Direction
 function winmove.move_window(source_win_id, dir)
     if winutil.window_count() == 1 then
+        message.error("Only one window")
+        return
+    end
+
+    if winutil.is_floating_window(source_win_id) then
+        message.error("Cannot move floating window")
         return
     end
 

@@ -15,7 +15,7 @@ describe("plugin", function()
 
     describe("commands", function()
         it("prints version", function()
-            local version = vim.fn.execute("Winmove version")
+            local version = vim.fn.execute("Winmove version", "")
             local match = version:gsub("%s+", ""):match([[^%d+%.%d+%.%d+$]])
 
             assert.are.same(match == winmove.version(), true)

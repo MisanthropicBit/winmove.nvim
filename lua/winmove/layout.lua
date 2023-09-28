@@ -82,7 +82,7 @@ function layout.are_siblings(win_id1, win_id2)
         local type, data = unpack(node)
 
         if type == "leaf" then
-            if data == win_id then
+            if data == win_id and parent then
                 for _, sibling in ipairs(parent[2]) do
                     if sibling[2] == win_id2 then
                         return true
