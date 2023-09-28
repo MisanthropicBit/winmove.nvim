@@ -19,7 +19,8 @@ end
 function winutil.wincall_no_events(func, ...)
     local saved_eventignore = vim.opt_global.eventignore:get()
 
-    vim.opt_global.eventignore = {
+    -- Neovim 0.8.0 does not accept table values
+    vim.opt_global.eventignore = table.concat({
         "WinEnter",
         "WinLeave",
         "WinNew",
@@ -30,7 +31,7 @@ function winutil.wincall_no_events(func, ...)
         "BufWinLeave",
         "BufEnter",
         "BufLeave",
-    }
+    }, ",")
 
     func(...)
 
