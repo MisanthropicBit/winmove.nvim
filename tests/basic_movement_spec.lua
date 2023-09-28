@@ -9,7 +9,8 @@ describe("basic movements", function()
     it("moves window to the left", function()
         given("", function()
             local win_id = vader.make_layout({
-                "row", { "leaf", "main" },
+                "row",
+                { "leaf", "main" },
             })["main"]
 
             assert.matches_winlayout(vim.fn.winlayout(), {
@@ -36,7 +37,8 @@ describe("basic movements", function()
     it("moves window down", function()
         given("", function()
             local win_id = vader.make_layout({
-                "col", { "main", "leaf" },
+                "col",
+                { "main", "leaf" },
             })["main"]
 
             assert.matches_winlayout(vim.fn.winlayout(), {
@@ -63,7 +65,8 @@ describe("basic movements", function()
     it("moves window up", function()
         given("", function()
             local win_id = vader.make_layout({
-                "col", { "leaf", "main" },
+                "col",
+                { "leaf", "main" },
             })["main"]
 
             assert.matches_winlayout(vim.fn.winlayout(), {
@@ -90,7 +93,8 @@ describe("basic movements", function()
     it("moves window to the right", function()
         given("", function()
             local win_id = vader.make_layout({
-                "row", { "main", "leaf" },
+                "row",
+                { "main", "leaf" },
             })["main"]
 
             assert.matches_winlayout(vim.fn.winlayout(), {

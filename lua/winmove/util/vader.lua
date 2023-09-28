@@ -67,7 +67,12 @@ local function matches_winlayout(state, arguments)
 end
 
 say:set("assertion.matches_winlayout.positive", "Expected %s \nto match window layout: %s")
-assert:register("assertion", "matches_winlayout", matches_winlayout, "assertion.matches_winlayout.positive")
+assert:register(
+    "assertion",
+    "matches_winlayout",
+    matches_winlayout,
+    "assertion.matches_winlayout.positive"
+)
 
 --- Create a new buffer with the given contents and run the callback
 --- in that buffer

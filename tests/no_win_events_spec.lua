@@ -27,7 +27,7 @@ describe("no window events", function()
                 vim.api.nvim_create_autocmd(event, {
                     callback = function()
                         triggers[event] = true
-                    end
+                    end,
                 })
             end
 

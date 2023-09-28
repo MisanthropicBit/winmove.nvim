@@ -10,7 +10,8 @@ describe("wrap-around when moving windows", function()
 
         given("", function()
             local win_ids = vader.make_layout({
-                "row", { "main", "leaf" },
+                "row",
+                { "main", "leaf" },
             })
 
             local main_win_id = win_ids["main"]
@@ -41,7 +42,8 @@ describe("wrap-around when moving windows", function()
 
         given("", function()
             local win_ids = vader.make_layout({
-                "row", { "main", "leaf" },
+                "row",
+                { "main", "leaf" },
             })
 
             local main_win_id = win_ids["main"]
