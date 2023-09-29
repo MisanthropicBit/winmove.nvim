@@ -1,4 +1,5 @@
 local winmove = require("winmove")
+local compat = require("winmove.compat")
 local resize = require("winmove.resize")
 local str = require("winmove.util.str")
 
@@ -70,7 +71,7 @@ local function winmove_command(options)
     local arg = options.fargs[1]
 
     if arg == "version" then
-        vim.pretty_print(winmove.version())
+        compat.print(winmove.version())
     elseif arg == "move" then
         winmove.start_move_mode()
     elseif arg == "resize" then

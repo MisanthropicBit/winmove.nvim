@@ -1,4 +1,5 @@
 local winmove = require("winmove")
+local compat = require("winmove.compat")
 local vader = require("winmove.util.vader")
 
 local given = vader.given
@@ -9,13 +10,17 @@ describe("no window events", function()
         "WinLeave",
         "WinNew",
         "WinScrolled",
-        "WinResized",
         "WinClosed",
         "BufWinEnter",
         "BufWinLeave",
         "BufEnter",
         "BufLeave",
     }
+
+    if compat.has("nvim-0.8.2") then
+        table.insert(events, "WinResized")
+    end
+
     local triggers = {}
 
     it("does not trigger any window events when moving", function()

@@ -1,5 +1,9 @@
 local winutil = {}
 
+local compat = require("winmove.compat")
+
+local message = require("winmove.message")
+
 ---@return integer
 function winutil.window_count()
     return vim.fn.winnr("$")
@@ -19,21 +23,30 @@ end
 function winutil.wincall_no_events(func, ...)
     local saved_eventignore = vim.opt_global.eventignore:get()
 
-    -- Neovim 0.8.0 does not accept table values
-    vim.opt_global.eventignore = table.concat({
+    local events = {
         "WinEnter",
         "WinLeave",
         "WinNew",
         "WinScrolled",
-        "WinResized",
         "WinClosed",
         "BufWinEnter",
         "BufWinLeave",
         "BufEnter",
         "BufLeave",
-    }, ",")
+    }
 
-    func(...)
+    if compat.has("nvim-0.8.2") then
+        table.insert(events, "WinResized")
+    end
+
+    vim.opt_global.eventignore = events
+
+    -- Do a protected call so that we restore 'eventignore' in case it fails
+    local ok, error = pcall(func, ...)
+
+    if not ok then
+        message.error(error)
+    end
 
     vim.opt_global.eventignore = saved_eventignore
 end
