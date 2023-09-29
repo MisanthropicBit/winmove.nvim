@@ -1,4 +1,5 @@
 local winmove = require("winmove")
+local compat = require("winmove.compat")
 local vader = require("winmove.util.vader")
 local stub = require("luassert.stub")
 
@@ -16,9 +17,14 @@ describe("plugin", function()
     describe("commands", function()
         it("prints version", function()
             local version = vim.fn.execute("Winmove version", "")
+
+            if not compat.has("nvim-0.9.0") then
+                version = version:gsub('"', "")
+            end
+
             local match = version:gsub("%s+", ""):match([[^%d+%.%d+%.%d+$]])
 
-            assert.are.same(match == winmove.version(), true)
+            assert.are.same(match, winmove.version())
         end)
 
         it("starts move mode", function()
