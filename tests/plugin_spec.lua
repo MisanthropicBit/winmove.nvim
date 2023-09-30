@@ -16,7 +16,7 @@ describe("plugin", function()
 
     describe("commands", function()
         it("prints version", function()
-            local version = vim.fn.execute("Winmove version", "")
+            local version = vim.fn.execute("silent Winmove version", "")
 
             if not compat.has("nvim-0.9.0") then
                 version = version:gsub('"', "")
