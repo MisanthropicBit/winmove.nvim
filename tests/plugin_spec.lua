@@ -16,13 +16,14 @@ describe("plugin", function()
 
     describe("commands", function()
         it("prints version", function()
-            local version = vim.fn.execute("silent Winmove version", "")
+            local version = vim.fn.execute("Winmove version", "silent")
 
             if not compat.has("nvim-0.9.0") then
                 version = version:gsub('"', "")
             end
 
-            local match = version:gsub("%s+", ""):match([[^%d+%.%d+%.%d+$]])
+            version = version:gsub("%s+", "")
+            local match = version:match([[^%d+%.%d+%.%d+$]])
 
             assert.are.same(match, winmove.version())
         end)
