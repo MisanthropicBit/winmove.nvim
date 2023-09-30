@@ -244,16 +244,17 @@ local function get_existing_buffer_keymaps(bufnr)
     local existing_buf_keymaps = api.nvim_buf_get_keymap(bufnr, "n")
     local keymaps = {}
 
-    for _, map in ipairs(existing_buf_keymaps) do
-        if map.lhs then
-            keymaps[map.lhs] = {
-                rhs = map.rhs or "",
-                expr = map.expr == 1,
-                callback = map.callback,
-                noremap = map.noremap == 1,
-                script = map.script == 1,
-                silent = map.silent == 1,
-                nowait = map.nowait == 1,
+    for _, keymap in ipairs(existing_buf_keymaps) do
+        if keymap.lhs then
+            keymaps[keymap.lhs] = {
+                lhs = keymap.lhs,
+                rhs = keymap.rhs or "",
+                expr = keymap.expr == 1,
+                callback = keymap.callback,
+                noremap = keymap.noremap > 0, -- Apparently noremap is 2 when script is given
+                script = keymap.script == 1,
+                silent = keymap.silent == 1,
+                nowait = keymap.nowait == 1,
             }
         end
     end
@@ -328,24 +329,26 @@ local function restore_keymaps(mode)
         return
     end
 
-    -- Remove winmove keymaps
+    -- Remove winmove keymaps in protected calls since the buffer might have
+    -- been deleted but the buffer can still be marked as valid
     for _, map in pairs(config.keymaps[mode]) do
-        api.nvim_buf_del_keymap(state.bufnr, "n", map)
+        pcall(api.nvim_buf_del_keymap, state.bufnr, "n", map)
     end
 
-    api.nvim_buf_del_keymap(state.bufnr, "n", config.keymaps.help)
-    api.nvim_buf_del_keymap(state.bufnr, "n", config.keymaps.quit)
-    api.nvim_buf_del_keymap(state.bufnr, "n", config.keymaps.toggle_mode)
+    pcall(api.nvim_buf_del_keymap, state.bufnr, "n", config.keymaps.help)
+    pcall(api.nvim_buf_del_keymap, state.bufnr, "n", config.keymaps.quit)
+    pcall(api.nvim_buf_del_keymap, state.bufnr, "n", config.keymaps.toggle_mode)
 
     -- Restore old keymaps
-    for _, map in pairs(state.saved_keymaps) do
-        api.nvim_buf_set_keymap(state.bufnr, "n", map.lhs, map.rhs, {
-            expr = map.expr,
-            callback = map.callback,
-            noremap = map.noremap,
-            script = map.script,
-            silent = map.silent,
-            nowait = map.nowait,
+    for _, keymap in ipairs(state.saved_keymaps) do
+        vim.keymap.set("n", keymap.lhs, keymap.rhs, {
+            buffer = state.bufnr,
+            expr = keymap.expr,
+            callback = keymap.callback,
+            noremap = keymap.noremap,
+            script = keymap.script,
+            silent = keymap.silent,
+            nowait = keymap.nowait,
         })
     end
 end
