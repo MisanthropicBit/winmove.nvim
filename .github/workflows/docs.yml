@@ -20,7 +20,7 @@ jobs:
         with:
           vimdoc: winmove
           pandoc: "README.md"
-          version: "NVIM >= v0.5.0"
+          version: "NVIM >= v0.8.0"
           toc: true
           description: "Easily move and resize windows"
           demojify: false
