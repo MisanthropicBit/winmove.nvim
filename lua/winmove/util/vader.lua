@@ -51,7 +51,7 @@ local function compare_tree(tree1, tree2)
     return true
 end
 
-local function matches_winlayout(state, arguments)
+local function matches_winlayout(_, arguments)
     if #arguments ~= 2 then
         error("matches_winlayout expected two table arguments")
     end
@@ -90,8 +90,12 @@ function vader.given(...)
     end
 
     local bufnr = vim.api.nvim_create_buf(false, false)
-    vim.api.nvim_set_current_buf(bufnr)
 
+    if bufnr == 0 then
+        error("Failed to create stratch buffer for testing")
+    end
+
+    vim.api.nvim_set_current_buf(bufnr)
     vim.opt_local.bufhidden = "hide"
     vim.opt_local.swapfile = false
 
