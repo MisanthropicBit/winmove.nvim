@@ -134,10 +134,17 @@ function vader.expect(contents, bufnr)
     -- luassert.are.same(actual_contents, contents)
 end
 
+---@alias Leaf string
+---@alias Row { [1]: "row", [2]: WinLayout[] }
+---@alias Col { [1]: "col", [2]: WinLayout[] }
+
+---@alias WinLayout Leaf | Row | Col
+
+---@param layout WinLayout
 function vader.make_layout(layout)
     local win_ids = {}
 
-    local function _make_layout(parent_type, sublayout)
+    local function _make_layout(sublayout)
         local type = type(sublayout) == "string" and sublayout or sublayout[1]
 
         if type == "row" or type == "col" then
@@ -145,7 +152,7 @@ function vader.make_layout(layout)
             local new_win_type = type == "row" and "vnew" or "new"
             local new_win_ids = { vim.api.nvim_get_current_win() }
 
-            -- Start by creating the subtrees for this root
+            -- Start by creating the subtrees for this node
             for _ = 1, #subtrees - 1 do
                 vim.cmd("belowright " .. new_win_type)
                 table.insert(new_win_ids, vim.api.nvim_get_current_win())
@@ -153,7 +160,7 @@ function vader.make_layout(layout)
 
             for idx, subtree in ipairs(subtrees) do
                 vim.api.nvim_set_current_win(new_win_ids[idx])
-                _make_layout(type, subtree)
+                _make_layout(subtree)
             end
         else
             -- Save leaves not labelled as "leaf" for testing
@@ -163,7 +170,7 @@ function vader.make_layout(layout)
         end
     end
 
-    _make_layout(nil, layout)
+    _make_layout(layout)
 
     return win_ids
 end
