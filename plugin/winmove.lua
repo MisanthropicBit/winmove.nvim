@@ -94,7 +94,7 @@ local function winmove_command(options)
         elseif str.has_prefix(command, "split") then
             winmove.split_into(win_id, dir)
         elseif str.has_prefix(command, "far") then
-            winmove.move_far(win_id, dir)
+            winmove.move_window_far(win_id, dir)
         else
             winmove.move_window(win_id, dir)
         end
