@@ -152,7 +152,7 @@ function winmove.split_into(source_win_id, dir)
 end
 
 ---@diagnostic disable-next-line:unused-local
-function winmove.move_far(source_win_id, dir)
+function winmove.move_window_far(source_win_id, dir)
     winutil.wincall_no_events(function()
         vim.cmd("wincmd " .. dir:upper())
     end)
@@ -180,13 +180,13 @@ local function move_mode_key_handler(keys, win_id)
     elseif keys == keymaps.split_right then
         winmove.split_into(win_id, "l")
     elseif keys == keymaps.far_left then
-        winmove.move_far(win_id, "h")
+        winmove.move_window_far(win_id, "h")
     elseif keys == keymaps.far_down then
-        winmove.move_far(win_id, "j")
+        winmove.move_window_far(win_id, "j")
     elseif keys == keymaps.far_up then
-        winmove.move_far(win_id, "k")
+        winmove.move_window_far(win_id, "k")
     elseif keys == keymaps.far_right then
-        winmove.move_far(win_id, "l")
+        winmove.move_window_far(win_id, "l")
     elseif keys == keymaps.resize_mode then
         winmove.toggle_mode()
     end

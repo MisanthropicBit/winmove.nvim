@@ -35,8 +35,7 @@ describe("basic movements", function()
             })
 
             vim.api.nvim_set_current_win(win_id)
-            -- TODO: Rename to move_window_far
-            winmove.move_far(win_id, "h")
+            winmove.move_window_far(win_id, "h")
 
             assert.matches_winlayout(vim.fn.winlayout(), {
                 "row",
@@ -76,7 +75,7 @@ describe("basic movements", function()
             })
 
             vim.api.nvim_set_current_win(win_id)
-            winmove.move_far(win_id, "j")
+            winmove.move_window_far(win_id, "j")
 
             assert.matches_winlayout(vim.fn.winlayout(), {
                 "col",
@@ -116,7 +115,7 @@ describe("basic movements", function()
             })
 
             vim.api.nvim_set_current_win(win_id)
-            winmove.move_far(win_id, "k")
+            winmove.move_window_far(win_id, "k")
 
             assert.matches_winlayout(vim.fn.winlayout(), {
                 "col",
@@ -157,7 +156,7 @@ describe("basic movements", function()
             })
 
             vim.api.nvim_set_current_win(win_id)
-            winmove.move_far(win_id, "l")
+            winmove.move_window_far(win_id, "l")
 
             assert.matches_winlayout(vim.fn.winlayout(), {
                 "row",
