@@ -41,6 +41,10 @@ local function compare_tree(tree1, tree2)
             return false
         end
     else
+        if #data1 ~= #data2 then
+            return false
+        end
+
         for idx, child in ipairs(data1) do
             if not compare_tree(child, data2[idx]) then
                 return false
