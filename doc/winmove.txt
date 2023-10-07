@@ -9,6 +9,7 @@ Table of Contents                                  *winmove-table-of-contents*
   - Commands                                                |winmove-commands|
   - Autocommands                                        |winmove-autocommands|
   - Public API                                            |winmove-public-api|
+  - Contributing                                        |winmove-contributing|
   - FAQ                                                          |winmove-faq|
   - Showcase                                                |winmove-showcase|
   - Similar projects                                |winmove-similar-projects|
@@ -135,12 +136,21 @@ Get the current version of `winmove`. You can also execute `:Winmove version`.
     winmove.version()
 <
 
-Check which mode is currently active. Returns `"move"`, `"resize"`, or
-`"none"`.
+Check which mode is currently active. Returns `"move"`, `"resize"`, or `nil`.
 
 >lua
     winmove.current_mode()
 <
+
+
+CONTRIBUTING                                            *winmove-contributing*
+
+Contributions are welcome!
+
+1. Fork this repository.
+2. Make sure tests are passing (run `./tests/run_tests.sh` in the root directory). Running the tests requires `plenary.nvim` <https://github.com/nvim-lua/plenary.nvim>
+3. Submit a pull request.
+4. Get it approved.
 
 
 FAQ                                                              *winmove-faq*
@@ -149,8 +159,9 @@ FAQ                                                              *winmove-faq*
 Q: WHY CREATE THIS PROJECT?
 
 **A**: There are |winmove-already-a-few-projects| for moving windows but none
-of them suited me so I did the only rational thing a developer would do in this
-situtation and created my own plugin.
+of them felt intuitive to me so I did the only rational thing a developer would
+do in this situation and created my own plugin. If any of the others suit your
+needs then by all means use them.
 
 
 SHOWCASE                                                    *winmove-showcase*
