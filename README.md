@@ -31,6 +31,7 @@
 - [Commands](#commands)
 - [Autocommands](#autocommands)
 - [Public API](#public-api)
+- [Contributing](#contributing)
 - [FAQ](#faq)
 - [Showcase](#showcase)
 - [Similar projects](#similar-projects)
@@ -160,6 +161,15 @@ Check which mode is currently active. Returns `"move"`, `"resize"`, or `"none"`.
 ```lua
 winmove.current_mode()
 ```
+
+## Contributing
+
+Contributions are welcome!
+
+1. Fork this repository.
+2. Make sure tests are passing (run `./tests/run_tests.sh` in the root directory). Running the tests requires [`plenary.nvim`](https://github.com/nvim-lua/plenary.nvim)
+3. Submit a pull request.
+4. Get it approved.
 
 ## FAQ
 
