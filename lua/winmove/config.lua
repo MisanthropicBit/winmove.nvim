@@ -112,7 +112,7 @@ local mapping_descriptions = {
 ---@param mode winmove.Mode?
 ---@return string
 function config.get_keymap_description(name, mode)
-    if mode == "none" or mode == nil then
+    if mode == nil then
         ---@diagnostic disable-next-line:return-type-mismatch
         return mapping_descriptions[name]
     else

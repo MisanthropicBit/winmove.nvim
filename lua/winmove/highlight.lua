@@ -50,7 +50,7 @@ end
 ---@param win_id integer
 ---@param mode winmove.Mode
 function highlight.highlight_window(win_id, mode)
-    if not api.nvim_win_is_valid(win_id) or mode == "none" then
+    if not api.nvim_win_is_valid(win_id) or mode == nil then
         return
     end
 

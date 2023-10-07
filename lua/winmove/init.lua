@@ -9,28 +9,23 @@ local resize = require("winmove.resize")
 local str = require("winmove.util.str")
 local winutil = require("winmove.winutil")
 
+winmove.mode = require("winmove.mode")
+
 local api = vim.api
 local winmove_version = "0.1.0"
 
 local augroup = api.nvim_create_augroup("Winmove", { clear = true })
 local autocmds = {}
 
----@enum winmove.Mode
-winmove.mode = {
-    None = "none",
-    Move = "move",
-    Resize = "resize",
-}
-
 ---@class winmove.State
----@field mode winmove.Mode
+---@field mode winmove.Mode?
 ---@field win_id integer?
 ---@field bufnr integer?
 ---@field saved_keymaps table?
 
 ---@type winmove.State
 local state = {
-    mode = winmove.mode.None,
+    mode = nil,
     win_id = nil,
     bufnr = nil,
     saved_keymaps = nil,
@@ -56,7 +51,7 @@ local stop_mode
 
 --- Quit the current mode
 local function quit_mode()
-    state.mode = winmove.mode.None
+    state.mode = nil
     state.win_id = nil
     state.bufnr = nil
     state.saved_keymaps = nil

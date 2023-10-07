@@ -156,7 +156,7 @@ version`.
 winmove.version()
 ```
 
-Check which mode is currently active. Returns `"move"`, `"resize"`, or `"none"`.
+Check which mode is currently active. Returns `"move"`, `"resize"`, or `nil`.
 
 ```lua
 winmove.current_mode()
