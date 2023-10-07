@@ -176,8 +176,9 @@ Contributions are welcome!
 #### **Q**: Why create this project?
 
 **A**: There are [already a few projects](#similar-projects) for moving windows
-but none of them suited me so I did the only rational thing a developer would do
-in this situtation and created my own plugin.
+but none of them felt intuitive to me so I did the only rational thing a
+developer would do in this situation and created my own plugin. If any of the
+others suit your needs then by all means use them.
 
 ## Showcase
 
