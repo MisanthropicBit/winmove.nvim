@@ -475,6 +475,13 @@ function winmove.stop_resize_mode()
     stop_mode(winmove.mode.Resize)
 end
 
+---@param win_id integer
+---@param dir winmove.Direction
+---@param count integer
+function winmove.resize_window(win_id, dir, count)
+    resize.resize_window(win_id, dir, count)
+end
+
 function winmove.current_mode()
     return state.mode
 end
