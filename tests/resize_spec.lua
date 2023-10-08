@@ -3,7 +3,6 @@ local vader = require("winmove.util.vader")
 
 local given = vader.given
 
--- TODO: Also test that windows are *not* resized when they should not be
 describe("resize", function()
     local count = 3
     assert:set_parameter("TableFormatLevel", 10)
@@ -296,6 +295,82 @@ describe("resize", function()
                 winmove.resize_window(win_id, "l", count)
 
                 assert.are.same(vim.api.nvim_win_get_width(win_id), width + count)
+            end)
+        end)
+
+        it("should not resize a full width window", function()
+            given("", function()
+                local win_id = vader.make_layout({
+                    "col",
+                    {
+                        "main",
+                        {
+                            "row",
+                            { "leaf", "leaf" },
+                        },
+                    },
+                })["main"]
+
+                assert.matches_winlayout(vim.fn.winlayout(), {
+                    "col",
+                    {
+                        { "leaf", win_id },
+                        {
+                            "row",
+                            {
+                                { "leaf", -1 },
+                                { "leaf", -1 },
+                            },
+                        },
+                    },
+                })
+
+                vim.api.nvim_set_current_win(win_id)
+                local width = vim.api.nvim_win_get_width(win_id)
+
+                winmove.resize_window(win_id, "h", count)
+                assert.are.same(vim.api.nvim_win_get_width(win_id), width)
+
+                winmove.resize_window(win_id, "l", count)
+                assert.are.same(vim.api.nvim_win_get_width(win_id), width)
+            end)
+        end)
+
+        it("should not resize a full height window", function()
+            given("", function()
+                local win_id = vader.make_layout({
+                    "row",
+                    {
+                        "main",
+                        {
+                            "col",
+                            { "leaf", "leaf" },
+                        },
+                    },
+                })["main"]
+
+                assert.matches_winlayout(vim.fn.winlayout(), {
+                    "row",
+                    {
+                        { "leaf", win_id },
+                        {
+                            "col",
+                            {
+                                { "leaf", -1 },
+                                { "leaf", -1 },
+                            },
+                        },
+                    },
+                })
+
+                vim.api.nvim_set_current_win(win_id)
+                local height = vim.api.nvim_win_get_height(win_id)
+
+                winmove.resize_window(win_id, "j", count)
+                assert.are.same(vim.api.nvim_win_get_height(win_id), height)
+
+                winmove.resize_window(win_id, "k", count)
+                assert.are.same(vim.api.nvim_win_get_height(win_id), height)
             end)
         end)
     end)
