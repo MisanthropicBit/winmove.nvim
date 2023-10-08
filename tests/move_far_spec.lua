@@ -4,9 +4,7 @@ local vader = require("winmove.util.vader")
 local given = vader.given
 
 describe("basic movements", function()
-    before_each(function()
-        assert:set_parameter("TableFormatLevel", 10)
-    end)
+    assert:set_parameter("TableFormatLevel", 10)
 
     it("moves window far to the left", function()
         given("", function()
