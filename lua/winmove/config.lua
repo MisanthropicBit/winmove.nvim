@@ -33,8 +33,8 @@ local config_loaded = false
 ---@field resize      winmove.ConfigResizeModeKeymaps
 
 ---@class winmove.Highlights
----@field move   string
----@field resize string
+---@field move   string?
+---@field resize string?
 
 ---@class winmove.Config
 ---@field highlights           winmove.Highlights
@@ -120,16 +120,36 @@ function config.get_keymap_description(name, mode)
     end
 end
 
+--- Check if a value is a valid string option
+---@param value any
+---@return boolean
+function config.valid_string_option(value)
+    return value ~= nil and type(value) == "string" and #value > 0
+end
+
+local function is_positive_non_zero_number(value)
+    return type(value) == "number" and value > 0
+end
+
+local function is_non_empty_string(value)
+    return type(value) == "string" and #value > 0
+end
+
 --- Validate keys in a table
 ---@param specs table<any>
 ---@return fun(tbl: table): boolean, any?
 local function validate_keys(specs)
     return function(tbl)
+        if not tbl then
+            return true
+        end
+
         for _, spec in ipairs(specs) do
             local key = spec[1]
+            local expected = spec[2]
 
             local validated, error = pcall(vim.validate, {
-                [key] = { tbl[key], spec[2], spec[3] and true },
+                [key] = { tbl[key], spec[2], spec[3] },
             })
 
             if not validated then
@@ -146,6 +166,8 @@ end
 ---@return boolean
 ---@return any?
 function config.validate(_config)
+    local expected_non_empty_string = "Expected a non-empty string"
+
     -- stylua: ignore start
     return pcall(vim.validate, {
         highlights = {
@@ -161,7 +183,7 @@ function config.validate(_config)
         },
         default_resize_count = {
             _config.default_resize_count,
-            "number",
+            is_positive_non_zero_number,
         },
         keymaps = {
             _config.keymaps,
@@ -175,27 +197,27 @@ function config.validate(_config)
         ["keymaps.move"] = {
             _config.keymaps.move,
             validate_keys({
-                { "left",        "string" },
-                { "down",        "string" },
-                { "up",          "string" },
-                { "right",       "string" },
-                { "far_left",    "string" },
-                { "far_down",    "string" },
-                { "far_up",      "string" },
-                { "far_right",   "string" },
-                { "split_left",  "string" },
-                { "split_down",  "string" },
-                { "split_up",    "string" },
-                { "split_right", "string" },
+                { "left",        is_non_empty_string, expected_non_empty_string },
+                { "down",        is_non_empty_string, expected_non_empty_string },
+                { "up",          is_non_empty_string, expected_non_empty_string },
+                { "right",       is_non_empty_string, expected_non_empty_string },
+                { "far_left",    is_non_empty_string, expected_non_empty_string },
+                { "far_down",    is_non_empty_string, expected_non_empty_string },
+                { "far_up",      is_non_empty_string, expected_non_empty_string },
+                { "far_right",   is_non_empty_string, expected_non_empty_string },
+                { "split_left",  is_non_empty_string, expected_non_empty_string },
+                { "split_down",  is_non_empty_string, expected_non_empty_string },
+                { "split_up",    is_non_empty_string, expected_non_empty_string },
+                { "split_right", is_non_empty_string, expected_non_empty_string },
             }),
         },
         ["keymaps.resize"] = {
             _config.keymaps.resize,
             validate_keys({
-                { "left",      "string" },
-                { "down",      "string" },
-                { "up",        "string" },
-                { "right",     "string" },
+                { "left",  is_non_empty_string, expected_non_empty_string },
+                { "down",  is_non_empty_string, expected_non_empty_string },
+                { "up",    is_non_empty_string, expected_non_empty_string },
+                { "right", is_non_empty_string, expected_non_empty_string },
             }),
         },
     })
