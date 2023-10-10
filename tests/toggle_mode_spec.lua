@@ -18,7 +18,7 @@ describe("toggle mode", function()
                 "row",
                 {
                     { "leaf", win_id },
-                    { "leaf", -1 },
+                    { "leaf" },
                 },
             })
 

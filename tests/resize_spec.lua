@@ -24,11 +24,11 @@ describe("resize", function()
                 assert.matches_winlayout(vim.fn.winlayout(), {
                     "row",
                     {
-                        { "leaf", -1 },
+                        { "leaf" },
                         {
                             "col",
                             {
-                                { "leaf", -1 },
+                                { "leaf" },
                                 { "leaf", win_id },
                             },
                         },
@@ -60,12 +60,12 @@ describe("resize", function()
                 assert.matches_winlayout(vim.fn.winlayout(), {
                     "row",
                     {
-                        { "leaf", -1 },
+                        { "leaf" },
                         {
                             "col",
                             {
                                 { "leaf", win_id },
-                                { "leaf", -1 },
+                                { "leaf" },
                             },
                         },
                     },
@@ -96,11 +96,11 @@ describe("resize", function()
                 assert.matches_winlayout(vim.fn.winlayout(), {
                     "row",
                     {
-                        { "leaf", -1 },
+                        { "leaf" },
                         {
                             "col",
                             {
-                                { "leaf", -1 },
+                                { "leaf" },
                                 { "leaf", win_id },
                             },
                         },
@@ -135,11 +135,11 @@ describe("resize", function()
                         {
                             "col",
                             {
-                                { "leaf", -1 },
+                                { "leaf" },
                                 { "leaf", win_id },
                             },
                         },
-                        { "leaf", -1 },
+                        { "leaf" },
                     },
                 })
 
@@ -173,8 +173,8 @@ describe("resize", function()
                         {
                             "col",
                             {
-                                { "leaf", -1 },
-                                { "leaf", -1 },
+                                { "leaf" },
+                                { "leaf" },
                             },
                         },
                         { "leaf", win_id },
@@ -210,8 +210,8 @@ describe("resize", function()
                         {
                             "row",
                             {
-                                { "leaf", -1 },
-                                { "leaf", -1 },
+                                { "leaf" },
+                                { "leaf" },
                             },
                         },
                     },
@@ -245,8 +245,8 @@ describe("resize", function()
                         {
                             "row",
                             {
-                                { "leaf", -1 },
-                                { "leaf", -1 },
+                                { "leaf" },
+                                { "leaf" },
                             },
                         },
                         { "leaf", win_id },
@@ -282,8 +282,8 @@ describe("resize", function()
                         {
                             "col",
                             {
-                                { "leaf", -1 },
-                                { "leaf", -1 },
+                                { "leaf" },
+                                { "leaf" },
                             },
                         },
                     },
@@ -318,8 +318,8 @@ describe("resize", function()
                         {
                             "row",
                             {
-                                { "leaf", -1 },
-                                { "leaf", -1 },
+                                { "leaf" },
+                                { "leaf" },
                             },
                         },
                     },
@@ -356,8 +356,8 @@ describe("resize", function()
                         {
                             "col",
                             {
-                                { "leaf", -1 },
-                                { "leaf", -1 },
+                                { "leaf" },
+                                { "leaf" },
                             },
                         },
                     },
@@ -373,5 +373,7 @@ describe("resize", function()
                 assert.are.same(vim.api.nvim_win_get_height(win_id), height)
             end)
         end)
+
+        -- TODO: Test for statusline/tabline etc.
     end)
 end)

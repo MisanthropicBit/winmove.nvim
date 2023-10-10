@@ -39,10 +39,10 @@ describe("split_into", function()
                         "col",
                         {
                             { "leaf", win_id },
-                            { "leaf", -1 },
+                            { "leaf" },
                         },
                     },
-                    { "leaf", -1 },
+                    { "leaf" },
                 },
             })
 
@@ -53,9 +53,9 @@ describe("split_into", function()
             assert.matches_winlayout(vim.fn.winlayout(), {
                 "row",
                 {
-                    { "leaf", -1 },
+                    { "leaf" },
                     { "leaf", win_id },
-                    { "leaf", -1 },
+                    { "leaf" },
                 },
             })
         end)
@@ -89,14 +89,14 @@ describe("split_into", function()
                             {
                                 "row",
                                 {
-                                    { "leaf", -1 },
+                                    { "leaf" },
                                     { "leaf", win_id },
                                 },
                             },
-                            { "leaf", -1 },
+                            { "leaf" },
                         },
                     },
-                    { "leaf", -1 },
+                    { "leaf" },
                 },
             })
 
@@ -110,12 +110,12 @@ describe("split_into", function()
                     {
                         "col",
                         {
-                            { "leaf", -1 },
+                            { "leaf" },
                             { "leaf", win_id },
-                            { "leaf", -1 },
+                            { "leaf" },
                         },
                     },
-                    { "leaf", -1 },
+                    { "leaf" },
                 },
             })
         end)
@@ -146,17 +146,17 @@ describe("split_into", function()
                     {
                         "col",
                         {
-                            { "leaf", -1 },
+                            { "leaf" },
                             {
                                 "row",
                                 {
-                                    { "leaf", -1 },
+                                    { "leaf" },
                                     { "leaf", win_id },
                                 },
                             },
                         },
                     },
-                    { "leaf", -1 },
+                    { "leaf" },
                 },
             })
 
@@ -171,13 +171,13 @@ describe("split_into", function()
                     {
                         "col",
                         {
-                            { "leaf", -1 },
+                            { "leaf" },
                             { "leaf", win_id },
-                            { "leaf", -1 },
+                            { "leaf" },
                         },
-                        { "leaf", -1 },
+                        { "leaf" },
                     },
-                    { "leaf", -1 },
+                    { "leaf" },
                 },
             })
         end)
@@ -194,7 +194,7 @@ describe("split_into", function()
     --             "row",
     --             {
     --                 { "leaf", win_id },
-    --                 { "leaf", -1 },
+    --                 { "leaf" },
     --             },
     --         })
 
@@ -205,7 +205,7 @@ describe("split_into", function()
     --         assert.matches_winlayout(vim.fn.winlayout(), {
     --             "row",
     --             {
-    --                 { "leaf", -1 },
+    --                 { "leaf" },
     --                 { "leaf", win_id },
     --             },
     --         })

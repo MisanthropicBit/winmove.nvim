@@ -4,9 +4,7 @@ local vader = require("winmove.util.vader")
 local given = vader.given
 
 describe("relative cursor", function()
-    before_each(function()
-        assert:set_parameter("TableFormatLevel", 10)
-    end)
+    assert:set_parameter("TableFormatLevel", 10)
 
     it("moves window above target", function()
         given("", function()
@@ -27,10 +25,10 @@ describe("relative cursor", function()
                         "col",
                         {
                             { "leaf", main_win_id },
-                            { "leaf", -1 },
+                            { "leaf" },
                         },
                     },
-                    { "leaf", -1 },
+                    { "leaf" },
                 },
             })
 
@@ -40,12 +38,12 @@ describe("relative cursor", function()
             assert.matches_winlayout(vim.fn.winlayout(), {
                 "row",
                 {
-                    { "leaf", -1 },
+                    { "leaf" },
                     {
                         "col",
                         {
                             { "leaf", main_win_id },
-                            { "leaf", -1 },
+                            { "leaf" },
                         },
                     },
                 },
@@ -71,11 +69,11 @@ describe("relative cursor", function()
                     {
                         "col",
                         {
-                            { "leaf", -1 },
+                            { "leaf" },
                             { "leaf", main_win_id },
                         },
                     },
-                    { "leaf", -1 },
+                    { "leaf" },
                 },
             })
 
@@ -85,11 +83,11 @@ describe("relative cursor", function()
             assert.matches_winlayout(vim.fn.winlayout(), {
                 "row",
                 {
-                    { "leaf", -1 },
+                    { "leaf" },
                     {
                         "col",
                         {
-                            { "leaf", -1 },
+                            { "leaf" },
                             { "leaf", main_win_id },
                         },
                     },
@@ -116,16 +114,16 @@ describe("relative cursor", function()
                     {
                         "col",
                         {
-                            { "leaf", -1 },
+                            { "leaf" },
                             { "leaf", main_win_id },
-                            { "leaf", -1 },
+                            { "leaf" },
                         },
                     },
                     {
                         "col",
                         {
-                            { "leaf", -1 },
-                            { "leaf", -1 },
+                            { "leaf" },
+                            { "leaf" },
                         },
                     },
                 },
@@ -140,16 +138,16 @@ describe("relative cursor", function()
                     {
                         "col",
                         {
-                            { "leaf", -1 },
-                            { "leaf", -1 },
+                            { "leaf" },
+                            { "leaf" },
                         },
                     },
                     {
                         "col",
                         {
-                            { "leaf", -1 },
+                            { "leaf" },
                             { "leaf", main_win_id },
-                            { "leaf", -1 },
+                            { "leaf" },
                         },
                     },
                 },

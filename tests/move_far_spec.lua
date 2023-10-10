@@ -21,12 +21,12 @@ describe("basic movements", function()
             assert.matches_winlayout(vim.fn.winlayout(), {
                 "row",
                 {
-                    { "leaf", -1 },
+                    { "leaf" },
                     {
                         "col",
                         {
                             { "leaf", win_id },
-                            { "leaf", -1 },
+                            { "leaf" },
                         },
                     },
                 },
@@ -39,8 +39,8 @@ describe("basic movements", function()
                 "row",
                 {
                     { "leaf", win_id },
-                    { "leaf", -1 },
-                    { "leaf", -1 },
+                    { "leaf" },
+                    { "leaf" },
                 },
             })
         end)
@@ -65,10 +65,10 @@ describe("basic movements", function()
                         "row",
                         {
                             { "leaf", win_id },
-                            { "leaf", -1 },
+                            { "leaf" },
                         },
                     },
-                    { "leaf", -1 },
+                    { "leaf" },
                 },
             })
 
@@ -78,8 +78,8 @@ describe("basic movements", function()
             assert.matches_winlayout(vim.fn.winlayout(), {
                 "col",
                 {
-                    { "leaf", -1 },
-                    { "leaf", -1 },
+                    { "leaf" },
+                    { "leaf" },
                     { "leaf", win_id },
                 },
             })
@@ -101,11 +101,11 @@ describe("basic movements", function()
             assert.matches_winlayout(vim.fn.winlayout(), {
                 "col",
                 {
-                    { "leaf", -1 },
+                    { "leaf" },
                     {
                         "row",
                         {
-                            { "leaf", -1 },
+                            { "leaf" },
                             { "leaf", win_id },
                         },
                     },
@@ -119,8 +119,8 @@ describe("basic movements", function()
                 "col",
                 {
                     { "leaf", win_id },
-                    { "leaf", -1 },
-                    { "leaf", -1 },
+                    { "leaf" },
+                    { "leaf" },
                 },
             })
         end)
@@ -145,11 +145,11 @@ describe("basic movements", function()
                     {
                         "col",
                         {
-                            { "leaf", -1 },
+                            { "leaf" },
                             { "leaf", win_id },
                         },
                     },
-                    { "leaf", -1 },
+                    { "leaf" },
                 },
             })
 
@@ -159,8 +159,8 @@ describe("basic movements", function()
             assert.matches_winlayout(vim.fn.winlayout(), {
                 "row",
                 {
-                    { "leaf", -1 },
-                    { "leaf", -1 },
+                    { "leaf" },
+                    { "leaf" },
                     { "leaf", win_id },
                 },
             })

@@ -20,7 +20,7 @@ describe("wrap-around when moving windows", function()
                 "row",
                 {
                     { "leaf", main_win_id },
-                    { "leaf", -1 },
+                    { "leaf" },
                 },
             })
 
@@ -30,7 +30,7 @@ describe("wrap-around when moving windows", function()
             assert.matches_winlayout(vim.fn.winlayout(), {
                 "row",
                 {
-                    { "leaf", -1 },
+                    { "leaf" },
                     { "leaf", main_win_id },
                 },
             })
@@ -52,7 +52,7 @@ describe("wrap-around when moving windows", function()
                 "row",
                 {
                     { "leaf", main_win_id },
-                    { "leaf", -1 },
+                    { "leaf" },
                 },
             })
 
@@ -63,7 +63,7 @@ describe("wrap-around when moving windows", function()
                 "row",
                 {
                     { "leaf", main_win_id },
-                    { "leaf", -1 },
+                    { "leaf" },
                 },
             })
         end)

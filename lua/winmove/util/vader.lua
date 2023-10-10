@@ -28,16 +28,33 @@ luassert:register(
     "assertion.expect_buffer.negative"
 )
 
+-- A concrete window layout is the one returned by vim.fn.winlayout
+---@alias ConcreteLeaf { [1]: "leaf", [2]: integer } # "lol"
+---@alias ConcreteRow { [1]: "row", [2]: ConcreteWinLayout[] }
+---@alias ConcreteCol { [1]: "col", [2]: ConcreteWinLayout[] }
+---@alias ConcreteWinLayout ConcreteLeaf | ConcreteRow | ConcreteCol
+
+-- An abstract window layout is used in comparison with a concrete one where
+-- we do not want to specify window IDs for every window in the abstract layout
+---@alias AbstractLeaf { [1]: "leaf", [2]: integer? }
+---@alias AbstractRow { [1]: "row", [2]: AbstractWinLayout[] }
+---@alias AbstractCol { [1]: "col", [2]: AbstractWinLayout[] }
+---@alias AbstractWinLayout AbstractLeaf | AbstractRow | AbstractCol
+
+--- Compare two trees (window layouts)
+---@param tree1 ConcreteWinLayout
+---@param tree2 AbstractWinLayout
+---@return boolean
 local function compare_tree(tree1, tree2)
-    local type1, data1 = unpack(tree1)
-    local type2, data2 = unpack(tree2)
+    local type1, data1 = tree1[1], tree1[2]
+    local type2, data2 = tree2[1], tree2[2]
 
     if type1 ~= type2 then
         return false
     end
 
     if type1 == "leaf" then
-        if data1 ~= -1 and data1 ~= data2 then
+        if data1 ~= nil and data1 ~= data2 then
             return false
         end
     else
@@ -45,7 +62,9 @@ local function compare_tree(tree1, tree2)
             return false
         end
 
+        ---@cast data1 -integer
         for idx, child in ipairs(data1) do
+            ---@cast data2 -?, -integer
             if not compare_tree(child, data2[idx]) then
                 return false
             end
@@ -134,13 +153,14 @@ function vader.expect(contents, bufnr)
     -- luassert.are.same(actual_contents, contents)
 end
 
----@alias Leaf string
----@alias Row { [1]: "row", [2]: WinLayout[] }
----@alias Col { [1]: "col", [2]: WinLayout[] }
+-- A skeleton window layout that only contains the shape of the desired
+-- window layout without any window IDs
+---@alias SkeletonLeaf string
+---@alias SkeletonRow { [1]: "row", [2]: SkeletonWinLayout[] }
+---@alias SkeletonCol { [1]: "col", [2]: SkeletonWinLayout[] }
+---@alias SkeletonWinLayout string | SkeletonRow | SkeletonCol
 
----@alias WinLayout Leaf | Row | Col
-
----@param layout WinLayout
+---@param layout SkeletonWinLayout
 function vader.make_layout(layout)
     local win_ids = {}
 
