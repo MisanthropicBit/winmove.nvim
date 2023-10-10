@@ -251,10 +251,11 @@ function config.setup(user_config)
 
     if not ok then
         message.error("Errors found in config: " .. error)
-        return
+    else
+        config_loaded = true
     end
 
-    config_loaded = true
+    return ok
 end
 
 setmetatable(config, {
