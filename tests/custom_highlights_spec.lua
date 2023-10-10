@@ -1,9 +1,22 @@
 local winmove = require("winmove")
+local compat = require("winmove.compat")
 local config = require("winmove.config")
 local highlight = require("winmove.highlight")
 local vader = require("winmove.util.vader")
 
 local given = vader.given
+
+---@param group_name string
+---@return string
+local function get_linked_highlight_group(group_name)
+    if compat.has("nvim-0.9.0") then
+        local hi = vim.api.nvim_get_hl(0, { name = group_name })
+
+        return hi.link
+    else
+        return vim.fn.synIDattr(vim.fn.synIDtrans(vim.api.nvim_get_hl_id_by_name(group_name)), "name")
+    end
+end
 
 describe("custom highlights", function()
     it("uses a custom highlight for move mode", function()
@@ -39,9 +52,9 @@ describe("custom highlights", function()
             )
 
             for _, group in ipairs(highlight.groups()) do
-                local hi = vim.api.nvim_get_hl(0, { name = "WinmoveMove" .. group })
+                local linked_group = get_linked_highlight_group("WinmoveMove" .. group)
 
-                assert.are.same(hi.link, "CustomWinmoveMoveMode")
+                assert.are.same(linked_group, "CustomWinmoveMoveMode")
             end
 
             winmove.stop_move_mode()
@@ -81,9 +94,9 @@ describe("custom highlights", function()
             )
 
             for _, group in ipairs(highlight.groups()) do
-                local hi = vim.api.nvim_get_hl(0, { name = "WinmoveResize" .. group })
+                local linked_group = get_linked_highlight_group("WinmoveResize" .. group)
 
-                assert.are.same(hi.link, "CustomWinmoveResizeMode")
+                assert.are.same(linked_group, "CustomWinmoveResizeMode")
             end
 
             winmove.stop_resize_mode()
