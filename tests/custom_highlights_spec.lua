@@ -14,7 +14,10 @@ local function get_linked_highlight_group(group_name)
 
         return hi.link
     else
-        return vim.fn.synIDattr(vim.fn.synIDtrans(vim.api.nvim_get_hl_id_by_name(group_name)), "name")
+        return vim.fn.synIDattr(
+            vim.fn.synIDtrans(vim.api.nvim_get_hl_id_by_name(group_name)),
+            "name"
+        )
     end
 end
 
