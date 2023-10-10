@@ -33,7 +33,10 @@ describe("custom highlights", function()
 
             local win_id = vim.api.nvim_get_current_win()
 
-            assert.are.same(vim.wo[win_id].winhighlight, "Normal:WinmoveMoveNormal,CursorLine:WinmoveMoveCursorLine,CursorLineNr:WinmoveMoveCursorLineNr,EndOfBuffer:WinmoveMoveEndOfBuffer,SignColumn:WinmoveMoveSignColumn,FoldColumn:WinmoveMoveFoldColumn,LineNr:WinmoveMoveLineNr,LineNrAbove:WinmoveMoveLineNrAbove,LineNrBelow:WinmoveMoveLineNrBelow")
+            assert.are.same(
+                vim.wo[win_id].winhighlight,
+                "Normal:WinmoveMoveNormal,CursorLine:WinmoveMoveCursorLine,CursorLineNr:WinmoveMoveCursorLineNr,EndOfBuffer:WinmoveMoveEndOfBuffer,SignColumn:WinmoveMoveSignColumn,FoldColumn:WinmoveMoveFoldColumn,LineNr:WinmoveMoveLineNr,LineNrAbove:WinmoveMoveLineNrAbove,LineNrBelow:WinmoveMoveLineNrBelow"
+            )
 
             for _, group in ipairs(highlight.groups()) do
                 local hi = vim.api.nvim_get_hl(0, { name = "WinmoveMove" .. group })
@@ -72,7 +75,10 @@ describe("custom highlights", function()
 
             local win_id = vim.api.nvim_get_current_win()
 
-            assert.are.same(vim.wo[win_id].winhighlight, "Normal:WinmoveResizeNormal,CursorLine:WinmoveResizeCursorLine,CursorLineNr:WinmoveResizeCursorLineNr,EndOfBuffer:WinmoveResizeEndOfBuffer,SignColumn:WinmoveResizeSignColumn,FoldColumn:WinmoveResizeFoldColumn,LineNr:WinmoveResizeLineNr,LineNrAbove:WinmoveResizeLineNrAbove,LineNrBelow:WinmoveResizeLineNrBelow")
+            assert.are.same(
+                vim.wo[win_id].winhighlight,
+                "Normal:WinmoveResizeNormal,CursorLine:WinmoveResizeCursorLine,CursorLineNr:WinmoveResizeCursorLineNr,EndOfBuffer:WinmoveResizeEndOfBuffer,SignColumn:WinmoveResizeSignColumn,FoldColumn:WinmoveResizeFoldColumn,LineNr:WinmoveResizeLineNr,LineNrAbove:WinmoveResizeLineNrAbove,LineNrBelow:WinmoveResizeLineNrBelow"
+            )
 
             for _, group in ipairs(highlight.groups()) do
                 local hi = vim.api.nvim_get_hl(0, { name = "WinmoveResize" .. group })

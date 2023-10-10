@@ -30,7 +30,7 @@ describe("config", function()
             {
                 keymaps = {
                     move = {
-                        left = 12.5
+                        left = 12.5,
                     },
                 },
             },
