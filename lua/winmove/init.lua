@@ -271,7 +271,7 @@ local function create_pcall_mode_key_handler(mode)
         if not ok then
             -- There was an error in the call, restore keymaps and quit move mode
             winmove["stop_" .. mode .. "_mode"]()
-            message.error((("winmove got error in '%s' mode: %s"):format(mode, error)))
+            message.error((("Got error in '%s' mode: %s"):format(mode, error)))
         end
     end
 end

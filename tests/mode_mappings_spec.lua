@@ -1,28 +1,9 @@
 local winmove = require("winmove")
 local config = require("winmove.config")
+local test_helpers = require("winmove.util.test_helpers")
 local vader = require("winmove.util.vader")
 
 local given = vader.given
-
-local function get_buf_mapped_keymaps(buffer)
-    local all_keymaps = vim.api.nvim_buf_get_keymap(buffer, "n")
-    local keymaps = {}
-
-    for _, map in ipairs(all_keymaps) do
-        keymaps[map.lhs] = {
-            rhs = map.rhs or "",
-            expr = map.expr,
-            callback = map.callback,
-            noremap = map.noremap,
-            script = map.script,
-            silent = map.silent,
-            nowait = map.nowait,
-            desc = map.desc,
-        }
-    end
-
-    return keymaps
-end
 
 local function compare_keymap(mode, name, keymap)
     -- Do asserts separately otherwise the callback function will not match
@@ -41,7 +22,7 @@ describe("mode mappings", function()
 
             winmove.start_move_mode()
 
-            local keymaps = get_buf_mapped_keymaps(vim.api.nvim_get_current_buf())
+            local keymaps = test_helpers.get_buf_mapped_keymaps(vim.api.nvim_get_current_buf())
 
             for name, lhs in pairs(config.keymaps.move) do
                 compare_keymap("move", name, keymaps[lhs])
@@ -55,7 +36,7 @@ describe("mode mappings", function()
 
             winmove.start_resize_mode()
 
-            local keymaps = get_buf_mapped_keymaps(vim.api.nvim_get_current_buf())
+            local keymaps = test_helpers.get_buf_mapped_keymaps(vim.api.nvim_get_current_buf())
 
             for name, lhs in pairs(config.keymaps.resize) do
                 compare_keymap("resize", name, keymaps[lhs])
@@ -83,12 +64,12 @@ describe("mode mappings", function()
 
             winmove.start_move_mode()
 
-            local keymaps = get_buf_mapped_keymaps(buffer)
+            local keymaps = test_helpers.get_buf_mapped_keymaps(buffer)
             compare_keymap("move", "split_down", keymaps["sj"])
 
             winmove.stop_move_mode()
 
-            keymaps = get_buf_mapped_keymaps(buffer)
+            keymaps = test_helpers.get_buf_mapped_keymaps(buffer)
             local keymap = keymaps["sj"]
 
             assert.is_not_nil(keymap)
