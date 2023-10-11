@@ -7,7 +7,7 @@ local vader = require("winmove.util.vader")
 local given = vader.given
 
 describe("custom highlights", function()
-    if not compat.has("nvim-0.8.0") then
+    if not compat.has("nvim-0.9.0") then
         pending("Skipped for versions below 0.9.0")
         return
     end
@@ -87,7 +87,8 @@ describe("custom highlights", function()
             )
 
             for _, group in ipairs(highlight.groups()) do
-                local linked_group = vim.api.nvim_get_hl(0, { name = "WinmoveResize" .. group }).link
+                local linked_group =
+                    vim.api.nvim_get_hl(0, { name = "WinmoveResize" .. group }).link
 
                 assert.are.same(linked_group, "CustomWinmoveResizeMode")
             end
