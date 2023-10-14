@@ -46,34 +46,44 @@ luassert:register(
 ---@param tree2 AbstractWinLayout
 ---@return boolean
 local function compare_tree(tree1, tree2)
-    local type1, data1 = tree1[1], tree1[2]
-    local type2, data2 = tree2[1], tree2[2]
+    ---@param _tree1 ConcreteWinLayout
+    ---@param _tree2 AbstractWinLayout
+    local function _compare_tree(_tree1, _tree2, level)
+        local type1, data1 = _tree1[1], _tree1[2]
+        local type2, data2 = _tree2[1], _tree2[2]
 
-    if type1 ~= type2 then
-        return false
-    end
-
-    if type1 == "leaf" then
-        if data1 ~= nil and data1 ~= data2 then
-            return false
-        end
-    else
-        if #data1 ~= #data2 then
+        if type1 ~= type2 then
             return false
         end
 
-        ---@cast data1 -integer
-        for idx, child in ipairs(data1) do
-            ---@cast data2 -?, -integer
-            if not compare_tree(child, data2[idx]) then
+        if type1 == "leaf" then
+            if data2 ~= nil and data1 ~= data2 then
                 return false
+            end
+        else
+            if #data2 < 2 then
+                error(("Abstract tree of type %s at level %d only has one child"):format(type1, level))
+            end
+
+            if #data1 ~= #data2 then
+                return false
+            end
+
+            ---@cast data1 -integer
+            for idx, child in ipairs(data1) do
+                ---@cast data2 -?, -integer
+                if not compare_tree(child, data2[idx]) then
+                    return false
+                end
             end
         end
     end
 
-    return true
+    return _compare_tree(tree1, tree2, 0) == nil and true or false
 end
 
+---@param _ any
+---@param arguments any[]
 local function matches_winlayout(_, arguments)
     if #arguments ~= 2 then
         error("matches_winlayout expected two table arguments")
@@ -86,7 +96,7 @@ local function matches_winlayout(_, arguments)
         error("matches_winlayout expected two table arguments")
     end
 
-    return compare_tree(expected_layout, actual_layout)
+    return compare_tree(actual_layout, expected_layout)
 end
 
 say:set("assertion.matches_winlayout.positive", "Expected %s \nto match window layout: %s")
@@ -164,11 +174,17 @@ end
 function vader.make_layout(layout)
     local win_ids = {}
 
-    local function _make_layout(sublayout)
+    local function _make_layout(sublayout, level)
         local type = type(sublayout) == "string" and sublayout or sublayout[1]
 
+        -- TODO: Check that there is at least one subtree
         if type == "row" or type == "col" then
             local subtrees = sublayout[2]
+
+            if #subtrees < 2 then
+                error(("Tree of type %s at level %d only has one child"):format(type, level))
+            end
+
             local new_win_type = type == "row" and "vnew" or "new"
             local new_win_ids = { vim.api.nvim_get_current_win() }
 
@@ -180,7 +196,7 @@ function vader.make_layout(layout)
 
             for idx, subtree in ipairs(subtrees) do
                 vim.api.nvim_set_current_win(new_win_ids[idx])
-                _make_layout(subtree)
+                _make_layout(subtree, level + 1)
             end
         else
             -- Save leaves not labelled as "leaf" for testing
@@ -190,7 +206,7 @@ function vader.make_layout(layout)
         end
     end
 
-    _make_layout(layout)
+    _make_layout(layout, 0)
 
     return win_ids
 end
