@@ -112,7 +112,9 @@ local function compare_tree(tree1, tree2)
             end
         else
             if #data2 < 2 then
-                error(("Abstract tree of type %s at level %d only has one child"):format(type1, level))
+                error(
+                    ("Abstract tree of type %s at level %d only has one child"):format(type1, level)
+                )
             end
 
             if #data1 ~= #data2 then
