@@ -1,15 +1,17 @@
 local winmove = require("winmove")
 local config = require("winmove.config")
 local vader = require("winmove.util.vader")
+local test_helpers = require("winmove.util.test_helpers")
 
 local given = vader.given
+local make_layout = test_helpers.make_layout
 
 describe("toggle mode", function()
     it("toggles modes", function()
         given("", function()
             config.setup({ keymaps = { toggle_mode = "t" } })
 
-            local win_id = vader.make_layout({
+            local win_id = make_layout({
                 "row",
                 { "main", "leaf" },
             })["main"]

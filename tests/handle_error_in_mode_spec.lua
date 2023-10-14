@@ -4,11 +4,12 @@ local vader = require("winmove.util.vader")
 local stub = require("luassert.stub")
 
 local given = vader.given
+local make_layout = test_helpers.make_layout
 
 describe("error handling in modes", function()
     it("handles errors in move mode and restores mappings", function()
         given("", function()
-            vader.make_layout({
+            make_layout({
                 "row",
                 { "leaf", "leaf" },
             })

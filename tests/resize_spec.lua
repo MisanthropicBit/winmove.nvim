@@ -1,7 +1,9 @@
 local winmove = require("winmove")
 local vader = require("winmove.util.vader")
+local test_helpers = require("winmove.util.test_helpers")
 
 local given = vader.given
+local make_layout = test_helpers.make_layout
 
 describe("resize", function()
     local count = 3
@@ -10,7 +12,7 @@ describe("resize", function()
     describe("windows", function()
         it("resizes window to the left", function()
             given("", function()
-                local win_id = vader.make_layout({
+                local win_id = make_layout({
                     "row",
                     {
                         "leaf",
@@ -46,7 +48,7 @@ describe("resize", function()
 
         it("resizes window down", function()
             given("", function()
-                local win_id = vader.make_layout({
+                local win_id = make_layout({
                     "row",
                     {
                         "leaf",
@@ -82,7 +84,7 @@ describe("resize", function()
 
         it("resizes window up", function()
             given("", function()
-                local win_id = vader.make_layout({
+                local win_id = make_layout({
                     "row",
                     {
                         "leaf",
@@ -118,7 +120,7 @@ describe("resize", function()
 
         it("resizes window to the right", function()
             given("", function()
-                local win_id = vader.make_layout({
+                local win_id = make_layout({
                     "row",
                     {
                         {
@@ -156,7 +158,7 @@ describe("resize", function()
     describe("full width/height windows", function()
         it("resizes window to the left", function()
             given("", function()
-                local win_id = vader.make_layout({
+                local win_id = make_layout({
                     "row",
                     {
                         {
@@ -192,7 +194,7 @@ describe("resize", function()
 
         it("resizes window down", function()
             given("", function()
-                local win_id = vader.make_layout({
+                local win_id = make_layout({
                     "col",
                     {
                         "main",
@@ -228,7 +230,7 @@ describe("resize", function()
 
         it("resizes window up", function()
             given("", function()
-                local win_id = vader.make_layout({
+                local win_id = make_layout({
                     "col",
                     {
                         {
@@ -264,7 +266,7 @@ describe("resize", function()
 
         it("resizes window to the right", function()
             given("", function()
-                local win_id = vader.make_layout({
+                local win_id = make_layout({
                     "row",
                     {
                         "main",
@@ -300,7 +302,7 @@ describe("resize", function()
 
         it("should not resize a full width window", function()
             given("", function()
-                local win_id = vader.make_layout({
+                local win_id = make_layout({
                     "col",
                     {
                         "main",
@@ -338,7 +340,7 @@ describe("resize", function()
 
         it("should not resize a full height window", function()
             given("", function()
-                local win_id = vader.make_layout({
+                local win_id = make_layout({
                     "row",
                     {
                         "main",

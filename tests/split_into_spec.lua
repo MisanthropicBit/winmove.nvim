@@ -1,8 +1,10 @@
 local winmove = require("winmove")
 local config = require("winmove.config")
 local vader = require("winmove.util.vader")
+local test_helpers = require("winmove.util.test_helpers")
 
 local given = vader.given
+local make_layout = test_helpers.make_layout
 
 describe("split_into", function()
     -- Ensure default keymaps
@@ -21,7 +23,7 @@ describe("split_into", function()
 
     it("splits left", function()
         given("", function()
-            local win_id = vader.make_layout({
+            local win_id = make_layout({
                 "row",
                 {
                     {
@@ -63,7 +65,7 @@ describe("split_into", function()
 
     it("splits down", function()
         given("", function()
-            local win_id = vader.make_layout({
+            local win_id = make_layout({
                 "row",
                 {
                     {
@@ -123,7 +125,7 @@ describe("split_into", function()
 
     it("splits up", function()
         given("", function()
-            local win_id = vader.make_layout({
+            local win_id = make_layout({
                 "row",
                 {
                     {

@@ -1,18 +1,20 @@
 local winmove = require("winmove")
 local vader = require("winmove.util.vader")
+local test_helpers = require("winmove.util.test_helpers")
 
 local given = vader.given
+local make_layout = test_helpers.make_layout
 
 describe("relative cursor", function()
     assert:set_parameter("TableFormatLevel", 10)
 
     it("moves window above target", function()
         given("", function()
-            local win_ids = vader.make_layout({
+            local win_ids = make_layout({
                 "row",
                 {
                     { "col", { "main", "leaf" } },
-                    { "leaf" },
+                    "leaf",
                 },
             })
 
@@ -53,11 +55,11 @@ describe("relative cursor", function()
 
     it("moves window below target", function()
         given("", function()
-            local win_ids = vader.make_layout({
+            local win_ids = make_layout({
                 "row",
                 {
                     { "col", { "leaf", "main" } },
-                    { "leaf" },
+                    "leaf",
                 },
             })
 
@@ -98,7 +100,7 @@ describe("relative cursor", function()
 
     it("moves window between targets", function()
         given("", function()
-            local win_ids = vader.make_layout({
+            local win_ids = make_layout({
                 "row",
                 {
                     { "col", { "leaf", "main", "leaf" } },
@@ -157,7 +159,7 @@ describe("relative cursor", function()
 
     it("moves window to the right of window above it with long line", function()
         given("", function()
-            local win_id = vader.make_layout({
+            local win_id = make_layout({
                 "row",
                 {
                     {

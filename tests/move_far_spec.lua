@@ -1,17 +1,19 @@
 local winmove = require("winmove")
 local vader = require("winmove.util.vader")
+local test_helpers = require("winmove.util.test_helpers")
 
 local given = vader.given
+local make_layout = test_helpers.make_layout
 
 describe("basic movements", function()
     assert:set_parameter("TableFormatLevel", 10)
 
     it("moves window far to the left", function()
         given("", function()
-            local win_ids = vader.make_layout({
+            local win_ids = make_layout({
                 "row",
                 {
-                    { "leaf" },
+                    "leaf",
                     { "col", { "main", "leaf" } },
                 },
             })
@@ -48,11 +50,11 @@ describe("basic movements", function()
 
     it("moves window far down", function()
         given("", function()
-            local win_ids = vader.make_layout({
+            local win_ids = make_layout({
                 "col",
                 {
                     { "row", { "main", "leaf" } },
-                    { "leaf" },
+                    "leaf",
                 },
             })
 
@@ -88,10 +90,10 @@ describe("basic movements", function()
 
     it("moves window far up", function()
         given("", function()
-            local win_ids = vader.make_layout({
+            local win_ids = make_layout({
                 "col",
                 {
-                    { "leaf" },
+                    "leaf",
                     { "row", { "leaf", "main" } },
                 },
             })
@@ -129,11 +131,11 @@ describe("basic movements", function()
     it("moves window far to the right", function()
         given("", function()
             -- TODO: Move to util.test_helpers along with compare_tree etc.
-            local win_ids = vader.make_layout({
+            local win_ids = make_layout({
                 "row",
                 {
                     { "col", { "leaf", "main" } },
-                    { "leaf" },
+                    "leaf",
                 },
             })
 

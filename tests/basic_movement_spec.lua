@@ -1,14 +1,16 @@
 local winmove = require("winmove")
 local vader = require("winmove.util.vader")
 local stub = require("luassert.stub")
+local test_helpers = require("winmove.util.test_helpers")
 
 local given = vader.given
+local make_layout = test_helpers.make_layout
 
 describe("basic movements", function()
     describe("direct function invocation", function()
         it("moves window to the left", function()
             given("", function()
-                local win_id = vader.make_layout({
+                local win_id = make_layout({
                     "row",
                     { "leaf", "main" },
                 })["main"]
@@ -36,7 +38,7 @@ describe("basic movements", function()
 
         it("moves window down", function()
             given("", function()
-                local win_id = vader.make_layout({
+                local win_id = make_layout({
                     "col",
                     { "main", "leaf" },
                 })["main"]
@@ -64,7 +66,7 @@ describe("basic movements", function()
 
         it("moves window up", function()
             given("", function()
-                local win_id = vader.make_layout({
+                local win_id = make_layout({
                     "col",
                     { "leaf", "main" },
                 })["main"]
@@ -92,7 +94,7 @@ describe("basic movements", function()
 
         it("moves window to the right", function()
             given("", function()
-                local win_id = vader.make_layout({
+                local win_id = make_layout({
                     "row",
                     { "main", "leaf" },
                 })["main"]
@@ -160,7 +162,7 @@ describe("basic movements", function()
     describe("move mode", function()
         it("moves window to the left", function()
             given("", function()
-                local win_id = vader.make_layout({
+                local win_id = make_layout({
                     "row",
                     { "leaf", "main" },
                 })["main"]
@@ -189,7 +191,7 @@ describe("basic movements", function()
 
         it("moves window down", function()
             given("", function()
-                local win_id = vader.make_layout({
+                local win_id = make_layout({
                     "col",
                     { "main", "leaf" },
                 })["main"]
@@ -218,7 +220,7 @@ describe("basic movements", function()
 
         it("moves window up", function()
             given("", function()
-                local win_id = vader.make_layout({
+                local win_id = make_layout({
                     "col",
                     { "leaf", "main" },
                 })["main"]
@@ -247,7 +249,7 @@ describe("basic movements", function()
 
         it("moves window to the right", function()
             given("", function()
-                local win_id = vader.make_layout({
+                local win_id = make_layout({
                     "row",
                     { "main", "leaf" },
                 })["main"]

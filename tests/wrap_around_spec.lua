@@ -1,15 +1,17 @@
 local winmove = require("winmove")
 local config = require("winmove.config")
 local vader = require("winmove.util.vader")
+local test_helpers = require("winmove.util.test_helpers")
 
 local given = vader.given
+local make_layout = test_helpers.make_layout
 
 describe("wrap-around when moving windows", function()
     it("wraps around when enabled in the config", function()
         config.setup({ wrap_around = true })
 
         given("", function()
-            local win_ids = vader.make_layout({
+            local win_ids = make_layout({
                 "row",
                 { "main", "leaf" },
             })
@@ -41,7 +43,7 @@ describe("wrap-around when moving windows", function()
         winmove.setup({ wrap_around = false })
 
         given("", function()
-            local win_ids = vader.make_layout({
+            local win_ids = make_layout({
                 "row",
                 { "main", "leaf" },
             })
