@@ -154,4 +154,77 @@ describe("relative cursor", function()
             })
         end)
     end)
+
+    it("moves window to the right of window above it with long line", function()
+        given("", function()
+            local win_id = vader.make_layout({
+                "row",
+                {
+                    {
+                        "col",
+                        {
+                            "leaf",
+                            {
+                                "row",
+                                {
+                                    "leaf",
+                                    "main",
+                                },
+                            },
+                        },
+                    },
+                    "leaf",
+                },
+            })["main"]
+
+            assert.matches_winlayout(vim.fn.winlayout(), {
+                "row",
+                {
+                    {
+                        "col",
+                        {
+                            { "leaf" },
+                            {
+                                "row",
+                                {
+                                    { "leaf" },
+                                    { "leaf", win_id },
+                                },
+                            },
+                        },
+                    },
+                    { "leaf" },
+                },
+            })
+
+            vim.api.nvim_set_current_win(win_id)
+
+            local buffer = vim.api.nvim_win_get_buf(win_id)
+            local width = vim.api.nvim_win_get_width(win_id)
+            local long_line = ("x"):rep(width * 0.75)
+
+            vim.api.nvim_buf_set_lines(buffer, 0, 1, true, { long_line })
+            winmove.move_window(win_id, "k")
+
+            assert.matches_winlayout(vim.fn.winlayout(), {
+                "row",
+                {
+                    {
+                        "col",
+                        {
+                            {
+                                "row",
+                                {
+                                    { "leaf" },
+                                    { "leaf", win_id },
+                                },
+                            },
+                            { "leaf" },
+                        },
+                    },
+                    { "leaf" },
+                },
+            })
+        end)
+    end)
 end)
