@@ -130,7 +130,6 @@ describe("basic movements", function()
 
     it("moves window far to the right", function()
         given("", function()
-            -- TODO: Move to util.test_helpers along with compare_tree etc.
             local win_ids = make_layout({
                 "row",
                 {

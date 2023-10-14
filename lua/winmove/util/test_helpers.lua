@@ -44,7 +44,6 @@ function test_helpers.make_layout(layout)
     local function _make_layout(sublayout, level)
         local type = type(sublayout) == "string" and sublayout or sublayout[1]
 
-        -- TODO: Check that there is at least one subtree
         if type == "row" or type == "col" then
             local subtrees = sublayout[2]
 
