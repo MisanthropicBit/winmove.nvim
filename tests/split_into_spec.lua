@@ -185,32 +185,32 @@ describe("split_into", function()
         end)
     end)
 
-    -- it("splits right", function()
-    --     given("", function()
-    --         local win_id = vader.make_layout({
-    --             "row",
-    --             { "main", "leaf" },
-    --         })["main"]
+    it("splits right", function()
+        given("", function()
+            local win_id = make_layout({
+                "row",
+                { "main", "leaf" },
+            })["main"]
 
-    --         assert.matches_winlayout(vim.fn.winlayout(), {
-    --             "row",
-    --             {
-    --                 { "leaf", win_id },
-    --                 { "leaf" },
-    --             },
-    --         })
+            assert.matches_winlayout(vim.fn.winlayout(), {
+                "row",
+                {
+                    { "leaf", win_id },
+                    { "leaf" },
+                },
+            })
 
-    --         vim.api.nvim_set_current_win(win_id)
-    --         winmove.start_move_mode()
-    --         vim.cmd.normal("l")
+            vim.api.nvim_set_current_win(win_id)
+            winmove.start_move_mode()
+            vim.cmd.normal("l")
 
-    --         assert.matches_winlayout(vim.fn.winlayout(), {
-    --             "row",
-    --             {
-    --                 { "leaf" },
-    --                 { "leaf", win_id },
-    --             },
-    --         })
-    --     end)
-    -- end)
+            assert.matches_winlayout(vim.fn.winlayout(), {
+                "row",
+                {
+                    { "leaf" },
+                    { "leaf", win_id },
+                },
+            })
+        end)
+    end)
 end)
