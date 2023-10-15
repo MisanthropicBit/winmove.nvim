@@ -14,9 +14,11 @@ local win_highlights = {
     resize = nil,
 }
 
+---@type string?
 local saved_win_highlights = nil
 
 -- Highlight groups to create winmove versions of
+---@type string[]
 local highlight_groups = {
     "Normal",
     "CursorLine",
@@ -45,6 +47,11 @@ local function generate_highlights(mode, groups)
     end
 
     return table.concat(highlights, ",")
+end
+
+---@return string[]
+function highlight.groups()
+    return highlight_groups
 end
 
 ---@param win_id integer

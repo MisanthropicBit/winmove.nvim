@@ -8,20 +8,23 @@ local winutil = require("winmove.winutil")
 ---@field bottom integer
 ---@field right integer
 
----@param winnr integer
+---@param win_id integer
 ---@return integer
 ---@return integer
-local function get_cursor_screen_position(winnr)
-    local win_row, win_col = unpack(vim.fn.win_screenpos(winnr))
-    local row, col = unpack(vim.api.nvim_win_get_cursor(winnr))
+local function get_cursor_screen_position(win_id)
+    -- Get window position in screen space
+    local win_row, win_col = unpack(vim.api.nvim_win_get_position(win_id))
 
-    return win_row + row, win_col + col + 1
+    -- Get cursor position in local window space
+    local row, col = vim.fn.winline(), vim.fn.wincol()
+
+    return win_row + row, win_col + col
 end
 
 ---@param win_id integer
 ---@return winmove.BoundingBox
 local function window_bounding_box(win_id)
-    local win_row, win_col = unpack(vim.fn.win_screenpos(win_id))
+    local win_row, win_col = unpack(vim.api.nvim_win_get_position(win_id))
     local win_width = vim.api.nvim_win_get_width(win_id)
     local win_height = vim.api.nvim_win_get_height(win_id)
 
@@ -82,7 +85,7 @@ function layout.are_siblings(win_id1, win_id2)
         local type, data = unpack(node)
 
         if type == "leaf" then
-            if data == win_id then
+            if data == win_id and parent then
                 for _, sibling in ipairs(parent[2]) do
                     if sibling[2] == win_id2 then
                         return true

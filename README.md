@@ -40,7 +40,7 @@
 
 ## Requirements
 
-* Neovim 0.5.0+
+* Neovim 0.8.0+
 
 ## Installing
 

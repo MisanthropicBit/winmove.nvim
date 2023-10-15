@@ -44,8 +44,12 @@ function vader.given(...)
     end
 
     local bufnr = vim.api.nvim_create_buf(false, false)
-    vim.api.nvim_set_current_buf(bufnr)
 
+    if bufnr == 0 then
+        error("Failed to create stratch buffer for testing")
+    end
+
+    vim.api.nvim_set_current_buf(bufnr)
     vim.opt_local.bufhidden = "hide"
     vim.opt_local.swapfile = false
 
@@ -57,6 +61,11 @@ function vader.given(...)
     vim.api.nvim_buf_call(bufnr, function()
         callback({ bufnr = bufnr, win_id = vim.api.nvim_get_current_win() })
     end)
+
+    -- Clean up all open buffers to ensure test isolation
+    for _, buffer in ipairs(vim.api.nvim_list_bufs()) do
+        pcall(vim.api.nvim_buf_delete, buffer, { force = true })
+    end
 end
 
 --- Run normal mode commands without mappings
@@ -67,12 +76,12 @@ function vader.normal(input, use_mappings)
     vim.cmd(vim.api.nvim_replace_termcodes("normal" .. bang .. " " .. input, true, false, true))
 end
 
-function vader.expect(contents, bufnr)
-    local actual_contents = vim.api.nvim_buf_get_lines(bufnr or 0, 0, -1, true)
+---@param contents string[]
+---@param buffer integer?
+function vader.expect(contents, buffer)
+    local actual_contents = vim.api.nvim_buf_get_lines(buffer or 0, 0, -1, true)
 
     expect_buffer("", actual_contents, contents)
-
-    -- luassert.are.same(actual_contents, contents)
 end
 
 return vader
