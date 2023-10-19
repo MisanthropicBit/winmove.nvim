@@ -1,6 +1,7 @@
 local config = {}
 
 local message = require("winmove.message")
+local at_edge = require("winmove.at_edge")
 
 local config_loaded = false
 
@@ -36,21 +37,26 @@ local config_loaded = false
 ---@field move   string?
 ---@field resize string?
 
+---@class winmove.AtEdgeConfig
+---@field horizontal winmove.AtEdge
+---@field vertical   winmove.AtEdge
+
 ---@class winmove.Config
 ---@field highlights           winmove.Highlights
----@field wrap_around          boolean
+---@field at_edge              winmove.AtEdgeConfig
 ---@field default_resize_count integer
 ---@field keymaps              winmove.ConfigModeKeymaps
 
 ---@type winmove.Config
 local default_config = {
-    -- TODO: Move everything into top-level "move" and "resize" tables?
-    -- TODO: Move into move_mode key if we get top-level options
     highlights = {
         move = "Visual",
         resize = "Substitute",
     },
-    wrap_around = true,
+    at_edge = {
+        horizontal = at_edge.MoveTab,
+        vertical = at_edge.Wrap,
+    },
     default_resize_count = 3,
     keymaps = {
         help = "?",
@@ -177,9 +183,24 @@ function config.validate(_config)
                 { "resize", "string" },
             }),
         },
-        wrap_around = {
-            _config.wrap_around,
-            "boolean",
+        at_edge = {
+            _config.at_edge,
+            validate_keys({
+                {
+                    "horizontal",
+                    function(value)
+                        return value == at_edge.DoNothing or value == at_edge.Wrap or value == at_edge.MoveTab
+                    end,
+                    "valid behaviour at horizontal edge",
+                },
+                {
+                    "vertical",
+                    function(value)
+                        return value == at_edge.DoNothing or value == at_edge.Wrap
+                    end,
+                    "valid behaviour at vertical edge",
+                },
+            }),
         },
         default_resize_count = {
             _config.default_resize_count,

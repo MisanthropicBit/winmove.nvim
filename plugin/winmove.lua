@@ -74,11 +74,11 @@ local function winmove_command(options)
     if arg == "version" then
         compat.print(winmove.version())
     elseif arg == "move" then
-        winmove.start_move_mode()
+        winmove.start_mode(winmove.mode.Move)
     elseif arg == "resize" then
-        winmove.start_resize_mode()
+        winmove.start_mode(winmove.mode.Resize)
     elseif arg == "quit" then
-        winmove["stop_" .. winmove.current_mode() .. "_mode"]()
+        winmove.stop_mode()
     else
         local command = get_command(arg)
 

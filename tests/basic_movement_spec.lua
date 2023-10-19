@@ -176,7 +176,7 @@ describe("basic movements", function()
                 })
 
                 vim.api.nvim_set_current_win(win_id)
-                winmove.start_move_mode()
+                winmove.start_mode(winmove.mode.Move)
                 vim.cmd.normal("h")
 
                 assert.matches_winlayout(vim.fn.winlayout(), {
@@ -205,7 +205,7 @@ describe("basic movements", function()
                 })
 
                 vim.api.nvim_set_current_win(win_id)
-                winmove.start_move_mode()
+                winmove.start_mode(winmove.mode.Move)
                 vim.cmd.normal("j")
 
                 assert.matches_winlayout(vim.fn.winlayout(), {
@@ -234,7 +234,7 @@ describe("basic movements", function()
                 })
 
                 vim.api.nvim_set_current_win(win_id)
-                winmove.start_move_mode()
+                winmove.start_mode(winmove.mode.Move)
                 vim.cmd.normal("k")
 
                 assert.matches_winlayout(vim.fn.winlayout(), {
@@ -263,7 +263,7 @@ describe("basic movements", function()
                 })
 
                 vim.api.nvim_set_current_win(win_id)
-                winmove.start_move_mode()
+                winmove.start_mode(winmove.mode.Move)
                 vim.cmd.normal("l")
 
                 assert.matches_winlayout(vim.fn.winlayout(), {
