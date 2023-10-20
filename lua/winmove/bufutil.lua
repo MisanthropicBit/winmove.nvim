@@ -22,13 +22,10 @@ function bufutil.split_buffer(buffer, options)
         table.insert(cmd_prefixes, "vertical")
     end
 
-    if options.rightbelow then
-        table.insert(cmd_prefixes, "rightbelow")
-    end
+    local cmd = options.rightbelow and "rightbelow" or "aboveleft"
 
-    if #cmd_prefixes > 0 then
-        table.insert(cmd_prefixes, " ")
-    end
+    table.insert(cmd_prefixes, cmd)
+    table.insert(cmd_prefixes, " ")
 
     local split_command = ("%ssbuffer %d"):format(table.concat(cmd_prefixes, " "), buffer)
 
