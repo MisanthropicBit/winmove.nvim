@@ -73,8 +73,9 @@ end
 
 ---@param source_win_id integer
 ---@param target_win_id integer
----@param reldir winmove.VerticalDirection
-local function move_window_to_tab(source_win_id, target_win_id, reldir)
+---@param dir winmove.Direction
+---@param vertical boolean
+local function move_window_to_tab(source_win_id, target_win_id, dir, vertical)
     local source_buffer = api.nvim_win_get_buf(source_win_id)
 
     -- TODO: Check for error here?
@@ -83,8 +84,8 @@ local function move_window_to_tab(source_win_id, target_win_id, reldir)
 
     -- Split buffer and switch to new window
     bufutil.split_buffer(source_buffer, {
-        vertical = false,
-        rightbelow = reldir == "j",
+        vertical = vertical,
+        rightbelow = dir == "j",
     })
 
     local new_win_id = api.nvim_get_current_win()
@@ -106,10 +107,11 @@ end
 ---@param source_win_id integer
 ---@param dir winmove.Direction
 ---@param behaviour winmove.AtEdge
+---@param split_into boolean
 ---@return boolean
 ---@return integer?
 ---@return winmove.Direction
-local function handle_edge(source_win_id, dir, behaviour)
+local function handle_edge(source_win_id, dir, behaviour, split_into)
     if behaviour == at_edge.DoNothing then
         return false, nil, dir
     elseif behaviour == at_edge.Wrap then
@@ -125,14 +127,17 @@ local function handle_edge(source_win_id, dir, behaviour)
 
         return true, target_win_id, dir
     elseif behaviour == at_edge.MoveTab then
-        -- TODO: Move full width/height windows and maintain width/height?
-        -- TODO: Check for valid direction here
-
+        ---@cast dir winmove.HorizontalDirection
         local target_win_id, reldir = layout.get_target_window_in_tab(source_win_id, dir)
+        local final_dir = reldir ---@type winmove.Direction
+        local vertical = false
 
-        -- TODO: Or make a single win_splitmove function that supports
-        -- moving across tabpages?
-        move_window_to_tab(source_win_id, target_win_id, reldir)
+        if split_into then
+            final_dir = dir
+            vertical = true
+        end
+
+        move_window_to_tab(source_win_id, target_win_id, final_dir, vertical)
 
         return false, target_win_id, dir
     else
@@ -163,7 +168,7 @@ function winmove.move_window(source_win_id, dir)
     if target_win_id == nil then
         local edge_type = winutil.is_vertical(dir) and "horizontal" or "vertical"
         local behaviour = config.at_edge[edge_type]
-        local proceed, new_target_win_id, new_dir = handle_edge(source_win_id, dir, behaviour)
+        local proceed, new_target_win_id, new_dir = handle_edge(source_win_id, dir, behaviour, false)
 
         if not proceed then
             return
@@ -201,7 +206,7 @@ function winmove.split_into(source_win_id, dir)
     if target_win_id == nil then
         local edge_type = winutil.is_vertical(dir) and "horizontal" or "vertical"
         local behaviour = config.at_edge[edge_type]
-        local proceed, new_target_win_id, new_dir = handle_edge(source_win_id, dir, behaviour)
+        local proceed, new_target_win_id, new_dir = handle_edge(source_win_id, dir, behaviour, true)
 
         if not proceed then
             return
