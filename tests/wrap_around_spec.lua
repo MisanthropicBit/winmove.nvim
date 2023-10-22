@@ -1,4 +1,5 @@
 local winmove = require("winmove")
+local at_edge = require("winmove.at_edge")
 local config = require("winmove.config")
 local vader = require("winmove.util.vader")
 local test_helpers = require("winmove.util.test_helpers")
@@ -8,7 +9,20 @@ local make_layout = test_helpers.make_layout
 
 describe("wrap-around when moving windows", function()
     it("wraps around when enabled in the config", function()
-        config.configure({ wrap_around = true })
+        config.configure({
+            at_edge = {
+                horizontal = at_edge.Wrap,
+                vertical = at_edge.Wrap,
+            },
+            keymaps = {
+                move = {
+                    split_left = "sh",
+                    split_down = "sj",
+                    split_up = "sk",
+                    split_right = "sl",
+                },
+            },
+        })
 
         given("", function()
             local win_ids = make_layout({
@@ -40,7 +54,20 @@ describe("wrap-around when moving windows", function()
     end)
 
     it("does not wrap around when disabled in the config", function()
-        winmove.configure({ wrap_around = false })
+        config.configure({
+            at_edge = {
+                horizontal = at_edge.DoNothing,
+                vertical = at_edge.DoNothingWrap,
+            },
+            keymaps = {
+                move = {
+                    split_left = "sh",
+                    split_down = "sj",
+                    split_up = "sk",
+                    split_right = "sl",
+                },
+            },
+        })
 
         given("", function()
             local win_ids = make_layout({

@@ -1,4 +1,5 @@
 local winmove = require("winmove")
+local at_edge = require("winmove.at_edge")
 local config = require("winmove.config")
 local vader = require("winmove.util.vader")
 local test_helpers = require("winmove.util.test_helpers")
@@ -7,8 +8,12 @@ local given = vader.given
 local make_layout = test_helpers.make_layout
 
 describe("split_into", function()
-    -- Ensure default keymaps
+    -- Ensure default configuration
     config.configure({
+        at_edge = {
+            horizontal = at_edge.DoNothing,
+            vertical = at_edge.DoNothing,
+        },
         keymaps = {
             move = {
                 split_left = "sh",
@@ -26,17 +31,18 @@ describe("split_into", function()
             local win_id = make_layout({
                 "row",
                 {
+                    "leaf",
                     {
                         "col",
                         { "main", "leaf" },
                     },
-                    "leaf",
                 },
             })["main"]
 
             assert.matches_winlayout(vim.fn.winlayout(), {
                 "row",
                 {
+                    { "leaf" },
                     {
                         "col",
                         {
@@ -44,7 +50,6 @@ describe("split_into", function()
                             { "leaf" },
                         },
                     },
-                    { "leaf" },
                 },
             })
 
