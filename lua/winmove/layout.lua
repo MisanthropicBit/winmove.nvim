@@ -173,12 +173,13 @@ function layout.get_leaf_parent(win_id)
     return _find(win_layout, nil)
 end
 
+---@param win_id integer
 ---@param pos integer
 ---@param dir winmove.Direction
 ---@return integer
-local function find_target_window_in_tab(pos, dir)
-    local function _find_target_window_in_tab(_layout)
-        local type, data = _layout[1], _layout[2]
+local function find_target_window_in_tab(win_id, pos, dir)
+    local function _find_target_window_in_tab(win_layout, _dir)
+        local type, data = win_layout[1], win_layout[2]
 
         if type == "leaf" then
             local leaf_bbox = window_bounding_box(data)
@@ -188,25 +189,27 @@ local function find_target_window_in_tab(pos, dir)
                 return data
             end
         elseif type == "row" then
-            local idx = dir == "h" and 1 or #data
+            local idx = _dir == "h" and 1 or #data
 
             -- Recurse into the left- or right-most subtree
-            return _find_target_window_in_tab(data[idx])
+            return _find_target_window_in_tab(data[idx], _dir)
         elseif type == "col" then
             for _, subtree in ipairs(data) do
-                local win_id = _find_target_window_in_tab(subtree)
+                local _win_id = _find_target_window_in_tab(subtree, _dir)
 
-                if win_id then
-                    return win_id
+                if _win_id then
+                    return _win_id
                 end
             end
         end
     end
 
     -- Find target tabpage number
-    local tab_id = vim.api.nvim_get_current_tabpage()
+    local tab_id = vim.api.nvim_tabpage_get_number(vim.api.nvim_win_get_tabpage(win_id))
     local tab_count = vim.fn.tabpagenr("$")
     local target_tab_id = tab_id + (dir == "h" and -1 or 1)
+
+    -- TODO: Check that both tabpages are valid
 
     -- Wrap tab pages
     if target_tab_id > tab_count then
@@ -215,9 +218,10 @@ local function find_target_window_in_tab(pos, dir)
         target_tab_id = tab_count
     end
 
-    local tab_win_layout = vim.fn.winlayout(target_tab_id)
+    local target_tab_win_layout = vim.fn.winlayout(target_tab_id)
+    local revdir = winutil.reverse_direction(dir)
 
-    return _find_target_window_in_tab(tab_win_layout)
+    return _find_target_window_in_tab(target_tab_win_layout, revdir)
 end
 
 ---@param source_win_id integer
@@ -225,9 +229,8 @@ end
 ---@return integer
 ---@return winmove.VerticalDirection
 function layout.get_target_window_in_tab(source_win_id, dir)
-    local revdir = winutil.reverse_direction(dir)
     local grow, _ = get_cursor_screen_position(source_win_id)
-    local target_win_id = find_target_window_in_tab(grow, revdir)
+    local target_win_id = find_target_window_in_tab(source_win_id, grow, dir)
     local bbox = window_bounding_box(target_win_id)
     local reldir = relative_dir_by_extents(grow, { bbox.top, bbox.bottom }, { "k", "j" })
 
