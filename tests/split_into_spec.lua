@@ -1,5 +1,4 @@
 local winmove = require("winmove")
-local at_edge = require("winmove.at_edge")
 local config = require("winmove.config")
 local vader = require("winmove.util.vader")
 local test_helpers = require("winmove.util.test_helpers")
@@ -11,8 +10,8 @@ describe("split_into", function()
     -- Ensure default configuration
     config.configure({
         at_edge = {
-            horizontal = at_edge.DoNothing,
-            vertical = at_edge.DoNothing,
+            horizontal = false,
+            vertical = false,
         },
         keymaps = {
             move = {

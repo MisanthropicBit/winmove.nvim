@@ -56,8 +56,8 @@ describe("wrap-around when moving windows", function()
     it("does not wrap around when disabled in the config", function()
         config.configure({
             at_edge = {
-                horizontal = at_edge.DoNothing,
-                vertical = at_edge.DoNothingWrap,
+                horizontal = false,
+                vertical = false,
             },
             keymaps = {
                 move = {
@@ -70,12 +70,10 @@ describe("wrap-around when moving windows", function()
         })
 
         given("", function()
-            local win_ids = make_layout({
+            local main_win_id = make_layout({
                 "row",
                 { "main", "leaf" },
-            })
-
-            local main_win_id = win_ids["main"]
+            })["main"]
 
             assert.matches_winlayout(vim.fn.winlayout(), {
                 "row",

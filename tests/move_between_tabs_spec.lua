@@ -13,7 +13,7 @@ describe("moving between tabs", function()
     -- Ensure default configuration
     config.setup({
         at_edge = {
-            horizontal = at_edge.MoveTab,
+            horizontal = at_edge.MoveToTab,
         },
     })
 

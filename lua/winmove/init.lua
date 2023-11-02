@@ -112,7 +112,7 @@ end
 ---@return integer?
 ---@return winmove.Direction
 local function handle_edge(source_win_id, dir, behaviour, split_into)
-    if behaviour == at_edge.DoNothing then
+    if behaviour == false then
         return false, nil, dir
     elseif behaviour == at_edge.Wrap then
         local new_target_win_id = layout.get_wraparound_neighbor(dir)
@@ -126,7 +126,7 @@ local function handle_edge(source_win_id, dir, behaviour, split_into)
         dir = winutil.reverse_direction(dir)
 
         return true, target_win_id, dir
-    elseif behaviour == at_edge.MoveTab then
+    elseif behaviour == at_edge.MoveToTab then
         ---@cast dir winmove.HorizontalDirection
         local target_win_id, reldir = layout.get_target_window_in_tab(source_win_id, dir)
         local final_dir = reldir ---@type winmove.Direction

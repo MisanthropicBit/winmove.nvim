@@ -16,8 +16,13 @@ describe("config", function()
             },
             {
                 at_edge = {
-                    horizontal = at_edge.MoveTab,
-                    vertical = at_edge.MoveTab,
+                    horizontal = at_edge.MoveToTab,
+                    vertical = at_edge.MoveToTab,
+                },
+            },
+            {
+                at_edge = {
+                    vertical = true,
                 },
             },
             {
@@ -78,7 +83,7 @@ describe("config", function()
             },
             at_edge = {
                 horizontal = at_edge.Wrap,
-                vertical = at_edge.DoNothing,
+                vertical = false,
             },
             default_resize_count = 2,
             keymaps = {

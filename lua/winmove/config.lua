@@ -38,8 +38,8 @@ local config_loaded = false
 ---@field resize string?
 
 ---@class winmove.AtEdgeConfig
----@field horizontal winmove.AtEdge
----@field vertical   winmove.AtEdge
+---@field horizontal false | winmove.AtEdge
+---@field vertical   false | winmove.AtEdge
 
 ---@class winmove.Config
 ---@field highlights           winmove.Highlights
@@ -54,7 +54,7 @@ local default_config = {
         resize = "Substitute",
     },
     at_edge = {
-        horizontal = at_edge.MoveTab,
+        horizontal = at_edge.MoveToTab,
         vertical = at_edge.Wrap,
     },
     default_resize_count = 3,
@@ -189,14 +189,14 @@ function config.validate(_config)
                 {
                     "horizontal",
                     function(value)
-                        return value == at_edge.DoNothing or value == at_edge.Wrap or value == at_edge.MoveTab
+                        return value == false or value == at_edge.Wrap or value == at_edge.MoveToTab
                     end,
                     "valid behaviour at horizontal edge",
                 },
                 {
                     "vertical",
                     function(value)
-                        return value == at_edge.DoNothing or value == at_edge.Wrap
+                        return value == false or value == at_edge.Wrap
                     end,
                     "valid behaviour at vertical edge",
                 },
