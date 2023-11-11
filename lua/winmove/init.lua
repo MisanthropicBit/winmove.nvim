@@ -168,7 +168,8 @@ function winmove.move_window(source_win_id, dir)
     if target_win_id == nil then
         local edge_type = winutil.is_vertical(dir) and "horizontal" or "vertical"
         local behaviour = config.at_edge[edge_type]
-        local proceed, new_target_win_id, new_dir = handle_edge(source_win_id, dir, behaviour, false)
+        local proceed, new_target_win_id, new_dir =
+            handle_edge(source_win_id, dir, behaviour, false)
 
         if not proceed then
             return
