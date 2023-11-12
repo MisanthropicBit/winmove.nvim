@@ -85,7 +85,7 @@ local function move_window_to_tab(source_win_id, target_win_id, dir, vertical)
     -- Split buffer and switch to new window
     bufutil.split_buffer(source_buffer, {
         vertical = vertical,
-        rightbelow = dir == "j",
+        rightbelow = dir == "j" or dir == "l",
     })
 
     local new_win_id = api.nvim_get_current_win()
@@ -133,7 +133,7 @@ local function handle_edge(source_win_id, dir, behaviour, split_into)
         local vertical = false
 
         if split_into then
-            final_dir = dir
+            final_dir = winutil.reverse_direction(dir)
             vertical = true
         end
 

@@ -251,4 +251,95 @@ describe("moving between tabs", function()
             })
         end)
     end)
+
+    it("splits left into another tab", function()
+        given("", function()
+            local target_win_ids = make_layout({
+                "row",
+                {
+                    "leaf",
+                    {
+                        "col",
+                        {
+                            "top",
+                            "middle",
+                            "bottom",
+                        },
+                    },
+                },
+            })
+
+            vim.cmd.tabnew()
+
+            local source_win_ids = make_layout({
+                "row",
+                {
+                    {
+                        "col",
+                        {
+                            "main",
+                            "old_bottom",
+                        },
+                    },
+                    "leaf",
+                },
+            })
+
+            local win_id = source_win_ids["main"]
+            vim.api.nvim_set_current_win(win_id)
+            local before_buffer = vim.api.nvim_get_current_buf()
+            local line_end = math.floor(0.85 * vim.api.nvim_win_get_height(win_id))
+
+            -- Fill the main window's buffer with lines so it splits into the middle
+            -- window in the other tab
+            vim.api.nvim_buf_set_lines(
+                before_buffer,
+                0,
+                1,
+                true,
+                vim.fn.split((",_"):rep(line_end), ",")
+            )
+
+            -- Move down to the last line
+            vim.cmd.normal("G")
+
+            winmove.split_into(win_id, "h")
+            local after_buffer = vim.api.nvim_get_current_buf()
+
+            -- Window ids are not the same but the buffer is
+            assert.are.same(before_buffer, after_buffer)
+
+            -- Check window layout of tab 1
+            assert.matches_winlayout(vim.fn.winlayout(1), {
+                "row",
+                {
+                    { "leaf" },
+                    {
+                        "col",
+                        {
+                            { "leaf", target_win_ids["top"] },
+                            {
+                                "row",
+                                {
+                                    { "leaf", target_win_ids["middle"] },
+                                    { "leaf" },
+                                },
+                            },
+                            { "leaf", target_win_ids["bottom"] },
+                        },
+                    },
+                },
+            })
+
+            -- Check window layout of tab 2
+            assert.matches_winlayout(vim.fn.winlayout(2), {
+                "row",
+                {
+
+                    { "leaf", source_win_ids["old_bottom"] },
+                    { "leaf" },
+                },
+            })
+        end)
+    end)
 end)
