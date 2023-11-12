@@ -19,8 +19,10 @@ describe("moving between tabs", function()
 
     assert:set_parameter("TableFormatLevel", 10)
 
-    it("moves window to the tab to the right", function()
+    it("moves window to the tab to the right and ignores switchbuf option", function()
         given("", function()
+            vim.opt_local.switchbuf = "newtab"
+
             local win_id = make_layout({
                 "row",
                 {
