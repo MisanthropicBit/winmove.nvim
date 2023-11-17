@@ -67,6 +67,9 @@ end
 ---@param source_win_id integer
 ---@param dir winmove.Direction
 function winmove.move_window(source_win_id, dir)
+    -- TODO: Make a public function without source_win_id so users are forced to
+    -- use the current window? Or set the current window as source_win_id before
+    -- executing the rest of the function
     if winutil.window_count() == 1 then
         message.error("Only one window")
         return

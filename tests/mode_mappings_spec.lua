@@ -15,6 +15,7 @@ local function compare_keymap(mode, name, keymap)
     assert.are.same(keymap.desc, config.get_keymap_description(name, mode))
 end
 
+-- TODO: Test that mappings are also restored after moving the window
 describe("mode mappings", function()
     it("sets buffer-only mode mappings when entering move mode", function()
         given("", function()

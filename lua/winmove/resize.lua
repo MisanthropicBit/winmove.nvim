@@ -41,10 +41,13 @@ local function check_edge(edge, dir, sign)
     return sign
 end
 
+---@param win_id integer
 ---@param dir winmove.Direction
 ---@param count integer
----@param anchor winmove.Anchor
+---@param anchor winmove.Anchor?
+---@diagnostic disable-next-line: unused-local
 function resize.resize_window(win_id, dir, count, anchor)
+    -- TODO: Handle full width/height windows at edges
     local vertical = winutil.is_vertical(dir)
 
     if vertical then

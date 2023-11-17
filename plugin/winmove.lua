@@ -1,3 +1,4 @@
+-- TODO: Remove command? It servers no purpose, users might as well require
 local winmove = require("winmove")
 local compat = require("winmove.compat")
 local resize = require("winmove.resize")
