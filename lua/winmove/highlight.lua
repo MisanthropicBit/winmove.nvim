@@ -1,21 +1,17 @@
--- TODO: Convert to use nvim_win_set_hl_ns when we have nvim_win_get_hl_ns:
--- https://github.com/neovim/neovim/issues/24309
-
+--- TODO: Convert to use nvim_win_set_hl_ns when we have nvim_win_get_hl_ns:
+--- https://github.com/neovim/neovim/issues/24309
 local highlight = {}
 
 local config = require("winmove.config")
-local str = require("winmove.util.str")
 
 local api = vim.api
+local highlight_ns = api.nvim_create_namespace("winmove-highlight")
 
 -- Window higlights per mode
 local win_highlights = {
     move = nil,
     resize = nil,
 }
-
----@type string?
-local saved_win_highlights = nil
 
 -- Highlight groups to create winmove versions of
 ---@type string[]
@@ -35,18 +31,11 @@ local highlight_groups = {
 ---@param mode winmove.Mode
 ---@param groups string[]
 local function generate_highlights(mode, groups)
-    local highlights = {}
     local color = config.highlights[mode]
 
     for _, group in ipairs(groups) do
-        local titlecase_mode = str.titlecase(mode)
-        local winmove_group = "Winmove" .. titlecase_mode .. group
-
-        vim.cmd(("hi default link %s %s"):format(winmove_group, color))
-        table.insert(highlights, ("%s:%s"):format(group, winmove_group))
+        api.nvim_set_hl(highlight_ns, group, { link = color })
     end
-
-    return table.concat(highlights, ",")
 end
 
 ---@return string[]
@@ -61,12 +50,18 @@ function highlight.highlight_window(win_id, mode)
         return
     end
 
-    if not win_highlights[mode] then
-        win_highlights[mode] = generate_highlights(mode, highlight_groups)
+    local hi = config.highlights[mode]
+
+    -- Do not bother highlighting if highlights are turned off
+    if not config.valid_string_option(hi) then
+        return
     end
 
-    saved_win_highlights = vim.wo[win_id].winhighlight
-    vim.wo[win_id].winhighlight = win_highlights[mode]
+    if not win_highlights[mode] then
+        generate_highlights(mode, highlight_groups)
+    end
+
+    api.nvim_win_set_hl_ns(win_id, highlight_ns)
 end
 
 ---@param win_id integer
@@ -75,7 +70,7 @@ function highlight.unhighlight_window(win_id)
         return
     end
 
-    vim.wo[win_id].winhighlight = saved_win_highlights
+    api.nvim_win_set_hl_ns(win_id, 0)
 end
 
 ---@param win_id integer
