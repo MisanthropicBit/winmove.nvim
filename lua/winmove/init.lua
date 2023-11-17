@@ -489,8 +489,8 @@ function winmove.current_mode()
     return state.mode
 end
 
-function winmove.setup(user_config)
-    config.setup(user_config)
+function winmove.configure(user_config)
+    config.configure(user_config)
 end
 
 return winmove

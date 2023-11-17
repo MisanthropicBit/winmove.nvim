@@ -51,14 +51,14 @@ describe("config", function()
         stub(message, "error")
 
         for _, invalid_config in ipairs(invalid_configs) do
-            assert.is_false(config.setup(invalid_config))
+            assert.is_false(config.configure(invalid_config))
         end
 
         message.error:revert()
     end)
 
     it("throws no errors for a valid config", function()
-        local ok = config.setup({
+        local ok = config.configure({
             highlights = {
                 move = "Title",
                 resize = nil,
@@ -97,10 +97,10 @@ describe("config", function()
     end)
 
     it("throws no errors for empty user config", function()
-        assert.is_true(config.setup({}))
+        assert.is_true(config.configure({}))
     end)
 
     it("throws no errors for no user config", function()
-        assert.is_true(config.setup())
+        assert.is_true(config.configure())
     end)
 end)

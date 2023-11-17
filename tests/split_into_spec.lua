@@ -8,7 +8,7 @@ local make_layout = test_helpers.make_layout
 
 describe("split_into", function()
     -- Ensure default keymaps
-    config.setup({
+    config.configure({
         keymaps = {
             move = {
                 split_left = "sh",

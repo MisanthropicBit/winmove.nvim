@@ -234,7 +234,7 @@ function config._default_config()
 end
 
 ---@param user_config? winmove.Config
-function config.setup(user_config)
+function config.configure(user_config)
     _user_config = vim.tbl_deep_extend("keep", user_config or {}, default_config)
 
     local global_options = vim.g.winmove
@@ -260,9 +260,9 @@ end
 
 setmetatable(config, {
     __index = function(_, key)
-        -- Lazily load configuration so there is no need to call seutp explicitly
+        -- Lazily load configuration so there is no need to call configure explicitly
         if not config_loaded then
-            config.setup()
+            config.configure()
         end
 
         return _user_config[key]

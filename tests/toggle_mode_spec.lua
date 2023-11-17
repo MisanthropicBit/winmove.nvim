@@ -9,7 +9,7 @@ local make_layout = test_helpers.make_layout
 describe("toggle mode", function()
     it("toggles modes", function()
         given("", function()
-            config.setup({ keymaps = { toggle_mode = "t" } })
+            config.configure({ keymaps = { toggle_mode = "t" } })
 
             local win_id = make_layout({
                 "row",

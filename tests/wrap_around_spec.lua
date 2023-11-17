@@ -8,7 +8,7 @@ local make_layout = test_helpers.make_layout
 
 describe("wrap-around when moving windows", function()
     it("wraps around when enabled in the config", function()
-        config.setup({ wrap_around = true })
+        config.configure({ wrap_around = true })
 
         given("", function()
             local win_ids = make_layout({
@@ -40,7 +40,7 @@ describe("wrap-around when moving windows", function()
     end)
 
     it("does not wrap around when disabled in the config", function()
-        winmove.setup({ wrap_around = false })
+        winmove.configure({ wrap_around = false })
 
         given("", function()
             local win_ids = make_layout({

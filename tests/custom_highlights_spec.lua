@@ -17,7 +17,7 @@ describe("custom highlights", function()
     it("uses a custom highlight for move mode", function()
         vim.cmd(("hi link %s %s"):format("CustomWinmoveMoveMode", "Title"))
 
-        config.setup({
+        config.configure({
             highlights = {
                 move = "CustomWinmoveMoveMode",
             },
@@ -59,7 +59,7 @@ describe("custom highlights", function()
     it("uses a custom highlight for resize mode", function()
         vim.cmd(("hi link %s %s"):format("CustomWinmoveResizeMode", "Repeat"))
 
-        config.setup({
+        config.configure({
             highlights = {
                 resize = "CustomWinmoveResizeMode",
             },

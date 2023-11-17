@@ -9,7 +9,7 @@ local make_layout = test_helpers.make_layout
 
 describe("shows floating window help", function()
     -- Ensure default keymaps
-    config.setup({
+    config.configure({
         keymaps = {
             help = "?",
             help_close = "q",

@@ -59,7 +59,7 @@ use 'MisanthropicBit/winmove.nvim'
 ## Setup
 
 If you are content with the defaults, you don't need to call the `setup`
-function. Otherwise, either call `winmove.setup` with your desired options or
+function. Otherwise, either call `winmove.configure` with your desired options or
 set `vim.g.winmove` to your desired options. Defaults are shown below.
 
 ```lua
@@ -146,7 +146,7 @@ are subject to change.
 Setup `winmove`.
 
 ```lua
-winmove.setup({ ... })
+winmove.configure({ ... })
 ```
 
 Get the current version of `winmove`. You can also execute `:Winmove
