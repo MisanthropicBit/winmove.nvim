@@ -107,13 +107,13 @@ You can define autocommands for when modes start and end.
 >lua
     vim.api.nvim_create_autocmd("WinmoveModeStart", {
         callback = function(event)
-            vim.print("Started ".. event.data.mode .. "mode")
+            vim.print("Started ".. event.data.mode .. " mode")
         end,
     })
     
     vim.api.nvim_create_autocmd("WinmoveModeEnd", {
         callback = function(event)
-            vim.print("Ended ".. event.data.mode .. "mode")
+            vim.print("Ended ".. event.data.mode .. " mode")
         end,
     })
 <
@@ -148,9 +148,13 @@ CONTRIBUTING                                            *winmove-contributing*
 Contributions are welcome!
 
 1. Fork this repository.
-2. Make sure tests are passing (run `./tests/run_tests.sh` in the root directory). Running the tests requires `plenary.nvim` <https://github.com/nvim-lua/plenary.nvim>
-3. Submit a pull request.
-4. Get it approved.
+2. Make sure tests and styling checks are passing.
+
+- Run tests by running `./tests/run_tests.sh` in the root directory. Running the tests requires `plenary.nvim` <https://github.com/nvim-lua/plenary.nvim>
+- Install stylua <> and check styling using `stylua --check lua/ tests/`. Omit `--check` in order to fix styling.
+
+1. Submit a pull request.
+2. Get it approved.
 
 
 FAQ                                                              *winmove-faq*
