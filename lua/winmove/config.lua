@@ -47,7 +47,7 @@ local default_config = {
     -- TODO: Move everything into top-level "move" and "resize" tables?
     -- TODO: Move into move_mode key if we get top-level options
     highlights = {
-        move = "Search",
+        move = "Visual",
         resize = "Substitute",
     },
     wrap_around = true,
