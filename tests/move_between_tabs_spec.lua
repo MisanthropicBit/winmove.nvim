@@ -7,8 +7,6 @@ local test_helpers = require("winmove.util.test_helpers")
 local given = vader.given
 local make_layout = test_helpers.make_layout
 
--- TODO: Add tests for split into
-
 describe("moving between tabs", function()
     -- Ensure default configuration
     config.setup({
@@ -339,6 +337,80 @@ describe("moving between tabs", function()
                 {
 
                     { "leaf", source_win_ids["old_bottom"] },
+                    { "leaf" },
+                },
+            })
+        end)
+    end)
+
+    it("splits right into another tab", function()
+        given("", function()
+            local source_win_ids = make_layout({
+                "row",
+                {
+                    "leaf",
+                    {
+                        "col",
+                        {
+                            "main",
+                            "old_bottom",
+                        },
+                    },
+                },
+            })
+
+            vim.cmd.tabnew()
+
+            local target_win_ids = make_layout({
+                "row",
+                {
+                    {
+                        "col",
+                        {
+                            "top",
+                            "bottom",
+                        },
+                    },
+                    "leaf",
+                },
+            })
+
+            local win_id = source_win_ids["main"]
+            vim.api.nvim_set_current_win(win_id)
+            local before_buffer = vim.api.nvim_get_current_buf()
+
+            winmove.split_into(win_id, "l")
+            local after_buffer = vim.api.nvim_get_current_buf()
+
+            -- Window ids are not the same but the buffer is
+            assert.are.same(before_buffer, after_buffer)
+
+            -- Check window layout of tab 1
+            assert.matches_winlayout(vim.fn.winlayout(1), {
+                "row",
+                {
+                    { "leaf" },
+                    { "leaf", source_win_ids["old_bottom"] },
+                },
+            })
+
+            -- Check window layout of tab 2
+            assert.matches_winlayout(vim.fn.winlayout(2), {
+                "row",
+                {
+                    {
+                        "col",
+                        {
+                            {
+                                "row",
+                                {
+                                    { "leaf" },
+                                    { "leaf", target_win_ids["top"] },
+                                },
+                            },
+                            { "leaf", target_win_ids["bottom"] },
+                        },
+                    },
                     { "leaf" },
                 },
             })
