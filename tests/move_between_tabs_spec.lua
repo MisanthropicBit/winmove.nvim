@@ -9,7 +9,7 @@ local make_layout = test_helpers.make_layout
 
 describe("moving between tabs", function()
     -- Ensure default configuration
-    config.setup({
+    config.configure({
         at_edge = {
             horizontal = at_edge.MoveToTab,
         },

@@ -63,7 +63,7 @@ describe("config", function()
         stub(message, "error")
 
         for _, invalid_config in ipairs(invalid_configs) do
-            local ok = config.setup(invalid_config)
+            local ok = config.configure(invalid_config)
 
             if ok then
                 vim.print(invalid_config)
