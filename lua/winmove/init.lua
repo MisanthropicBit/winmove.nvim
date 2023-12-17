@@ -124,6 +124,11 @@ local function handle_edge(source_win_id, dir, behaviour, split_into)
 
         return true, target_win_id, dir
     elseif behaviour == at_edge.MoveToTab then
+        if winutil.window_count() == 1 and vim.fn.tabpagenr("$") == 1 then
+            -- Only one window and one tab, do not proceed
+            return false, nil, dir
+        end
+
         ---@cast dir winmove.HorizontalDirection
         local target_win_id, reldir = layout.get_target_window_in_tab(source_win_id, dir)
         local final_dir = reldir ---@type winmove.Direction
@@ -488,9 +493,18 @@ end
 
 ---@param mode winmove.Mode
 start_mode = function(mode)
-    if winutil.window_count() == 1 then
-        message.error("Only one window")
-        return
+    local at_edge_horizontal = config.at_edge.horizontal
+
+    if at_edge_horizontal == at_edge.MoveToTab then
+        if winutil.window_count() == 1 and vim.fn.tabpagenr("$") == 1 then
+            message.error("Only one window and tab")
+            return
+        end
+    elseif at_edge_horizontal == at_edge.Wrap then
+        if winutil.window_count() == 1 then
+            message.error("Only one window")
+            return
+        end
     end
 
     local cur_win_id = api.nvim_get_current_win()

@@ -3,6 +3,8 @@ local at_edge = require("winmove.at_edge")
 local config = require("winmove.config")
 local vader = require("winmove.util.vader")
 local test_helpers = require("winmove.util.test_helpers")
+local message = require("winmove.message")
+local stub = require("luassert.stub")
 
 local given = vader.given
 local make_layout = test_helpers.make_layout
@@ -414,6 +416,29 @@ describe("moving between tabs", function()
                     { "leaf" },
                 },
             })
+        end)
+    end)
+
+    it("does not move window if there is only one window and one tab", function()
+        given("", function()
+            local win_id = vim.api.nvim_get_current_win()
+
+            assert.matches_winlayout(vim.fn.winlayout(), { "leaf", win_id })
+
+            winmove.move_window(win_id, "l")
+
+            assert.matches_winlayout(vim.fn.winlayout(), { "leaf", win_id })
+        end)
+    end)
+
+    it("does not start move mode if there is only one window and one tab", function()
+        given("", function()
+            stub(message, "error")
+
+            winmove.start_mode(winmove.mode.Move)
+            assert.stub(message.error).was.called_with("Only one window and tab")
+
+            message.error:revert()
         end)
     end)
 end)
