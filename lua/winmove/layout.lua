@@ -209,8 +209,6 @@ local function find_target_window_in_tab(win_id, pos, dir)
     local tab_count = vim.fn.tabpagenr("$")
     local target_tab_id = tab_id + (dir == "h" and -1 or 1)
 
-    -- TODO: Check that both tabpages are valid
-
     -- Wrap tab pages
     if target_tab_id > tab_count then
         target_tab_id = 1

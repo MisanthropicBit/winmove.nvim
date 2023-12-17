@@ -33,7 +33,7 @@ local state = {
     saved_keymaps = nil,
 }
 
---- Set the current mode
+--- Set current state
 ---@param mode winmove.Mode
 ---@param win_id integer
 ---@param bufnr integer
@@ -49,7 +49,6 @@ local function update_state(changes)
     state = vim.tbl_extend("force", state, changes)
 end
 
---- Quit the current mode
 local function reset_state()
     state.mode = nil
     state.win_id = nil
@@ -92,9 +91,6 @@ local function move_window_to_tab(source_win_id, target_win_id, dir, vertical)
     local mode = winmove.mode.Move
     highlight.highlight_window(new_win_id, mode)
 
-    -- TODO: Should we still update buffer keymaps? Probably not
-    -- TODO: Handle user calling winmove.move_window directly without being in a mode
-
     if winmove.current_mode() ~= nil then
         -- Update state with the new window
         update_state({
@@ -118,7 +114,8 @@ local function handle_edge(source_win_id, dir, behaviour, split_into)
         local new_target_win_id = layout.get_wraparound_neighbor(dir)
 
         if new_target_win_id == source_win_id then
-            -- The window is full width/height
+            -- If we get the same window it is full width/height because we
+            -- wrap around to the same window
             return false, nil, dir
         end
 
