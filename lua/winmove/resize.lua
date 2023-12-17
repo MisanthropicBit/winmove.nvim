@@ -48,7 +48,7 @@ end
 ---@diagnostic disable-next-line: unused-local
 function resize.resize_window(win_id, dir, count, anchor)
     -- TODO: Handle full width/height windows at edges
-    local vertical = winutil.is_vertical(dir)
+    local vertical = winutil.is_horizontal(dir)
 
     if vertical then
         if winutil.is_full_width(win_id) then

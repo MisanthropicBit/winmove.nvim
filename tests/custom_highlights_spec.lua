@@ -37,7 +37,7 @@ describe("custom highlights", function()
                 },
             })
 
-            winmove.start_move_mode()
+            winmove.start_mode(winmove.mode.Move)
 
             local win_id = vim.api.nvim_get_current_win()
 
@@ -52,7 +52,7 @@ describe("custom highlights", function()
                 assert.are.same(linked_group, "CustomWinmoveMoveMode")
             end
 
-            winmove.stop_move_mode()
+            winmove.stop_mode()
         end)
     end)
 
@@ -79,7 +79,7 @@ describe("custom highlights", function()
                 },
             })
 
-            winmove.start_resize_mode()
+            winmove.start_mode(winmove.mode.Resize)
 
             local win_id = vim.api.nvim_get_current_win()
 
@@ -95,7 +95,7 @@ describe("custom highlights", function()
                 assert.are.same(linked_group, "CustomWinmoveResizeMode")
             end
 
-            winmove.stop_resize_mode()
+            winmove.stop_mode()
         end)
     end)
 end)

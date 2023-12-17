@@ -7,8 +7,12 @@ local given = vader.given
 local make_layout = test_helpers.make_layout
 
 describe("split_into", function()
-    -- Ensure default keymaps
+    -- Ensure default configuration
     config.configure({
+        at_edge = {
+            horizontal = false,
+            vertical = false,
+        },
         keymaps = {
             move = {
                 split_left = "sh",
@@ -26,17 +30,18 @@ describe("split_into", function()
             local win_id = make_layout({
                 "row",
                 {
+                    "leaf",
                     {
                         "col",
                         { "main", "leaf" },
                     },
-                    "leaf",
                 },
             })["main"]
 
             assert.matches_winlayout(vim.fn.winlayout(), {
                 "row",
                 {
+                    { "leaf" },
                     {
                         "col",
                         {
@@ -44,12 +49,11 @@ describe("split_into", function()
                             { "leaf" },
                         },
                     },
-                    { "leaf" },
                 },
             })
 
             vim.api.nvim_set_current_win(win_id)
-            winmove.start_move_mode()
+            winmove.start_mode(winmove.mode.Move)
             vim.cmd.normal("sh")
 
             assert.matches_winlayout(vim.fn.winlayout(), {
@@ -103,7 +107,7 @@ describe("split_into", function()
             })
 
             vim.api.nvim_set_current_win(win_id)
-            winmove.start_move_mode()
+            winmove.start_mode(winmove.mode.Move)
             vim.cmd.normal("sj")
 
             assert.matches_winlayout(vim.fn.winlayout(), {
@@ -164,7 +168,7 @@ describe("split_into", function()
 
             vim.api.nvim_set_current_win(win_id)
 
-            winmove.start_move_mode()
+            winmove.start_mode(winmove.mode.Move)
             vim.cmd.normal("sk")
 
             assert.matches_winlayout(vim.fn.winlayout(), {
@@ -201,7 +205,7 @@ describe("split_into", function()
             })
 
             vim.api.nvim_set_current_win(win_id)
-            winmove.start_move_mode()
+            winmove.start_mode(winmove.mode.Move)
             vim.cmd.normal("l")
 
             assert.matches_winlayout(vim.fn.winlayout(), {

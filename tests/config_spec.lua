@@ -1,3 +1,4 @@
+local at_edge = require("winmove.at_edge")
 local config = require("winmove.config")
 local message = require("winmove.message")
 local stub = require("luassert.stub")
@@ -11,7 +12,18 @@ describe("config", function()
                 },
             },
             {
-                wrap_around = 2,
+                at_edge = 2,
+            },
+            {
+                at_edge = {
+                    horizontal = at_edge.MoveToTab,
+                    vertical = at_edge.MoveToTab,
+                },
+            },
+            {
+                at_edge = {
+                    vertical = true,
+                },
             },
             {
                 default_resize_count = false,
@@ -51,7 +63,13 @@ describe("config", function()
         stub(message, "error")
 
         for _, invalid_config in ipairs(invalid_configs) do
-            assert.is_false(config.configure(invalid_config))
+            local ok = config.configure(invalid_config)
+
+            if ok then
+                vim.print(invalid_config)
+            end
+
+            assert.is_false(ok)
         end
 
         message.error:revert()
@@ -63,7 +81,10 @@ describe("config", function()
                 move = "Title",
                 resize = nil,
             },
-            wrap_around = false,
+            at_edge = {
+                horizontal = at_edge.Wrap,
+                vertical = false,
+            },
             default_resize_count = 2,
             keymaps = {
                 help = "_",

@@ -188,6 +188,8 @@ others suit your needs then by all means use them.
 
 ### Moving and resizing windows
 
+### Move between tabs
+
 ### Moving using relative cursor position
 
 ### Toggle help

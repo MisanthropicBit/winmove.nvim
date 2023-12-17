@@ -32,7 +32,7 @@ describe("shows floating window help", function()
             })
 
             local win_id1 = vim.api.nvim_get_current_win()
-            winmove.start_resize_mode()
+            winmove.start_mode(winmove.mode.Resize)
 
             assert.is_false(float.is_help_window(win_id1))
 
