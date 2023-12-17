@@ -125,7 +125,7 @@ end
 function layout.get_sibling_relative_dir(source_win_id, target_win_id, dir)
     local grow, gcol = get_cursor_screen_position(source_win_id)
     local bbox = window_bounding_box(target_win_id)
-    local vertical = winutil.is_vertical(dir)
+    local vertical = winutil.is_horizontal(dir)
     local pos = 0
     local extents = {} ---@type integer[]
     local dirs = {} ---@type table<winmove.Direction>

@@ -166,7 +166,7 @@ function winmove.move_window(source_win_id, dir)
 
     -- No neighbor, handle configured behaviour at edges
     if target_win_id == nil then
-        local edge_type = winutil.is_vertical(dir) and "horizontal" or "vertical"
+        local edge_type = winutil.is_horizontal(dir) and "horizontal" or "vertical"
         local behaviour = config.at_edge[edge_type]
         local proceed, new_target_win_id, new_dir =
             handle_edge(source_win_id, dir, behaviour, false)
@@ -189,7 +189,7 @@ function winmove.move_window(source_win_id, dir)
         vim.fn.win_splitmove,
         source_win_id,
         target_win_id,
-        { vertical = winutil.is_vertical(dir), rightbelow = dir == "j" or dir == "l" }
+        { vertical = winutil.is_horizontal(dir), rightbelow = dir == "j" or dir == "l" }
     )
 end
 
@@ -205,7 +205,7 @@ function winmove.split_into(source_win_id, dir)
 
     -- No neighbor, handle configured behaviour at edges
     if target_win_id == nil then
-        local edge_type = winutil.is_vertical(dir) and "horizontal" or "vertical"
+        local edge_type = winutil.is_horizontal(dir) and "horizontal" or "vertical"
         local behaviour = config.at_edge[edge_type]
         local proceed, new_target_win_id, new_dir = handle_edge(source_win_id, dir, behaviour, true)
 
@@ -218,7 +218,7 @@ function winmove.split_into(source_win_id, dir)
     end
 
     local split_options = {
-        vertical = winutil.is_vertical(dir),
+        vertical = winutil.is_horizontal(dir),
         rightbelow = dir == "h" or dir == "k",
     }
 

@@ -52,7 +52,7 @@ function winutil.wincall_no_events(func, ...)
 end
 
 ---@param dir winmove.Direction
-function winutil.is_vertical(dir)
+function winutil.is_horizontal(dir)
     return dir == "h" or dir == "l"
 end
 
