@@ -20,6 +20,7 @@ end
 --- Call a window-related function in the current window without triggering any events
 ---@param func function
 ---@param ... any
+---@return boolean
 function winutil.wincall_no_events(func, ...)
     local saved_eventignore = vim.opt_global.eventignore:get()
 
@@ -49,6 +50,8 @@ function winutil.wincall_no_events(func, ...)
     end
 
     vim.opt_global.eventignore = saved_eventignore
+
+    return ok
 end
 
 ---@param dir winmove.Direction

@@ -77,9 +77,13 @@ end
 local function move_window_to_tab(source_win_id, target_win_id, dir, vertical)
     local source_buffer = api.nvim_win_get_buf(source_win_id)
 
-    -- TODO: Check for error here?
-    winutil.wincall_no_events(api.nvim_win_close, source_win_id, false)
-    winutil.wincall_no_events(api.nvim_set_current_win, target_win_id)
+    if not winutil.wincall_no_events(api.nvim_win_close, source_win_id, false) then
+        return
+    end
+
+    if not winutil.wincall_no_events(api.nvim_set_current_win, target_win_id) then
+        return
+    end
 
     -- Split buffer and switch to new window
     bufutil.split_buffer(source_buffer, {
