@@ -1,7 +1,7 @@
 local config = {}
 
-local message = require("winmove.message")
 local at_edge = require("winmove.at_edge")
+local message = require("winmove.message")
 
 local config_loaded = false
 

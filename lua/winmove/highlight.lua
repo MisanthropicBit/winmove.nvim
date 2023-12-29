@@ -75,7 +75,8 @@ function highlight.unhighlight_window(win_id)
         return
     end
 
-    vim.wo[win_id].winhighlight = saved_win_highlights
+    vim.wo[win_id].winhighlight = saved_win_highlights or ""
+    saved_win_highlights = nil
 end
 
 ---@param win_id integer

@@ -96,14 +96,12 @@ local function move_window_to_tab(source_win_id, target_win_id, dir, vertical)
 
     local new_win_id = api.nvim_get_current_win()
     local mode = winmove.mode.Move
+
     highlight.highlight_window(new_win_id, mode)
 
     if winmove.current_mode() == winmove.mode.Move then
         -- Update state with the new window
-        update_state({
-            win_id = new_win_id,
-            bufnr = source_buffer,
-        })
+        update_state({ win_id = new_win_id })
     end
 end
 
