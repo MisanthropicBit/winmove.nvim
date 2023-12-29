@@ -152,6 +152,32 @@ local function handle_edge(source_win_id, dir, behaviour, split_into)
     end
 end
 
+---@param win_id integer
+---@param mode winmove.Mode
+---@return boolean
+local function can_move(win_id, mode)
+    local at_edge_horizontal = config.at_edge.horizontal
+
+    if at_edge_horizontal == at_edge.MoveToTab then
+        if winutil.window_count() == 1 and vim.fn.tabpagenr("$") == 1 then
+            message.error("Only one window and tab")
+            return false
+        end
+    elseif at_edge_horizontal == at_edge.Wrap then
+        if winutil.window_count() == 1 then
+            message.error("Only one window")
+            return false
+        end
+    end
+
+    if mode == winmove.mode.Move and winutil.is_floating_window(win_id) then
+        message.error("Cannot move floating window")
+        return false
+    end
+
+    return true
+end
+
 --- Move a window in a given direction
 ---@param source_win_id integer
 ---@param dir winmove.Direction
@@ -159,13 +185,7 @@ function winmove.move_window(source_win_id, dir)
     -- TODO: Make a public function without source_win_id so users are forced to
     -- use the current window? Or set the current window as source_win_id before
     -- executing the rest of the function
-    if winutil.window_count() == 1 then
-        message.error("Only one window")
-        return
-    end
-
-    if winutil.is_floating_window(source_win_id) then
-        message.error("Cannot move floating window")
+    if not can_move(source_win_id, winmove.mode.Move) then
         return
     end
 
@@ -498,24 +518,9 @@ end
 
 ---@param mode winmove.Mode
 start_mode = function(mode)
-    local at_edge_horizontal = config.at_edge.horizontal
-
-    if at_edge_horizontal == at_edge.MoveToTab then
-        if winutil.window_count() == 1 and vim.fn.tabpagenr("$") == 1 then
-            message.error("Only one window and tab")
-            return
-        end
-    elseif at_edge_horizontal == at_edge.Wrap then
-        if winutil.window_count() == 1 then
-            message.error("Only one window")
-            return
-        end
-    end
-
     local cur_win_id = api.nvim_get_current_win()
 
-    if mode == winmove.mode.Move and winutil.is_floating_window(cur_win_id) then
-        message.error("Cannot " .. mode .. " floating window")
+    if not can_move(cur_win_id, mode) then
         return
     end
 

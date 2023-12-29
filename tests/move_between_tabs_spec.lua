@@ -421,6 +421,8 @@ describe("moving between tabs", function()
 
     it("does not move window if there is only one window and one tab", function()
         given("", function()
+            stub(message, "error")
+
             local win_id = vim.api.nvim_get_current_win()
 
             assert.matches_winlayout(vim.fn.winlayout(), { "leaf", win_id })
@@ -428,6 +430,9 @@ describe("moving between tabs", function()
             winmove.move_window(win_id, "l")
 
             assert.matches_winlayout(vim.fn.winlayout(), { "leaf", win_id })
+
+            assert.stub(message.error).was.called_with("Only one window and tab")
+            message.error:revert()
         end)
     end)
 

@@ -1,4 +1,6 @@
 local winmove = require("winmove")
+local at_edge = require("winmove.at_edge")
+local config = require("winmove.config")
 local vader = require("winmove.util.vader")
 local stub = require("luassert.stub")
 local test_helpers = require("winmove.util.test_helpers")
@@ -7,6 +9,13 @@ local given = vader.given
 local make_layout = test_helpers.make_layout
 
 describe("basic movements", function()
+    config.configure({
+        at_edge = {
+            horizontal = at_edge.Wrap,
+            vertical = at_edge.Wrap,
+        },
+    })
+
     describe("direct function invocation", function()
         it("moves window to the left", function()
             given("", function()
