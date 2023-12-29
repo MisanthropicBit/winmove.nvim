@@ -77,6 +77,9 @@ end
 local function move_window_to_tab(source_win_id, target_win_id, dir, vertical)
     local source_buffer = api.nvim_win_get_buf(source_win_id)
 
+    -- https://github.com/neovim/neovim/issues/18283
+    highlight.unhighlight_window(source_win_id)
+
     if not winutil.wincall_no_events(api.nvim_win_close, source_win_id, false) then
         return
     end
