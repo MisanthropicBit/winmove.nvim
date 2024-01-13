@@ -104,6 +104,18 @@ function layout.are_siblings(win_id1, win_id2)
     return _are_siblings(win_layout, nil, win_id1)
 end
 
+-- Find the distances to the extents of the target window
+---@param pos integer
+---@param extents integer[]
+---@param dirs winmove.Direction[]
+---@return winmove.Direction
+local function relative_dir_by_extents(pos, extents, dirs)
+    local dist1 = math.abs(pos - extents[1])
+    local dist2 = math.abs(pos - extents[2])
+
+    return dirs[dist1 < dist2 and 1 or 2]
+end
+
 --- Find the relative direction of a move/split based on the cursor's distance
 --- to the extents of the target window
 ---@param source_win_id integer
@@ -113,9 +125,9 @@ end
 function layout.get_sibling_relative_dir(source_win_id, target_win_id, dir)
     local grow, gcol = get_cursor_screen_position(source_win_id)
     local bbox = window_bounding_box(target_win_id)
-    local vertical = winutil.is_vertical(dir)
+    local vertical = winutil.is_horizontal(dir)
     local pos = 0
-    local extents = {} ---@type table<integer>
+    local extents = {} ---@type integer[]
     local dirs = {} ---@type table<winmove.Direction>
 
     if vertical then
@@ -128,12 +140,7 @@ function layout.get_sibling_relative_dir(source_win_id, target_win_id, dir)
         dirs = { "h", "l" }
     end
 
-    -- Find the distances to the extents of the target window
-    local dist1 = math.abs(pos - extents[1])
-    local dist2 = math.abs(pos - extents[2])
-    local reldir = dirs[dist1 < dist2 and 1 or 2] ---@type winmove.Direction
-
-    return reldir
+    return relative_dir_by_extents(pos, extents, dirs)
 end
 
 --- Get a leaf's parent or nil if it is not found
@@ -164,6 +171,69 @@ function layout.get_leaf_parent(win_id)
     end
 
     return _find(win_layout, nil)
+end
+
+---@param win_id integer
+---@param pos integer
+---@param dir winmove.Direction
+---@return integer
+local function find_target_window_in_tab(win_id, pos, dir)
+    local function _find_target_window_in_tab(win_layout, _dir)
+        local type, data = win_layout[1], win_layout[2]
+
+        if type == "leaf" then
+            local leaf_bbox = window_bounding_box(data)
+
+            if pos >= leaf_bbox.top and pos <= leaf_bbox.bottom then
+                -- Leaf bounding box contains cursor position
+                return data
+            end
+        elseif type == "row" then
+            local idx = _dir == "h" and 1 or #data
+
+            -- Recurse into the left- or right-most subtree
+            return _find_target_window_in_tab(data[idx], _dir)
+        elseif type == "col" then
+            for _, subtree in ipairs(data) do
+                local _win_id = _find_target_window_in_tab(subtree, _dir)
+
+                if _win_id then
+                    return _win_id
+                end
+            end
+        end
+    end
+
+    -- Find target tabpage number
+    local tab_id = vim.api.nvim_tabpage_get_number(vim.api.nvim_win_get_tabpage(win_id))
+    local tab_count = vim.fn.tabpagenr("$")
+    local target_tab_id = tab_id + (dir == "h" and -1 or 1)
+
+    -- Wrap tab pages
+    if target_tab_id > tab_count then
+        target_tab_id = 1
+    elseif target_tab_id < 1 then
+        target_tab_id = tab_count
+    end
+
+    local target_tab_win_layout = vim.fn.winlayout(target_tab_id)
+    local revdir = winutil.reverse_direction(dir)
+
+    return _find_target_window_in_tab(target_tab_win_layout, revdir)
+end
+
+---@param source_win_id integer
+---@param dir winmove.HorizontalDirection
+---@return integer
+---@return winmove.VerticalDirection
+function layout.get_target_window_in_tab(source_win_id, dir)
+    local grow, _ = get_cursor_screen_position(source_win_id)
+    local target_win_id = find_target_window_in_tab(source_win_id, grow, dir)
+    local bbox = window_bounding_box(target_win_id)
+    local reldir = relative_dir_by_extents(grow, { bbox.top, bbox.bottom }, { "k", "j" })
+
+    ---@cast reldir winmove.VerticalDirection
+    return target_win_id, reldir
 end
 
 return layout

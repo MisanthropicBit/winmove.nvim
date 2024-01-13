@@ -25,7 +25,7 @@ describe("toggle mode", function()
             })
 
             vim.api.nvim_set_current_win(win_id)
-            winmove.start_move_mode()
+            winmove.start_mode(winmove.mode.Move)
 
             assert.are.same(winmove.current_mode(), "move")
 
@@ -35,7 +35,7 @@ describe("toggle mode", function()
             vim.cmd([[execute "normal t"]])
             assert.are.same(winmove.current_mode(), "move")
 
-            winmove.stop_move_mode()
+            winmove.stop_mode()
         end)
     end)
 end)
