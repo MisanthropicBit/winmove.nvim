@@ -28,7 +28,6 @@
 - [Requirements](#requirements)
 - [Installing](#installing)
 - [Setup](#setup)
-- [Commands](#commands)
 - [Autocommands](#autocommands)
 - [Public API](#public-api)
 - [Contributing](#contributing)
@@ -100,23 +99,6 @@ require('winmove').setup({ -- Or pass the table to vim.g.winmove
 })
 ```
 
-## Commands
-
-The easiest way to start a mode is through the `Winmove` command: `:Winmove
-move` or `:Winmove resize`.
-
-> [!IMPORTANT]  
-> Moving windows takes into account the cursor position of the current window
-> relative to the target window in the direction you are moving.
->
-> For example, if your cursor position is closest to the bottom of one window in
-> the target direction, the window will be moved below that window. See
-> [this example](#moving-using-relative-cursor-position) for a visual explanation.
-
-The `Winmove` command also takes arguments for moving windows that correspond to
-the `config.keymaps.move` key passed to the `setup` function, e.g. `:Winmove
-far_right`. You can also quit the current mode using `:Winmove quit`.
-
 ## Autocommands
 
 You can define autocommands for when modes start and end.
@@ -149,8 +131,7 @@ Setup `winmove`.
 winmove.configure({ ... })
 ```
 
-Get the current version of `winmove`. You can also execute `:Winmove
-version`.
+Get the current version of `winmove`.
 
 ```lua
 winmove.version()
@@ -161,6 +142,14 @@ Check which mode is currently active. Returns `"move"`, `"resize"`, or `nil`.
 ```lua
 winmove.current_mode()
 ```
+
+> [!IMPORTANT]  
+> Moving windows takes into account the cursor position of the current window
+> relative to the target window in the direction you are moving.
+>
+> For example, if your cursor position is closest to the bottom of one window in
+> the target direction, the window will be moved below that window. See
+> [this example](#moving-using-relative-cursor-position) for a visual explanation.
 
 ## Contributing
 
