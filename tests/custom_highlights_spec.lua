@@ -14,6 +14,31 @@ describe("custom highlights", function()
         return
     end
 
+    local function get_expected_winhighlight(prefix)
+        local template = {
+            "CursorLine:%sCursorLine",
+            "CursorLineNr:%sCursorLineNr",
+            "DiagnosticVirtualTextOk:%sDiagnosticVirtualTextOk",
+            "DiagnosticVirtualTextHint:%sDiagnosticVirtualTextHint",
+            "DiagnosticVirtualTextInfo:%sDiagnosticVirtualTextInfo",
+            "DiagnosticVirtualTextWarn:%sDiagnosticVirtualTextWarn",
+            "DiagnosticVirtualTextError:%sDiagnosticVirtualTextError",
+            "EndOfBuffer:%sEndOfBuffer",
+            "FoldColumn:%sFoldColumn",
+            "LineNr:%sLineNr",
+            "LineNrAbove:%sLineNrAbove",
+            "LineNrBelow:%sLineNrBelow",
+            "Normal:%sNormal",
+            "SignColumn:%sSignColumn",
+        }
+
+        local prefixed = vim.tbl_map(function(item)
+            return item:format(prefix)
+        end, template)
+
+        return table.concat(prefixed, ",")
+    end
+
     it("uses a custom highlight for move mode", function()
         vim.cmd(("hi link %s %s"):format("CustomWinmoveMoveMode", "Title"))
 
@@ -41,10 +66,7 @@ describe("custom highlights", function()
 
             local win_id = vim.api.nvim_get_current_win()
 
-            assert.are.same(
-                vim.wo[win_id].winhighlight,
-                "Normal:WinmoveMoveNormal,CursorLine:WinmoveMoveCursorLine,CursorLineNr:WinmoveMoveCursorLineNr,EndOfBuffer:WinmoveMoveEndOfBuffer,SignColumn:WinmoveMoveSignColumn,FoldColumn:WinmoveMoveFoldColumn,LineNr:WinmoveMoveLineNr,LineNrAbove:WinmoveMoveLineNrAbove,LineNrBelow:WinmoveMoveLineNrBelow"
-            )
+            assert.are.same(vim.wo[win_id].winhighlight, get_expected_winhighlight("WinmoveMove"))
 
             for _, group in ipairs(highlight.groups()) do
                 local linked_group = vim.api.nvim_get_hl(0, { name = "WinmoveMove" .. group }).link
@@ -83,10 +105,7 @@ describe("custom highlights", function()
 
             local win_id = vim.api.nvim_get_current_win()
 
-            assert.are.same(
-                vim.wo[win_id].winhighlight,
-                "Normal:WinmoveResizeNormal,CursorLine:WinmoveResizeCursorLine,CursorLineNr:WinmoveResizeCursorLineNr,EndOfBuffer:WinmoveResizeEndOfBuffer,SignColumn:WinmoveResizeSignColumn,FoldColumn:WinmoveResizeFoldColumn,LineNr:WinmoveResizeLineNr,LineNrAbove:WinmoveResizeLineNrAbove,LineNrBelow:WinmoveResizeLineNrBelow"
-            )
+            assert.are.same(vim.wo[win_id].winhighlight, get_expected_winhighlight("WinmoveResize"))
 
             for _, group in ipairs(highlight.groups()) do
                 local linked_group =

@@ -20,15 +20,20 @@ local saved_win_highlights = nil
 -- Highlight groups to create winmove versions of
 ---@type string[]
 local highlight_groups = {
-    "Normal",
     "CursorLine",
     "CursorLineNr",
+    "DiagnosticVirtualTextOk",
+    "DiagnosticVirtualTextHint",
+    "DiagnosticVirtualTextInfo",
+    "DiagnosticVirtualTextWarn",
+    "DiagnosticVirtualTextError",
     "EndOfBuffer",
-    "SignColumn",
     "FoldColumn",
     "LineNr",
     "LineNrAbove",
     "LineNrBelow",
+    "Normal",
+    "SignColumn",
 }
 
 --- Generate group highlights for a mode
