@@ -6,7 +6,6 @@ Table of Contents                                  *winmove-table-of-contents*
   - Requirements                                        |winmove-requirements|
   - Installing                                            |winmove-installing|
   - Setup                                                      |winmove-setup|
-  - Commands                                                |winmove-commands|
   - Autocommands                                        |winmove-autocommands|
   - Public API                                            |winmove-public-api|
   - Contributing                                        |winmove-contributing|
@@ -80,23 +79,6 @@ or set `vim.g.winmove` to your desired options. Defaults are shown below.
 <
 
 
-COMMANDS                                                    *winmove-commands*
-
-The easiest way to start a mode is through the `Winmove` command: `:Winmove
-move` or `:Winmove resize`.
-
-
-  [!IMPORTANT] Moving windows takes into account the cursor position of the
-  current window relative to the target window in the direction you are moving.
-  For example, if your cursor position is closest to the bottom of one window in
-  the target direction, the window will be moved below that window. See
-  |winmove-this-example| for a visual explanation.
-The `Winmove` command also takes arguments for moving windows that correspond
-to the `config.keymaps.move` key passed to the `setup` function,
-e.g. `:Winmove far_right`. You can also quit the current mode using `:Winmove
-quit`.
-
-
 AUTOCOMMANDS                                            *winmove-autocommands*
 
 You can define autocommands for when modes start and end.
@@ -130,7 +112,7 @@ Setup `winmove`.
     winmove.configure({ ... })
 <
 
-Get the current version of `winmove`. You can also execute `:Winmove version`.
+Get the current version of `winmove`.
 
 >lua
     winmove.version()
@@ -142,6 +124,12 @@ Check which mode is currently active. Returns `"move"`, `"resize"`, or `nil`.
     winmove.current_mode()
 <
 
+
+  [!IMPORTANT] Moving windows takes into account the cursor position of the
+  current window relative to the target window in the direction you are moving.
+  For example, if your cursor position is closest to the bottom of one window in
+  the target direction, the window will be moved below that window. See
+  |winmove-this-example| for a visual explanation.
 
 CONTRIBUTING                                            *winmove-contributing*
 
