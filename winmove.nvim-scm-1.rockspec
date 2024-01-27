@@ -1,6 +1,6 @@
 local _MODREV, _SPECREV = 'scm', '-1'
 rockspec_format = "3.0"
-package = 'nvim-dap'
+package = 'winmove.nvim'
 version = _MODREV .. _SPECREV
 
 description = {
@@ -9,8 +9,8 @@ description = {
   labels = {
     'neovim',
     'plugin',
-    'debug-adapter-protocol',
-    'debugger',
+    'window',
+    'resize',
   },
   homepage = 'https://github.com/MisanthropicBit/winmove.nvim',
   license = 'BSD 3-Clause',
