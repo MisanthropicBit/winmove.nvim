@@ -82,6 +82,10 @@ local default_config = {
             down = "j",
             up = "k",
             right = "l",
+            left_other = "<c-h>",
+            down_other = "<c-j>",
+            up_other = "<c-k>",
+            right_other = "<c-l>",
         },
     },
 }

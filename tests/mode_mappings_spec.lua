@@ -6,6 +6,8 @@ local vader = require("winmove.util.vader")
 local given = vader.given
 
 local function compare_keymap(mode, name, keymap)
+    assert.is_not_nil(keymap)
+
     -- Do asserts separately otherwise the callback function will not match
     assert.are.same(keymap.rhs, "")
     assert.are.same(keymap.noremap, 1)
@@ -26,7 +28,7 @@ describe("mode mappings", function()
             local keymaps = test_helpers.get_buf_mapped_keymaps(vim.api.nvim_get_current_buf())
 
             for name, lhs in pairs(config.keymaps.move) do
-                compare_keymap("move", name, keymaps[lhs])
+                compare_keymap("move", name, keymaps[lhs] or keymaps[lhs:upper()])
             end
         end)
     end)
@@ -40,7 +42,7 @@ describe("mode mappings", function()
             local keymaps = test_helpers.get_buf_mapped_keymaps(vim.api.nvim_get_current_buf())
 
             for name, lhs in pairs(config.keymaps.resize) do
-                compare_keymap("resize", name, keymaps[lhs])
+                compare_keymap("resize", name, keymaps[lhs] or keymaps[lhs:upper()])
             end
         end)
     end)

@@ -56,6 +56,7 @@ end
 
 ---@param dir winmove.Direction
 function winutil.is_horizontal(dir)
+    -- TODO: Move direction functions into a direction.lua file?
     return dir == "h" or dir == "l"
 end
 
