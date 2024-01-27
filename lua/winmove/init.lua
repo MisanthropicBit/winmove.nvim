@@ -319,13 +319,21 @@ local function resize_mode_key_handler(keys)
     local keymaps = config.keymaps.resize
 
     if keys == keymaps.left then
-        resize.resize_window(win_id, "h", count, "top_left")
+        resize.resize_window(win_id, "h", count, resize.anchor.TopLeft)
     elseif keys == keymaps.down then
-        resize.resize_window(win_id, "j", count, "top_left")
+        resize.resize_window(win_id, "j", count, resize.anchor.TopLeft)
     elseif keys == keymaps.up then
-        resize.resize_window(win_id, "k", count, "top_left")
+        resize.resize_window(win_id, "k", count, resize.anchor.TopLeft)
     elseif keys == keymaps.right then
-        resize.resize_window(win_id, "l", count, "top_left")
+        resize.resize_window(win_id, "l", count, resize.anchor.TopLeft)
+    elseif keys == keymaps.left_other then
+        resize.resize_window(win_id, "h", count, resize.anchor.BottomRight)
+    elseif keys == keymaps.down_other then
+        resize.resize_window(win_id, "j", count, resize.anchor.BottomRight)
+    elseif keys == keymaps.up_other then
+        resize.resize_window(win_id, "k", count, resize.anchor.BottomRight)
+    elseif keys == keymaps.right_other then
+        resize.resize_window(win_id, "l", count, resize.anchor.BottomRight)
     elseif keys == keymaps.move_mode then
         winmove.toggle_mode()
     end
@@ -383,7 +391,7 @@ local function create_pcall_mode_key_handler(mode)
         local ok, error = pcall(handler, keys)
 
         if not ok then
-            -- There was an error in the call, restore keymaps and quit move mode
+            -- There was an error in the call, restore keymaps and quit current mode
             winmove.stop_mode()
             message.error((("Got error in '%s' mode: %s"):format(mode, error)))
         end
@@ -615,8 +623,9 @@ end
 ---@param win_id integer
 ---@param dir winmove.Direction
 ---@param count integer
-function winmove.resize_window(win_id, dir, count)
-    resize.resize_window(win_id, dir, count)
+---@param anchor winmove.ResizeAnchor?
+function winmove.resize_window(win_id, dir, count, anchor)
+    resize.resize_window(win_id, dir, count, anchor)
 end
 
 function winmove.current_mode()
