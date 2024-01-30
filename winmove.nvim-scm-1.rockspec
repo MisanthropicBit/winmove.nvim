@@ -1,7 +1,6 @@
-local _MODREV, _SPECREV = 'scm', '-1'
 rockspec_format = "3.0"
 package = 'winmove.nvim'
-version = _MODREV .. _SPECREV
+version = 'scm-1'
 
 description = {
   summary = 'Easily move and resize windows',
@@ -13,6 +12,7 @@ description = {
     'resize',
   },
   homepage = 'https://github.com/MisanthropicBit/winmove.nvim',
+  issues_url = 'https://github.com/MisanthropicBit/winmove.nvim/issues',
   license = 'BSD 3-Clause',
 }
 
@@ -21,7 +21,7 @@ dependencies = {
 }
 
 source = {
-   url = 'git://github.com/MisanthropicBit/winmove.nvim',
+   url = 'git+https://github.com/MisanthropicBit/winmove.nvim',
 }
 
 build = {
@@ -30,4 +30,9 @@ build = {
      'doc',
      'plugin',
    },
+}
+
+test = {
+    type = "command",
+    command = "./tests/run_tests.sh",
 }
