@@ -306,10 +306,9 @@ end
 
 ---@param keys string
 local function resize_mode_key_handler(keys)
-    local count = vim.v.count
-
     ---@type integer
     local win_id = state.win_id
+    local count = vim.v.count
 
     -- If no count is provided use the default count otherwise use the provided count
     if count == 0 then
@@ -334,6 +333,10 @@ local function resize_mode_key_handler(keys)
         resize.resize_window(win_id, "k", count, resize.anchor.BottomRight)
     elseif keys == keymaps.right_other then
         resize.resize_window(win_id, "l", count, resize.anchor.BottomRight)
+    elseif keys == keymaps.set_percentage_width then
+        resize.resize_window_to_percentage(win_id, vim.v.count, true)
+    elseif keys == keymaps.set_percentage_height then
+        resize.resize_window_to_percentage(win_id, vim.v.count, false)
     elseif keys == keymaps.move_mode then
         winmove.toggle_mode()
     end

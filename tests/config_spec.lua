@@ -110,6 +110,10 @@ describe("config", function()
                     down = "<Down>",
                     up = "<Up>",
                     right = "<Right>",
+                    left_other = "<s-h>",
+                    down_other = "<s-j>",
+                    up_other = "<s-k>",
+                    right_other = "<s-l>",
                 },
             },
         })
