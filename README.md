@@ -4,8 +4,8 @@
   <p><i>Easily move and resize windows</i></p>
   <p>
     <img src="https://img.shields.io/badge/version-0.1.0-blue?style=flat-square" />
-    <a href="https://luarocks.org/modules/MisanthropicBit/winmove.nvim">
-        <img src="https://img.shields.io/luarocks/v/MisanthropicBit/winmove.nvim?logo=lua&color=purple" />
+    <a href="https://luarocks.org/modules/misanthropicbit/winmove.nvim">
+        <img src="https://img.shields.io/luarocks/v/misanthropicbit/winmove.nvim?logo=lua&color=purple&style=flat-square" />
     </a>
     <a href="/.github/workflows/tests.yml">
         <img src="https://img.shields.io/github/actions/workflow/status/MisanthropicBit/winmove.nvim/tests.yml?branch=master&style=flat-square" />
