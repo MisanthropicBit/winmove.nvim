@@ -24,6 +24,10 @@ local config_loaded = false
 ---@field down         string
 ---@field up           string
 ---@field right        string
+---@field left_other   string
+---@field down_other   string
+---@field up_other     string
+---@field right_other  string
 
 ---@class winmove.ConfigModeKeymaps
 ---@field help        string
@@ -86,6 +90,8 @@ local default_config = {
             down_other = "<c-j>",
             up_other = "<c-k>",
             right_other = "<c-l>",
+            set_percentage_width = "%w",
+            set_percentage_height = "%h",
         },
     },
 }
@@ -114,6 +120,12 @@ local mapping_descriptions = {
         down = "Resize window down",
         up = "Resize window up",
         right = "Resize window right",
+        left_other = "Resize window left with bottom-right anchor",
+        down_other = "Resize window down with bottom-right anchor",
+        up_other = "Resize window up with bottom-right anchor",
+        right_other = "Resize window right with bottom-right anchor",
+        set_percentage_width = "Resize width to [count] percentage of the editor width",
+        set_percentage_height = "Resize height to [count] percentage of the editor height",
     },
 }
 
