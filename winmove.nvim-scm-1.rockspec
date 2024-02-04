@@ -1,33 +1,38 @@
-local _MODREV, _SPECREV = 'scm', '-1'
 rockspec_format = "3.0"
-package = 'nvim-dap'
-version = _MODREV .. _SPECREV
+package = "winmove.nvim"
+version = "scm-1"
 
 description = {
-  summary = 'Easily move and resize windows',
+  summary = "Easily move and resize windows",
   detailed = [[]],
   labels = {
-    'neovim',
-    'plugin',
-    'debug-adapter-protocol',
-    'debugger',
+    "neovim",
+    "plugin",
+    "window",
+    "resize",
   },
-  homepage = 'https://github.com/MisanthropicBit/winmove.nvim',
-  license = 'BSD 3-Clause',
+  homepage = "https://github.com/MisanthropicBit/winmove.nvim",
+  issues_url = "https://github.com/MisanthropicBit/winmove.nvim/issues",
+  license = "BSD 3-Clause",
 }
 
 dependencies = {
-  'lua == 5.1',
+  "lua == 5.1",
 }
 
 source = {
-   url = 'git://github.com/MisanthropicBit/winmove.nvim',
+   url = "git+https://github.com/MisanthropicBit/winmove.nvim",
 }
 
 build = {
-   type = 'builtin',
+   type = "builtin",
    copy_directories = {
-     'doc',
-     'plugin',
+     "doc",
+     "plugin",
    },
+}
+
+test = {
+    type = "command",
+    command = "./tests/run_tests.sh",
 }
