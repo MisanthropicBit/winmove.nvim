@@ -514,6 +514,18 @@ local function create_mode_autocmds(mode, source_win_id)
             desc = "Remove highlighting from any new window because the winhighlight option can leak into other windows",
         })
     )
+
+    table.insert(
+        autocmds,
+        api.nvim_create_autocmd("InsertEnter", {
+            callback = function()
+                stop_mode(mode)
+                return true
+            end,
+            group = augroup,
+            desc = "Quits " .. mode .. " when entering insert mode",
+        })
+    )
 end
 
 ---@param mode winmove.Mode

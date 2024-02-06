@@ -25,7 +25,7 @@ describe("no window events", function()
 
     it("does not trigger any window events when moving", function()
         given("", function()
-            vim.cmd("belowright vnew")
+            vim.cmd.vnew()
 
             -- Set up autocmds *after* splitting
             for _, event in ipairs(events) do
