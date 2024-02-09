@@ -143,36 +143,6 @@ function layout.get_sibling_relative_dir(source_win_id, target_win_id, dir)
     return relative_dir_by_extents(pos, extents, dirs)
 end
 
---- Get a leaf's parent or nil if it is not found
----@param win_id integer
----@return table?
-function layout.get_leaf_parent(win_id)
-    local win_layout = vim.fn.winlayout()
-
-    ---@return table?
-    local function _find(node, parent)
-        local type, data = unpack(node)
-
-        if type == "leaf" then
-            if data == win_id then
-                return parent
-            end
-        else
-            for _, child in ipairs(data) do
-                local found = _find(child, node)
-
-                if found then
-                    return found
-                end
-            end
-        end
-
-        return nil
-    end
-
-    return _find(win_layout, nil)
-end
-
 ---@param win_id integer
 ---@param pos integer
 ---@param dir winmove.Direction
