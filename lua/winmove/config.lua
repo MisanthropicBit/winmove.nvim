@@ -58,6 +58,7 @@ local default_config = {
         vertical = at_edge.Wrap,
     },
     default_resize_count = 3,
+    default_float_move_count = 1,
     keymaps = {
         help = "?",
         help_close = "q",

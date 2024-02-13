@@ -153,12 +153,16 @@ local function handle_edge(source_win_id, dir, behaviour, split_into)
 end
 
 ---@param win_id integer
----@param mode winmove.Mode
 ---@return boolean
-local function can_move(win_id, mode)
+local function can_move(win_id)
     local at_edge_horizontal = config.at_edge.horizontal
 
     if at_edge_horizontal == at_edge.MoveToTab then
+        -- if float.is_floating_window(win_id) then
+        --     message.error("Cannot move floating window between tabs")
+        --     return false
+        -- end
+
         if winutil.window_count() == 1 and vim.fn.tabpagenr("$") == 1 then
             message.error("Only one window and tab")
             return false
@@ -168,11 +172,6 @@ local function can_move(win_id, mode)
             message.error("Only one window")
             return false
         end
-    end
-
-    if mode == winmove.mode.Move and winutil.is_floating_window(win_id) then
-        message.error("Cannot move floating window")
-        return false
     end
 
     return true
@@ -185,7 +184,12 @@ function winmove.move_window(source_win_id, dir)
     -- TODO: Make a public function without source_win_id so users are forced to
     -- use the current window? Or set the current window as source_win_id before
     -- executing the rest of the function
-    if not can_move(source_win_id, winmove.mode.Move) then
+    if not can_move(source_win_id) then
+        return
+    end
+
+    if float.is_floating_window(source_win_id) then
+        float.move_window(source_win_id, dir)
         return
     end
 
@@ -263,9 +267,55 @@ end
 
 ---@diagnostic disable-next-line:unused-local
 function winmove.move_window_far(source_win_id, dir)
+    if float.is_floating_window(source_win_id) then
+        float.move_window_far(source_win_id, dir)
+        return
+    end
+
     winutil.wincall_no_events(function()
         vim.cmd("wincmd " .. dir:upper())
     end)
+end
+
+local keymap_mode_result_mapping = {
+    [winmove.mode.Move] = {
+        { "left",        winmove.move_window,     "h" },
+        { "down",        winmove.move_window,     "j" },
+        { "up",          winmove.move_window,     "k" },
+        { "right",       winmove.move_window,     "l" },
+        { "split_left",  winmove.split_into,      "h" },
+        { "split_down",  winmove.split_into,      "j" },
+        { "split_up",    winmove.split_into,      "k" },
+        { "split_right", winmove.split_into,      "l" },
+        { "far_left",    winmove.move_window_far, "h" },
+        { "far_down",    winmove.move_window_far, "j" },
+        { "far_up",      winmove.move_window_far, "k" },
+        { "far_right",   winmove.move_window_far, "l" },
+        { "resize_mode", winmove.toggle_mode },
+    },
+    [winmove.mode.Resize] = {
+        { "left",        winmove.resize_window, "h" },
+        { "down",        winmove.resize_window, "j" },
+        { "up",          winmove.resize_window, "k" },
+        { "right",       winmove.resize_window, "l" },
+        { "resize_mode", winmove.toggle_mode },
+    },
+}
+
+---
+---@param win_id integer
+---@param keys string
+---@param keymaps winmove.ConfigModeKeymaps | winmove.ConfigResizeModeKeymaps
+---@return function
+---@return any[]
+local function get_keymap_result_from_keys(mode, win_id, keys, keymaps)
+    local keymap_result_mapping = keymap_mode_result_mapping[mode]
+
+    for _, value in ipairs(keymap_result_mapping) do
+        if keys == keymaps[value[1]] then
+            return value[2], { win_id, value[3] }
+        end
+    end
 end
 
 ---@param keys string
@@ -275,33 +325,14 @@ local function move_mode_key_handler(keys)
     ---@type integer
     local win_id = state.win_id
 
-    if keys == keymaps.left then
-        winmove.move_window(win_id, "h")
-    elseif keys == keymaps.down then
-        winmove.move_window(win_id, "j")
-    elseif keys == keymaps.up then
-        winmove.move_window(win_id, "k")
-    elseif keys == keymaps.right then
-        winmove.move_window(win_id, "l")
-    elseif keys == keymaps.split_left then
-        winmove.split_into(win_id, "h")
-    elseif keys == keymaps.split_down then
-        winmove.split_into(win_id, "j")
-    elseif keys == keymaps.split_up then
-        winmove.split_into(win_id, "k")
-    elseif keys == keymaps.split_right then
-        winmove.split_into(win_id, "l")
-    elseif keys == keymaps.far_left then
-        winmove.move_window_far(win_id, "h")
-    elseif keys == keymaps.far_down then
-        winmove.move_window_far(win_id, "j")
-    elseif keys == keymaps.far_up then
-        winmove.move_window_far(win_id, "k")
-    elseif keys == keymaps.far_right then
-        winmove.move_window_far(win_id, "l")
-    elseif keys == keymaps.resize_mode then
-        winmove.toggle_mode()
+    if float.is_floating_window(win_id) then
+        float.move_window(win_id, keys, config.default_float_move_count)
+        return
     end
+
+    local func, args = get_keymap_result_from_keys(winmove.mode.Move, win_id, keys, keymaps)
+
+    func(unpack(args))
 end
 
 ---@param keys string
@@ -316,19 +347,15 @@ local function resize_mode_key_handler(keys)
         count = config.default_resize_count
     end
 
-    local keymaps = config.keymaps.resize
-
-    if keys == keymaps.left then
-        resize.resize_window(win_id, "h", count, "top_left")
-    elseif keys == keymaps.down then
-        resize.resize_window(win_id, "j", count, "top_left")
-    elseif keys == keymaps.up then
-        resize.resize_window(win_id, "k", count, "top_left")
-    elseif keys == keymaps.right then
-        resize.resize_window(win_id, "l", count, "top_left")
-    elseif keys == keymaps.move_mode then
-        winmove.toggle_mode()
+    if float.is_floating_window(win_id) then
+        float.resize_window(win_id, keys)
+        return
     end
+
+    local keymaps = config.keymaps.resize
+    local func, args = get_keymap_result_from_keys(winmove.mode.Resize, win_id, keys, keymaps)
+
+    func(unpack(args), count, resize.anchor.TopLeft)
 end
 
 --- Set a move mode keymap for a buffer
@@ -414,7 +441,7 @@ local function set_keymaps(win_id, bufnr, mode)
     end
 
     set_mode_keymap(win_id, bufnr, config.keymaps.help, function()
-        float.open(mode)
+        float.open_help(mode)
     end, config.get_keymap_description("help"))
 
     set_mode_keymap(

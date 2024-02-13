@@ -6,11 +6,6 @@ local winutil = require("winmove.winutil")
 ---@alias winmove.Sign "+" | "-"
 ---@alias winmove.Anchor "top_left" | "bottom_right"
 
----@param dir winmove.Direction
-local function is_at_edge(dir)
-    return vim.fn.winnr(dir) == vim.fn.winnr()
-end
-
 ---@param vertical boolean
 ---@param sign string
 ---@param count integer
@@ -32,7 +27,7 @@ end
 ---@param sign winmove.Sign
 ---@return winmove.Sign
 local function check_edge(edge, dir, sign)
-    if is_at_edge(edge) then
+    if winutil.is_at_edge(edge) then
         if dir == edge or dir == winutil.reverse_direction(edge) then
             return flip_sign(sign)
         end

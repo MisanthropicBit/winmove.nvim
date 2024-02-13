@@ -1,5 +1,6 @@
 local float = {}
 
+local at_edge = require("winmove.at_edge")
 local config = require("winmove.config")
 local message = require("winmove.message")
 local winutil = require("winmove.winutil")
@@ -106,7 +107,7 @@ end
 
 --- Open a float that displays help for the current mode
 ---@param mode winmove.Mode
-function float.open(mode)
+function float.open_help(mode)
     local lines = {}
     local keymaps = config.keymaps[mode]
     local max_widths = {}
@@ -173,6 +174,108 @@ function float.close()
     -- TODO: Should we explicitly set the window to the parent window here?
     pcall(vim.api.nvim_win_close, float_win_id, true)
     float_win_id = nil
+end
+
+--- Dettach a floating window by changing its 'relative' property to 'editor' so it
+--- can be moved around freely
+---@param win_id integer
+function float.dettach(win_id, win_config)
+    if not float.is_floating_window(win_id) then
+        error(("Not a floating window: %d"):format(win_id))
+    end
+
+    if win_config.relative == "editor" then
+        return win_config.row[vim.val_idx], win_config.col[vim.val_idx]
+    elseif win_config.relative == "win" then
+        win_config.relative = "editor"
+        local win_row, win_col = unpack(vim.fn.win_screenpos(win_id))
+
+        -- Calculate global screen positions
+        local row = win_row + win_config.bufpos[1] + win_config.row[vim.val_idx] + 1
+        local col = win_col + win_config.bufpos[2] + win_config.col[vim.val_idx]
+
+        return row, col
+    elseif win_config.relative == "cursor" then
+    elseif win_config.relative == "mouse" then
+    end
+end
+
+function float.get_wraparound_position(dir, row, col, win_config)
+    if winutil.is_horizontal(dir) then
+        if dir == "h" then
+            vim.print({ row, winutil.editor_width() - win_config.width })
+            return row - 1, winutil.editor_width() - win_config.width
+        else
+            return row - 1, 0
+        end
+    else
+        if dir == "j" then
+            return 0, col - 1
+        else
+            -- TODO: Use zero or do we need to account for the tabline?
+            return winutil.editor_bottom() - win_config.height - 1, col - 1
+        end
+    end
+end
+
+function float.is_at_edge(dir, row, col, win_config)
+    if dir == "h" then
+        return col <= 1
+    elseif dir == "j" then
+        return row + win_config.height >= winutil.editor_bottom() - 1
+    elseif dir == "k" then
+        return row <= 1
+    elseif dir == "l" then
+        return col + win_config.width >= winutil.editor_width() - 1
+    end
+end
+
+function float.move_window(win_id, dir, count)
+    local row, col = unpack(vim.fn.win_screenpos(win_id))
+    local win_config = vim.api.nvim_win_get_config(win_id)
+
+    if float.is_at_edge(dir, row, col, win_config) then
+        local edge_type = winutil.is_horizontal(dir) and "horizontal" or "vertical"
+        local behaviour = config.at_edge[edge_type]
+
+        if not behaviour then
+            return
+        end
+
+        row, col = float.get_wraparound_position(dir, row, col, win_config)
+    else
+        local dy, dx = 0, 0
+
+        if winutil.is_horizontal(dir) then
+            dx = dir == "l" and 1 or -1
+        else
+            dy = dir == "j" and 1 or -1
+        end
+
+        row, col = row + dy * count - 1, col + dx * count - 1
+    end
+
+    -- See lua-special-tbl for the row/col values
+    local new_win_config = {
+        row = row,
+        col = col,
+        relative = "editor",
+    }
+
+    vim.api.nvim_win_set_config(win_id, new_win_config)
+end
+
+function float.move_window_far(win_id, dir)
+
+end
+
+---@param win_id integer
+---@return boolean
+function float.is_floating_window(win_id)
+    vim.print(win_id)
+    local win_config = vim.api.nvim_win_get_config(win_id)
+
+    return win_config and (win_config.relative ~= "" or not win_config.relative)
 end
 
 ---@param win_id integer

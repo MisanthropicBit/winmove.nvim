@@ -9,14 +9,6 @@ function winutil.window_count()
     return vim.fn.winnr("$")
 end
 
----@param win_id integer
----@return boolean
-function winutil.is_floating_window(win_id)
-    local win_config = vim.api.nvim_win_get_config(win_id)
-
-    return win_config and (win_config.relative ~= "" or not win_config.relative)
-end
-
 --- Call a window-related function in the current window without triggering any events
 ---@param func function
 ---@param ... any
@@ -60,6 +52,11 @@ function winutil.is_horizontal(dir)
 end
 
 ---@param dir winmove.Direction
+function winutil.is_at_edge(dir)
+    return vim.fn.winnr(dir) == vim.fn.winnr()
+end
+
+---@param dir winmove.Direction
 ---@return winmove.Direction
 function winutil.reverse_direction(dir)
     return ({
@@ -78,7 +75,6 @@ end
 ---@return integer
 function winutil.editor_height()
     local height = vim.o.lines - vim.o.cmdheight
-
     local showtabline = vim.o.showtabline
 
     -- Subtract 1 if the tabline is visible
@@ -94,6 +90,10 @@ function winutil.editor_height()
     end
 
     return height
+end
+
+function winutil.editor_bottom()
+    return vim.o.lines - vim.o.cmdheight
 end
 
 function winutil.is_full_width(win_id)
