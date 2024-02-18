@@ -1,18 +1,13 @@
 local resize = {}
 
 local layout = require("winmove.layout")
-local message = require("winmove.message")
 local winutil = require("winmove.winutil")
 
----@alias winmove.Sign "+" | "-"
-
 ---@enum winmove.ResizeAnchor
-local ResizeAnchor = {
+resize.anchor = {
     TopLeft = "top_left",
     BottomRight = "bottom_right",
 }
-
-resize.anchor = ResizeAnchor
 
 ---@param dir winmove.Direction
 local function is_at_edge(dir)
@@ -24,29 +19,10 @@ end
 ---@param count integer
 ---@param winnr integer?
 local function _resize(horizontal, sign, count, winnr)
-    local _win_id = winnr and tostring(winnr) or ""
-    local _vertical = horizontal and "vertical " or ""
+    local win_id = winnr and tostring(winnr) or ""
+    local vertical = horizontal and "vertical " or ""
 
-    vim.cmd(("%s%sresize %s%d"):format(_vertical, _win_id, sign > 0 and "+" or "-", count or 1))
-end
-
-local function flip_sign(sign)
-    return sign == "+" and "-" or "+"
-end
-
---- Adjust sign if at an edge
----@param edge winmove.Direction
----@param dir winmove.Direction
----@param sign winmove.Sign
----@return winmove.Sign
-local function check_at_edge(edge, dir, sign)
-    if is_at_edge(edge) then
-        if dir == edge or dir == winutil.reverse_direction(edge) then
-            return flip_sign(sign)
-        end
-    end
-
-    return sign
+    vim.cmd(("%s%sresize %s%d"):format(vertical, win_id, sign > 0 and "+" or "-", count or 1))
 end
 
 ---@type table<boolean, table<boolean, winmove.Direction>>
@@ -61,27 +37,61 @@ local neighbor_dir_table = {
     },
 }
 
+---@param dir winmove.Direction
+---@param get_dimension_func fun(win_id: integer): integer
+---@param min_dimension fun(): integer
+---@return boolean
+local function can_resize(dir, get_dimension_func, min_dimension)
+    local neighbor_count, applied = layout.apply_to_neighbors(dir, function(neighbor_win_id)
+        local dimension = get_dimension_func(neighbor_win_id)
+
+        return true, dimension <= min_dimension()
+    end)
+
+    -- All neighbors are at minimal width/height so we cannot resize
+    return neighbor_count ~= applied
+end
+
 ---@param win_id integer
 ---@param dir winmove.Direction
 ---@param count integer
 ---@param anchor winmove.ResizeAnchor?
 ---@diagnostic disable-next-line: unused-local
-function resize.resize_window(win_id, dir, count, anchor)
+function resize.resize_window(win_id, dir, count, anchor, ignore_neighbors)
     if count < 1 then
         return
     end
 
     local horizontal = winutil.is_horizontal(dir)
-    local is_full_dimension = winutil[horizontal and "is_full_width" or "is_full_height"]
+    local is_full_dimension, get_dimension, get_min_dimension, edges
+
+    if horizontal then
+        is_full_dimension = winutil.is_full_width
+        get_dimension = vim.api.nvim_win_get_width
+        get_min_dimension = function()
+            return math.max(vim.opt_local.winheight:get(), vim.go.winminheight)
+        end
+        edges = { "l", "h" }
+    else
+        is_full_dimension = winutil.is_full_height
+        get_dimension = vim.api.nvim_win_get_height
+        get_min_dimension = function()
+            return math.max(vim.opt_local.winwidth:get(), vim.go.winminwidth)
+        end
+        edges = { "j", "k" }
+    end
 
     if is_full_dimension(win_id) then
         return
     end
 
     local sign = (dir == "l" or dir == "j") and 1 or -1
-    local winnr = vim.fn.winnr()
+    local winnr = vim.fn.win_id2win(win_id)
     local top_left = (anchor or resize.anchor.TopLeft) == resize.anchor.TopLeft
-    local edges = horizontal and { "l", "h" } or { "j", "k" }
+
+    if not can_resize(dir, get_dimension, get_min_dimension) then
+        return
+    end
 
     if is_at_edge(edges[1]) and top_left then
         -- If we are at the right or bottom edge with a top-left anchor, flip
@@ -114,6 +124,36 @@ function resize.resize_window(win_id, dir, count, anchor)
 
             -- Not a sibling, resize the neighbor instead
             winnr = neighbor_winnr
+
+            -- Check if the opposite neighbor is a sibling since a resize
+            -- towards a non-sibling will actually resize the neighbor instead
+            -- of the current window and if the opposite neighbor is a sibling,
+            -- vim/neovim will drag both (or more) siblings towards it or push
+            -- them.
+            --
+            -- For example, resize to the left with a bottom-right corner
+            -- towards a non-sibling will decrease the size of the non-sibling
+            -- neighbor but move the current window and an opposite sibling
+            -- neighbor window with it.
+            --
+            -- To compensate, we resize the opposite neighbor in the other
+            -- direction with an opposite anchor. This is only relevant when
+            -- using the bottom-right corner
+            if not top_left then
+                local opposite_neighbor_winnr = vim.fn.winnr(winutil.reverse_direction(neighbor_dir))
+                local opposite_is_sibling =
+                    layout.are_siblings(win_id, vim.fn.win_getid(opposite_neighbor_winnr))
+
+                if opposite_is_sibling then
+                    resize.resize_window(
+                        win_id,
+                        winutil.reverse_direction(dir),
+                        count,
+                        resize.anchor.TopLeft,
+                        false
+                    )
+                end
+            end
         else
             -- Neighbor is a sibling, resize the current window and flip the
             -- sign for same reason as above but for the bottom-right anchor
@@ -124,70 +164,32 @@ function resize.resize_window(win_id, dir, count, anchor)
     end
 
     _resize(horizontal, sign, count, winnr)
-end
 
---- Resize a window according to a percentage of the total width/height of the editor
----@param win_id integer
----@param percentage number
----@param horizontal boolean
-function resize.resize_window_to_percentage(win_id, percentage, horizontal)
-    -- Idea
-    -- 80%w => Set to 80% of width in both directions (down to a minimim for other windows?)
-    -- 80%l => Set to 80% of width to the right (down to a minimim for other
-    -- windows?) and otherwise in the other direction if it is not possible to
-    -- go 80% width in one direction
-    local editor_size, dimension, dir1, dir2
+    if ignore_neighbors == nil then
+        -- TODO: Skip first neighbor if non-sibling?
+        layout.apply_to_neighbors(dir, function(neighbor_win_id)
+            local dimension = get_dimension(neighbor_win_id)
+            local min_dimension = get_min_dimension()
+            -- local condition = dimension > min_dimension and not layout.are_siblings(win_id, neighbor_win_id)
+            vim.print({ neighbor_win_id, dimension })
 
-    if horizontal then
-        editor_size = winutil.editor_width()
-        dimension = vim.api.nvim_win_get_width(win_id)
-        dir1, dir2 = "l", "h"
-    else
-        editor_size = winutil.editor_height()
-        dimension = vim.api.nvim_win_get_height(win_id)
-        dir1, dir2 = "j", "k"
+            if dimension <= min_dimension() then
+                winutil.win_id_context_call(
+                    neighbor_win_id,
+                    resize.resize_window,
+                    neighbor_win_id,
+                    dir,
+                    dimension > min_dimension and count or min_dimension - dimension,
+                    anchor,
+                    false
+                )
+
+                return true, true
+            end
+
+            return false, false
+        end)
     end
-
-    local target_size = editor_size * percentage / 100.0
-
-    if target_size < 1 then
-        message.error("Cannot resize window to less than 1% of editor size")
-        return
-    end
-
-    local size_diff = target_size - dimension
-
-    if size_diff == 0 then
-        return
-    end
-
-    -- Handle (literal) edge cases
-    if horizontal then
-        local is_at_right_edge = is_at_edge("l")
-
-        if is_at_right_edge or is_at_edge("h") then
-            local dir = is_at_right_edge and dir2 or dir1
-            dir = size_diff > 0 and dir or winutil.reverse_direction(dir)
-            resize.resize_window(win_id, dir, math.abs(size_diff), resize.anchor.TopLeft)
-            return
-        end
-    else
-        local is_at_bottom_edge = is_at_edge("j")
-
-        if is_at_bottom_edge or is_at_edge("k") then
-            local dir = is_at_bottom_edge and dir2 or dir1
-            dir = size_diff > 0 and dir or winutil.reverse_direction(dir)
-            resize.resize_window(win_id, dir, math.abs(size_diff), resize.anchor.BottomRight)
-            return
-        end
-    end
-
-    if size_diff < 0 then
-        dir1, dir2 = dir2, dir1
-    end
-
-    resize.resize_window(win_id, dir1, math.abs(math.floor(size_diff / 2)), resize.anchor.TopLeft)
-    resize.resize_window(win_id, dir2, math.abs(math.ceil(size_diff / 2)), resize.anchor.BottomRight)
 end
 
 return resize
