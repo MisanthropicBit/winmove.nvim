@@ -325,18 +325,14 @@ local function resize_mode_key_handler(keys)
         resize.resize_window(win_id, "k", count, resize.anchor.TopLeft)
     elseif keys == keymaps.right then
         resize.resize_window(win_id, "l", count, resize.anchor.TopLeft)
-    elseif keys == keymaps.left_other then
+    elseif keys == keymaps.left_botright then
         resize.resize_window(win_id, "h", count, resize.anchor.BottomRight)
-    elseif keys == keymaps.down_other then
+    elseif keys == keymaps.down_botright then
         resize.resize_window(win_id, "j", count, resize.anchor.BottomRight)
-    elseif keys == keymaps.up_other then
+    elseif keys == keymaps.up_botright then
         resize.resize_window(win_id, "k", count, resize.anchor.BottomRight)
-    elseif keys == keymaps.right_other then
+    elseif keys == keymaps.right_botright then
         resize.resize_window(win_id, "l", count, resize.anchor.BottomRight)
-    elseif keys == keymaps.set_percentage_width then
-        resize.resize_window_to_percentage(win_id, vim.v.count, true)
-    elseif keys == keymaps.set_percentage_height then
-        resize.resize_window_to_percentage(win_id, vim.v.count, false)
     elseif keys == keymaps.move_mode then
         winmove.toggle_mode()
     end

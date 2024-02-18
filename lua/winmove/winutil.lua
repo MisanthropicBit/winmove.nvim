@@ -54,6 +54,28 @@ function winutil.wincall_no_events(func, ...)
     return ok
 end
 
+--- Switch to a window, call a function, then jump back to the original window
+---@param win_id integer
+---@param func function
+---@param ... any
+---@return boolean
+function winutil.win_id_context_call(win_id, func, ...)
+    local args = { ... }
+
+    local ok = winutil.wincall_no_events(function()
+        local old_win_id = vim.api.nvim_get_current_win()
+        vim.api.nvim_set_current_win(win_id)
+
+        local ok = pcall(func, unpack(args))
+
+        vim.api.nvim_set_current_win(old_win_id)
+
+        return ok
+    end)
+
+    return ok
+end
+
 ---@param dir winmove.Direction
 function winutil.is_horizontal(dir)
     -- TODO: Move direction functions into a direction.lua file?

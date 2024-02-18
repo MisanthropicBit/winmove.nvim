@@ -98,8 +98,6 @@ require('winmove').setup({ -- Or pass the table to vim.g.winmove
             down_other = "<c-j>", -- Resize down with bottom-right anchor
             up_other = "<c-k>", -- Resize up with bottom-right anchor
             right_other = "<c-l>", -- Resize right with bottom-right anchor
-            set_percentage_width = "%w", -- Resize width to [count] percentage of the editor width
-            set_percentage_height = "%h", -- Resize height to [count] percentage of the editor height
         },
     },
 })

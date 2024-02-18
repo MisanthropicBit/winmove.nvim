@@ -20,14 +20,14 @@ local config_loaded = false
 ---@field split_right string
 
 ---@class winmove.ConfigResizeModeKeymaps
----@field left         string
----@field down         string
----@field up           string
----@field right        string
----@field left_other   string
----@field down_other   string
----@field up_other     string
----@field right_other  string
+---@field left           string
+---@field down           string
+---@field up             string
+---@field right          string
+---@field left_botright  string
+---@field down_botright  string
+---@field up_botright    string
+---@field right_botright string
 
 ---@class winmove.ConfigModeKeymaps
 ---@field help        string
@@ -86,12 +86,10 @@ local default_config = {
             down = "j",
             up = "k",
             right = "l",
-            left_other = "<c-h>",
-            down_other = "<c-j>",
-            up_other = "<c-k>",
-            right_other = "<c-l>",
-            set_percentage_width = "%w",
-            set_percentage_height = "%h",
+            left_botright = "<c-h>",
+            down_botright = "<c-j>",
+            up_botright = "<c-k>",
+            right_botright = "<c-l>",
         },
     },
 }
@@ -120,12 +118,10 @@ local mapping_descriptions = {
         down = "Resize window down",
         up = "Resize window up",
         right = "Resize window right",
-        left_other = "Resize window left with bottom-right anchor",
-        down_other = "Resize window down with bottom-right anchor",
-        up_other = "Resize window up with bottom-right anchor",
-        right_other = "Resize window right with bottom-right anchor",
-        set_percentage_width = "Resize width to [count] percentage of the editor width",
-        set_percentage_height = "Resize height to [count] percentage of the editor height",
+        left_botright = "Resize window left with bottom-right anchor",
+        down_botright = "Resize window down with bottom-right anchor",
+        up_botright = "Resize window up with bottom-right anchor",
+        right_botright = "Resize window right with bottom-right anchor",
     },
 }
 
