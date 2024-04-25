@@ -13,24 +13,27 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        neovim_version: ['nightly', 'v0.8.0', 'v0.9.0']
+        neovim_version: ['v0.8.0', 'v0.9.0', 'nightly']
 
     steps:
       - uses: actions/checkout@v3
       - run: date +%F > todays-date
       - name: Restore cache for today's nightly.
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: _neovim
           key: ${{ runner.os }}-x64-${{ hashFiles('todays-date') }}
-      - name: Prepare plenary
+      - name: Install test dependencies
         run: |
-          git clone --depth 1 https://github.com/nvim-lua/plenary.nvim ~/.local/share/nvim/site/pack/vendor/start/plenary.nvim
-          ln -s "$(pwd)" ~/.local/share/nvim/site/pack/vendor/start
+          git clone --depth 1 https://github.com/MisanthropicBit/neotest-busted ~/.local/share/nvim/site/pack/start/neotest-busted
+          git clone --depth 1 https://github.com/nvim-neotest/neotest ~/.local/share/nvim/site/pack/start/neotest
+          git clone --depth 1 https://github.com/nvim-neotest/nvim-nio ~/.local/share/nvim/site/pack/start/nvim-nio
+          git clone --depth 1 https://github.com/nvim-lua/plenary.nvim ~/.local/share/nvim/site/pack/start/plenary.nvim
+          ln -s "$(pwd)" ~/.local/share/nvim/site/pack/start
       - name: Setup neovim
         uses: rhysd/action-setup-vim@v1
         with:
           neovim: true
           version: ${{ matrix.neovim_version }}
       - name: Run tests
-        run: ./tests/run_tests.sh
+        run: nvim -u NONE -l ~/.local/share/nvim/site/pack/start/neotest-busted/scripts/test-runner.lua
