@@ -54,23 +54,17 @@ function winutil.wincall_no_events(func, ...)
     return ok
 end
 
---- Switch to a window, call a function, then jump back to the original window
+--- Call a function in the context of a window
 ---@param win_id integer
 ---@param func function
 ---@param ... any
 ---@return boolean
 function winutil.win_id_context_call(win_id, func, ...)
     local args = { ... }
+    local ok
 
-    local ok = winutil.wincall_no_events(function()
-        local old_win_id = vim.api.nvim_get_current_win()
-        vim.api.nvim_set_current_win(win_id)
-
-        local ok = pcall(func, unpack(args))
-
-        vim.api.nvim_set_current_win(old_win_id)
-
-        return ok
+    vim.api.nvim_win_call(win_id, function()
+        ok = winutil.wincall_no_events(func, unpack(args))
     end)
 
     return ok

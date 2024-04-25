@@ -90,7 +90,7 @@ function layout.apply_to_neighbors(dir, func)
         end
 
         count = count + 1
-        local next_neighbor = vim.fn.win_getid(vim.fn.winnr(("%d%s"):format(count + 2, dir)))
+        local next_neighbor = vim.fn.win_getid(vim.fn.winnr(("%d%s"):format(count + 1, dir)))
 
         if next_neighbor == neighbor_win_id then
             break

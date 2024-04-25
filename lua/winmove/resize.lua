@@ -52,6 +52,60 @@ local function can_resize(dir, get_dimension_func, min_dimension)
     return neighbor_count ~= applied
 end
 
+--- Adjust right-hand side neighbors when using a bottom-right corner
+---@param win_id integer
+---@param rev_dir winmove.Direction
+---@param count integer
+local function adjust_neighbors_bottom_right_anchor(win_id, rev_dir, count)
+    layout.apply_to_neighbors("l", function(neighbor_win_id)
+        local neighbor_is_sibling = layout.are_siblings(win_id, neighbor_win_id)
+
+        if neighbor_is_sibling then
+            -- Adjust sibling in the opposite direction
+            winutil.win_id_context_call(
+                neighbor_win_id,
+                resize.resize_window,
+                neighbor_win_id,
+                rev_dir,
+                count,
+                resize.anchor.BottomRight,
+                true
+            )
+        end
+
+        return true, true
+    end)
+end
+
+--- Adjust neighbors in the direction the current window is being resized
+---@param dir winmove.Direction
+---@param get_dimension fun(win_id: integer): integer
+---@param get_min_dimension fun(): integer
+---@param count integer
+---@param anchor winmove.ResizeAnchor
+local function adjust_neighbors_in_direction(dir, get_dimension, get_min_dimension, count, anchor)
+    layout.apply_to_neighbors(dir, function(neighbor_win_id)
+        local dimension = get_dimension(neighbor_win_id)
+        local min_dimension = get_min_dimension()
+
+        if dimension <= min_dimension then
+            winutil.win_id_context_call(
+                neighbor_win_id,
+                resize.resize_window,
+                neighbor_win_id,
+                dir,
+                count,
+                anchor,
+                nil
+            )
+
+            return true, true
+        end
+
+        return false, false
+    end)
+end
+
 ---@param win_id integer
 ---@param dir winmove.Direction
 ---@param count integer
@@ -69,14 +123,14 @@ function resize.resize_window(win_id, dir, count, anchor, ignore_neighbors)
         is_full_dimension = winutil.is_full_width
         get_dimension = vim.api.nvim_win_get_width
         get_min_dimension = function()
-            return math.max(vim.opt_local.winheight:get(), vim.go.winminheight)
+            return math.max(vim.opt_local.winwidth:get(), vim.go.winminwidth)
         end
         edges = { "l", "h" }
     else
         is_full_dimension = winutil.is_full_height
         get_dimension = vim.api.nvim_win_get_height
         get_min_dimension = function()
-            return math.max(vim.opt_local.winwidth:get(), vim.go.winminwidth)
+            return math.max(vim.opt_local.winheight:get(), vim.go.winminheight)
         end
         edges = { "j", "k" }
     end
@@ -139,20 +193,13 @@ function resize.resize_window(win_id, dir, count, anchor, ignore_neighbors)
             -- To compensate, we resize the opposite neighbor in the other
             -- direction with an opposite anchor. This is only relevant when
             -- using the bottom-right corner
-            if not top_left then
-                local opposite_neighbor_winnr = vim.fn.winnr(winutil.reverse_direction(neighbor_dir))
-                local opposite_is_sibling =
-                    layout.are_siblings(win_id, vim.fn.win_getid(opposite_neighbor_winnr))
+            if not ignore_neighbors and not top_left then -- and dir ~= "l" then
+                local rev_dir = winutil.reverse_direction(dir)
 
-                if opposite_is_sibling then
-                    resize.resize_window(
-                        win_id,
-                        winutil.reverse_direction(dir),
-                        count,
-                        resize.anchor.TopLeft,
-                        false
-                    )
-                end
+                -- For a bottom-right anchor, always resize neighbors on the right since we
+                -- are actually resizing a non-sibling neighbor that might push/pull siblings
+                -- neighbors on the right
+                adjust_neighbors_bottom_right_anchor(win_id, rev_dir, count)
             end
         else
             -- Neighbor is a sibling, resize the current window and flip the
@@ -163,32 +210,12 @@ function resize.resize_window(win_id, dir, count, anchor, ignore_neighbors)
         end
     end
 
+    -- Resize the main window
     _resize(horizontal, sign, count, winnr)
 
-    if ignore_neighbors == nil then
+    if not ignore_neighbors then
         -- TODO: Skip first neighbor if non-sibling?
-        layout.apply_to_neighbors(dir, function(neighbor_win_id)
-            local dimension = get_dimension(neighbor_win_id)
-            local min_dimension = get_min_dimension()
-            -- local condition = dimension > min_dimension and not layout.are_siblings(win_id, neighbor_win_id)
-            vim.print({ neighbor_win_id, dimension })
-
-            if dimension <= min_dimension() then
-                winutil.win_id_context_call(
-                    neighbor_win_id,
-                    resize.resize_window,
-                    neighbor_win_id,
-                    dir,
-                    dimension > min_dimension and count or min_dimension - dimension,
-                    anchor,
-                    false
-                )
-
-                return true, true
-            end
-
-            return false, false
-        end)
+        adjust_neighbors_in_direction(dir, get_dimension, get_min_dimension, count, anchor)
     end
 end
 
