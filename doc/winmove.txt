@@ -5,7 +5,7 @@ Table of Contents                                  *winmove-table-of-contents*
 
   - Requirements                                        |winmove-requirements|
   - Installing                                            |winmove-installing|
-  - Setup                                                      |winmove-setup|
+  - Configuration                                      |winmove-configuration|
   - Autocommands                                        |winmove-autocommands|
   - Public API                                            |winmove-public-api|
   - Contributing                                        |winmove-contributing|
@@ -34,14 +34,13 @@ INSTALLING                                                *winmove-installing*
 <
 
 
-SETUP                                                          *winmove-setup*
+CONFIGURATION                                          *winmove-configuration*
 
-If you are content with the defaults, you don’t need to call the `setup`
-function. Otherwise, either call `winmove.configure` with your desired options
-or set `vim.g.winmove` to your desired options. Defaults are shown below.
+If you are content with the defaults that are shown below, you don’t need to
+call the `configure` function.
 
 >lua
-    require('winmove').setup({ -- Or pass the table to vim.g.winmove
+    require('winmove').configure({
         highlights = {
             move = "Search", -- Highlight group for move mode
             resize = "Substitute", -- Highlight group for resize mode
