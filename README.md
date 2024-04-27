@@ -27,7 +27,7 @@
 
 - [Requirements](#requirements)
 - [Installing](#installing)
-- [Setup](#setup)
+- [Configuration](#configuration)
 - [Autocommands](#autocommands)
 - [Public API](#public-api)
 - [Contributing](#contributing)
@@ -55,14 +55,13 @@ Plug 'MisanthropicBit/winmove.nvim'
 use 'MisanthropicBit/winmove.nvim'
 ```
 
-## Setup
+## Configuration
 
-If you are content with the defaults, you don't need to call the `setup`
-function. Otherwise, either call `winmove.configure` with your desired options or
-set `vim.g.winmove` to your desired options. Defaults are shown below.
+If you are content with the defaults that are shown below, you don't need to
+call the `configure` function.
 
 ```lua
-require('winmove').setup({ -- Or pass the table to vim.g.winmove
+require('winmove').configure({
     highlights = {
         move = "Search", -- Highlight group for move mode
         resize = "Substitute", -- Highlight group for resize mode
