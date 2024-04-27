@@ -57,9 +57,8 @@ use 'MisanthropicBit/winmove.nvim'
 
 ## Configuration
 
-If you are content with the defaults, you don’t need to call the `configure`
-function. Otherwise, call `winmove.configure` with your desired options.
-Defaults are shown below.
+If you are content with the defaults that are shown below, you don't need to
+call the `configure` function.
 
 ```lua
 require('winmove').configure({
