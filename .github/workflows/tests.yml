@@ -36,4 +36,7 @@ jobs:
           neovim: true
           version: ${{ matrix.neovim_version }}
       - name: Run tests
-        run: nvim -u NONE -l ~/.local/share/nvim/site/pack/start/neotest-busted/scripts/test-runner.lua
+        if: ${{ matrix.neovim_version != 'v0.8.0' }}
+        run: nvim -l ~/.local/share/nvim/site/pack/start/neotest-busted/scripts/test-runner.lua
+        if: ${{ matrix.neovim_version == 'v0.8.0' }}
+        run: nvim -u NONE -i NONE -n --headless -c 'source ~/.local/share/nvim/site/pack/start/neotest-busted/scripts/test-runner.lua' -c quitall
