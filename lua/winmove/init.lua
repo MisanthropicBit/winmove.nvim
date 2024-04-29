@@ -12,6 +12,7 @@ local str = require("winmove.util.str")
 local winutil = require("winmove.winutil")
 
 winmove.mode = require("winmove.mode")
+winmove.ResizeAnchor = require("winmove.resize").anchor
 
 local api = vim.api
 local winmove_version = "0.1.0"
