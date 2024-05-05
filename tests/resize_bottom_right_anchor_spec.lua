@@ -32,7 +32,7 @@ describe("resize", function()
 
         assert.matches_winlayout(vim.fn.winlayout(), {
             row_or_col,
-            { { "leaf" }, { "leaf" }, { "leaf" } }
+            { { "leaf" }, { "leaf" }, { "leaf" } },
         })
 
         return win_id
