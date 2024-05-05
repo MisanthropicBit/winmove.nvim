@@ -48,6 +48,11 @@ local function can_resize(dir, get_dimension_func, min_dimension)
         return true, dimension <= min_dimension()
     end)
 
+    if neighbor_count == 0 then
+        -- No neighbors, check the window itself
+        return get_dimension_func(0) > min_dimension()
+    end
+
     -- All neighbors are at minimal width/height so we cannot resize
     return neighbor_count ~= applied
 end
