@@ -32,15 +32,15 @@ luassert:register(
 --- in that buffer
 ---@param ... any
 function vader.given(...)
-    local description, contents, callback
+    local contents, callback
     local numargs = select("#", ...)
 
-    if numargs < 2 then
-        error("vader.given takes at least 2 arguments")
-    elseif numargs == 2 then
+    if numargs < 1 or numargs > 2 then
+        error("vader.given takes 1 or 2 arguments")
+    elseif numargs == 1 then
+        callback = ...
+    else
         contents, callback = ...
-    elseif numargs == 3 then
-        description, contents, callback = ...
     end
 
     local bufnr = vim.api.nvim_create_buf(false, false)
@@ -53,7 +53,7 @@ function vader.given(...)
     vim.opt_local.bufhidden = "hide"
     vim.opt_local.swapfile = false
 
-    if #contents > 0 then
+    if contents and #contents > 0 then
         vim.api.nvim_buf_set_lines(bufnr, 0, -1, true, contents)
     end
 
