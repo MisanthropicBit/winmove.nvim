@@ -134,7 +134,7 @@ local function compare_tree(tree1, tree2)
 end
 
 ---@param _ any
----@param arguments any[]
+---@param arguments { [1]: ConcreteWinLayout, [2]: AbstractWinLayout }
 local function matches_winlayout(_, arguments)
     if #arguments ~= 2 then
         error("matches_winlayout expected two table arguments")
