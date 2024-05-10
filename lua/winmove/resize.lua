@@ -146,7 +146,8 @@ function resize.resize_window(win_id, dir, count, anchor, ignore_neighbors)
 
     local sign = (dir == "l" or dir == "j") and 1 or -1
     local winnr = vim.fn.win_id2win(win_id)
-    local top_left = (anchor or resize.anchor.TopLeft) == resize.anchor.TopLeft
+    local _anchor = anchor or resize.anchor.TopLeft
+    local top_left = _anchor == resize.anchor.TopLeft
 
     if not can_resize(dir, get_dimension, get_min_dimension) then
         return
@@ -220,7 +221,7 @@ function resize.resize_window(win_id, dir, count, anchor, ignore_neighbors)
 
     if not ignore_neighbors then
         -- TODO: Skip first neighbor if non-sibling?
-        adjust_neighbors_in_direction(dir, get_dimension, get_min_dimension, count, anchor)
+        adjust_neighbors_in_direction(dir, get_dimension, get_min_dimension, count, _anchor)
     end
 end
 
