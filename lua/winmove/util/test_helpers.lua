@@ -38,6 +38,7 @@ end
 ---@alias SkeletonWinLayout string | SkeletonRow | SkeletonCol
 
 ---@param layout SkeletonWinLayout
+---@return table<string, integer>
 function test_helpers.make_layout(layout)
     local win_ids = {}
 

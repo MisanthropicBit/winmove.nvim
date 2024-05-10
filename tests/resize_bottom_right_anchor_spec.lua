@@ -9,6 +9,8 @@ describe("resize", function()
     local count = 3
     assert:set_parameter("TableFormatLevel", 10)
 
+    -- TODO: Move to test_helpers
+
     ---@param win_id integer
     ---@return integer
     ---@return integer
