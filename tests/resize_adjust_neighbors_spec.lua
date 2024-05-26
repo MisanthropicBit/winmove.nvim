@@ -247,7 +247,8 @@ describe("resize", function()
 
                 for _, _win_id in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
                     vim.api.nvim_win_call(_win_id, function()
-                        local minwidth = vim.api.nvim_win_get_width(win_id) - count
+                        local minwidth = vim.api.nvim_win_get_width(win_id) - count * 3
+                        vim.opt_local.signcolumn = "no"
                         vim.opt_local.winwidth = minwidth
                         minwidth_map[_win_id] = minwidth
                     end)
@@ -255,11 +256,11 @@ describe("resize", function()
 
                 vim.api.nvim_set_current_win(win_id)
 
-                local _, main_col_before, main_width_before, _ = get_win_pos_and_dimensions(win_id)
-                local _, col_before1, width_before1, _ = get_win_pos_and_dimensions(layout["neighbor1"])
-                local _, col_before2, width_before2, _ = get_win_pos_and_dimensions(layout["neighbor2"])
-                local _, col_before3, width_before3, _ = get_win_pos_and_dimensions(layout["neighbor3"])
-                local _, bottom_col_before, bottom_width_before, _ = get_win_pos_and_dimensions(layout["bottom neighbor"])
+                local _, _, main_width_before, _ = get_win_pos_and_dimensions(win_id)
+                local _, col_before1, _, _ = get_win_pos_and_dimensions(layout["neighbor1"])
+                local _, _, _, _ = get_win_pos_and_dimensions(layout["neighbor2"])
+                local _, _, _, _ = get_win_pos_and_dimensions(layout["neighbor3"])
+                local _, _, _, _ = get_win_pos_and_dimensions(layout["bottom neighbor"])
                 local _, col_before4, width_before4, _ = get_win_pos_and_dimensions(layout["neighbor4"])
 
                 for _ = 1, 10 do
@@ -277,20 +278,26 @@ describe("resize", function()
                 assert.are.same(vim.api.nvim_win_get_width(layout["neighbor2"]), minwidth_map[layout["neighbor2"]])
                 assert.are.same(vim.api.nvim_win_get_width(layout["neighbor3"]), minwidth_map[layout["neighbor3"]])
 
-                -- assert.are.same(main_col_before - count, main_col_after)
-                -- assert.are.same(main_width_before + count, main_width_after)
+                -- + 3 for the window separators
+                local left_total_width = minwidth_map[layout["neighbor1"]] + minwidth_map[layout["neighbor2"]] + minwidth_map[layout["neighbor3"]] + 3
+
+                assert.are.same(main_col_after, left_total_width)
+                assert.is._true(main_width_after > main_width_before)
 
                 assert.are.same(col_before1, col_after1)
-                -- assert.are.same(width_before1, width_after1)
+                assert.are.same(width_after1, minwidth_map[layout["neighbor1"]])
 
-                -- assert.are.same(col_before2, col_after2)
-                -- assert.are.same(width_before2, width_after2)
+                assert.are.same(col_after2, minwidth_map[layout["neighbor1"]] + 1)
+                assert.are.same(width_after2, minwidth_map[layout["neighbor2"]])
 
-                -- assert.are.same(col_before3, col_after3)
-                -- assert.are.same(width_before3 - count, width_after3)
+                assert.are.same(col_after3, minwidth_map[layout["neighbor1"]] + minwidth_map[layout["neighbor2"]] + 2)
+                assert.are.same(width_after3, minwidth_map[layout["neighbor3"]])
 
-                -- assert.are.same(bottom_col_before, bottom_col_after)
-                -- assert.are.same(bottom_width_before, bottom_width_after)
+                -- + 2 for the window separators
+                local top_column_width = vim.api.nvim_win_get_width(layout["neighbor2"]) + vim.api.nvim_win_get_width(layout["neighbor3"]) + vim.api.nvim_win_get_width(layout["main"]) + 2
+
+                assert.are.same(bottom_col_after, vim.api.nvim_win_get_width(layout["neighbor1"]) + 1)
+                assert.are.same(bottom_width_after, top_column_width)
 
                 assert.are.same(col_before4, col_after4)
                 assert.are.same(width_before4, width_after4)

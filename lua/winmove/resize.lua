@@ -57,7 +57,7 @@ local function can_resize(dir, get_dimension_func, min_dimension)
     return neighbor_count ~= applied
 end
 
---- Adjust right-hand side neighbors when using a bottom-right corner
+--- Adjust right-hand side sibling neighbors when using a bottom-right corner
 ---@param win_id integer
 ---@param rev_dir winmove.Direction
 ---@param count integer
@@ -76,6 +76,8 @@ local function adjust_neighbors_bottom_right_anchor(win_id, rev_dir, count)
                 resize.anchor.BottomRight,
                 true
             )
+        else
+            return false, false
         end
 
         return true, true
@@ -103,6 +105,8 @@ local function adjust_neighbors_in_direction(dir, get_dimension, get_min_dimensi
                 anchor,
                 nil
             )
+
+            vim.api.nvim_win_set_width(neighbor_win_id, min_dimension)
 
             return true, true
         end
@@ -199,7 +203,7 @@ function resize.resize_window(win_id, dir, count, anchor, ignore_neighbors)
             -- To compensate, we resize the opposite neighbor in the other
             -- direction with an opposite anchor. This is only relevant when
             -- using the bottom-right corner
-            if not ignore_neighbors and not top_left then -- and dir ~= "l" then
+            if not ignore_neighbors and not top_left then
                 local rev_dir = winutil.reverse_direction(dir)
 
                 -- For a bottom-right anchor, always resize neighbors on the right since we
