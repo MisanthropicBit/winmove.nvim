@@ -156,14 +156,7 @@ winmove.current_mode()
 
 ## Contributing
 
-Contributions are welcome!
-
-1. Fork this repository.
-2. Make sure tests and styling checks are passing.
-  * Run tests by running `./tests/run_tests.sh` in the root directory. Running the tests requires [`plenary.nvim`](https://github.com/nvim-lua/plenary.nvim)
-  * Install [stylua]() and check styling using `stylua --check lua/ tests/`. Omit `--check` in order to fix styling.
-3. Submit a pull request.
-4. Get it approved.
+See [here](/CONTRIBUTING.md).
 
 ## FAQ
 
