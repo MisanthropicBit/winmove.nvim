@@ -72,6 +72,10 @@ call the `configure` function.
                 down = "j", -- Resize down
                 up = "k", -- Resize up
                 right = "l", -- Resize to the right
+                left_botright = "<c-h>", -- Resize left with bottom-right anchor
+                down_botright = "<c-j>", -- Resize down with bottom-right anchor
+                up_botright = "<c-k>", -- Resize up with bottom-right anchor
+                right_botright = "<c-l>", -- Resize right with bottom-right anchor
             },
         },
     })
@@ -132,16 +136,7 @@ Check which mode is currently active. Returns `"move"`, `"resize"`, or `nil`.
 
 CONTRIBUTING                                            *winmove-contributing*
 
-Contributions are welcome!
-
-1. Fork this repository.
-2. Make sure tests and styling checks are passing.
-
-- Run tests by running `./tests/run_tests.sh` in the root directory. Running the tests requires `plenary.nvim` <https://github.com/nvim-lua/plenary.nvim>
-- Install stylua <> and check styling using `stylua --check lua/ tests/`. Omit `--check` in order to fix styling.
-
-1. Submit a pull request.
-2. Get it approved.
+See here </CONTRIBUTING.md>.
 
 
 FAQ                                                              *winmove-faq*
