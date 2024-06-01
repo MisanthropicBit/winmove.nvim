@@ -182,10 +182,7 @@ end
 --- Move a window in a given direction
 ---@param source_win_id integer
 ---@param dir winmove.Direction
-function winmove.move_window(source_win_id, dir)
-    -- TODO: Make a public function without source_win_id so users are forced to
-    -- use the current window? Or set the current window as source_win_id before
-    -- executing the rest of the function
+local function move_window(source_win_id, dir)
     if not can_move(source_win_id, winmove.mode.Move) then
         return
     end
@@ -221,10 +218,19 @@ function winmove.move_window(source_win_id, dir)
     )
 end
 
+--- Move a window in a given direction
+---@param source_win_id integer
+---@param dir winmove.Direction
+function winmove.move_window(source_win_id, dir)
+    winutil.win_id_context_call(source_win_id, function()
+        move_window(source_win_id, dir)
+    end)
+end
+--
 --- Split a window into another window in a given direction
 ---@param source_win_id integer
 ---@param dir winmove.Direction
-function winmove.split_into(source_win_id, dir)
+local function split_into(source_win_id, dir)
     if winutil.window_count() == 1 then
         return
     end
@@ -262,9 +268,21 @@ function winmove.split_into(source_win_id, dir)
     winutil.wincall_no_events(vim.fn.win_splitmove, source_win_id, target_win_id, split_options)
 end
 
+--- Split a window into another window in a given direction
+---@param source_win_id integer
+---@param dir winmove.Direction
+function winmove.split_into(source_win_id, dir)
+    winutil.win_id_context_call(source_win_id, function()
+        split_into(source_win_id, dir)
+    end)
+end
+
 ---@diagnostic disable-next-line:unused-local
+--- Move a window as far as possible in a direction
+---@param source_win_id integer
+---@param dir winmove.Direction
 function winmove.move_window_far(source_win_id, dir)
-    winutil.wincall_no_events(function()
+    winutil.win_id_context_call(source_win_id, function()
         vim.cmd("wincmd " .. dir:upper())
     end)
 end
@@ -625,7 +643,9 @@ end
 ---@param count integer
 ---@param anchor winmove.ResizeAnchor?
 function winmove.resize_window(win_id, dir, count, anchor)
-    resize.resize_window(win_id, dir, count, anchor)
+    winutil.win_id_context_call(win_id, function()
+        resize.resize_window(win_id, dir, count, anchor)
+    end)
 end
 
 function winmove.current_mode()
