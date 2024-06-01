@@ -7,6 +7,4 @@ describe("string utilities", function()
             assert.are.same(str.titlecase("TiTlE"), "Title")
         end)
     end)
-
-    -- TODO: Add test case for str.has_prefix only if we do not remove the :Winmove command
 end)
