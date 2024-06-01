@@ -26,7 +26,7 @@ describe("split_into", function()
     assert:set_parameter("TableFormatLevel", 10)
 
     it("splits left", function()
-        given("", function()
+        given(function()
             local win_id = make_layout({
                 "row",
                 {
@@ -68,7 +68,7 @@ describe("split_into", function()
     end)
 
     it("splits down", function()
-        given("", function()
+        given(function()
             local win_id = make_layout({
                 "row",
                 {
@@ -128,7 +128,7 @@ describe("split_into", function()
     end)
 
     it("splits up", function()
-        given("", function()
+        given(function()
             local win_id = make_layout({
                 "row",
                 {
@@ -190,7 +190,7 @@ describe("split_into", function()
     end)
 
     it("splits right", function()
-        given("", function()
+        given(function()
             local win_id = make_layout({
                 "row",
                 { "main", "leaf" },

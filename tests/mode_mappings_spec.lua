@@ -20,7 +20,7 @@ end
 -- TODO: Test that mappings are also restored after moving the window
 describe("mode mappings", function()
     it("sets buffer-only mode mappings when entering move mode", function()
-        given("", function()
+        given(function()
             vim.cmd("new") -- Create another buffer to activate move mode
 
             winmove.start_mode(winmove.mode.Move)
@@ -36,7 +36,7 @@ describe("mode mappings", function()
     end)
 
     it("sets buffer-only mode mappings when entering resize mode", function()
-        given("", function()
+        given(function()
             vim.cmd("new") -- Create another buffer to activate move mode
 
             winmove.start_mode(winmove.mode.Resize)
@@ -52,7 +52,7 @@ describe("mode mappings", function()
     end)
 
     it("restores mappings after exiting a mode", function()
-        given("", function()
+        given(function()
             vim.cmd("new") -- Create another buffer to activate move mode
 
             local buffer = vim.api.nvim_get_current_buf()

@@ -18,7 +18,7 @@ describe("basic movements", function()
 
     describe("direct function invocation", function()
         it("moves window to the left", function()
-            given("", function()
+            given(function()
                 local win_id = make_layout({
                     "row",
                     { "leaf", "main" },
@@ -46,7 +46,7 @@ describe("basic movements", function()
         end)
 
         it("moves window down", function()
-            given("", function()
+            given(function()
                 local win_id = make_layout({
                     "col",
                     { "main", "leaf" },
@@ -74,7 +74,7 @@ describe("basic movements", function()
         end)
 
         it("moves window up", function()
-            given("", function()
+            given(function()
                 local win_id = make_layout({
                     "col",
                     { "leaf", "main" },
@@ -102,7 +102,7 @@ describe("basic movements", function()
         end)
 
         it("moves window to the right", function()
-            given("", function()
+            given(function()
                 local win_id = make_layout({
                     "row",
                     { "main", "leaf" },
@@ -132,7 +132,7 @@ describe("basic movements", function()
         it("moves nothing if only one window", function()
             stub(vim.api, "nvim_echo")
 
-            given("", function(context)
+            given(function(context)
                 winmove.move_window(context.win_id, "l")
 
                 assert.stub(vim.api.nvim_echo).was.called_with({
@@ -147,7 +147,7 @@ describe("basic movements", function()
         it("does not move floating windows", function()
             stub(vim.api, "nvim_echo")
 
-            given("", function(context)
+            given(function(context)
                 local float_win_id = vim.api.nvim_open_win(context.bufnr, true, {
                     relative = "win",
                     row = 1,
@@ -170,7 +170,7 @@ describe("basic movements", function()
 
     describe("move mode", function()
         it("moves window to the left", function()
-            given("", function()
+            given(function()
                 local win_id = make_layout({
                     "row",
                     { "leaf", "main" },
@@ -199,7 +199,7 @@ describe("basic movements", function()
         end)
 
         it("moves window down", function()
-            given("", function()
+            given(function()
                 local win_id = make_layout({
                     "col",
                     { "main", "leaf" },
@@ -228,7 +228,7 @@ describe("basic movements", function()
         end)
 
         it("moves window up", function()
-            given("", function()
+            given(function()
                 local win_id = make_layout({
                     "col",
                     { "leaf", "main" },
@@ -257,7 +257,7 @@ describe("basic movements", function()
         end)
 
         it("moves window to the right", function()
-            given("", function()
+            given(function()
                 local win_id = make_layout({
                     "row",
                     { "main", "leaf" },

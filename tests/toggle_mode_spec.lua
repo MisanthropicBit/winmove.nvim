@@ -8,7 +8,7 @@ local make_layout = test_helpers.make_layout
 
 describe("toggle mode", function()
     it("toggles modes", function()
-        given("", function()
+        given(function()
             config.configure({ keymaps = { toggle_mode = "t" } })
 
             local win_id = make_layout({
