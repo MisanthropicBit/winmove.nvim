@@ -6,6 +6,8 @@ local vader = require("winmove.util.vader")
 local given = vader.given
 
 local function compare_keymap(mode, name, keymap)
+    assert.is_not_nil(keymap)
+
     -- Do asserts separately otherwise the callback function will not match
     assert.are.same(keymap.rhs, "")
     assert.are.same(keymap.noremap, 1)
@@ -18,7 +20,7 @@ end
 -- TODO: Test that mappings are also restored after moving the window
 describe("mode mappings", function()
     it("sets buffer-only mode mappings when entering move mode", function()
-        given("", function()
+        given(function()
             vim.cmd("new") -- Create another buffer to activate move mode
 
             winmove.start_mode(winmove.mode.Move)
@@ -26,13 +28,15 @@ describe("mode mappings", function()
             local keymaps = test_helpers.get_buf_mapped_keymaps(vim.api.nvim_get_current_buf())
 
             for name, lhs in pairs(config.keymaps.move) do
-                compare_keymap("move", name, keymaps[lhs])
+                compare_keymap("move", name, keymaps[lhs] or keymaps[lhs:upper()])
             end
+
+            winmove.stop_mode()
         end)
     end)
 
     it("sets buffer-only mode mappings when entering resize mode", function()
-        given("", function()
+        given(function()
             vim.cmd("new") -- Create another buffer to activate move mode
 
             winmove.start_mode(winmove.mode.Resize)
@@ -40,13 +44,15 @@ describe("mode mappings", function()
             local keymaps = test_helpers.get_buf_mapped_keymaps(vim.api.nvim_get_current_buf())
 
             for name, lhs in pairs(config.keymaps.resize) do
-                compare_keymap("resize", name, keymaps[lhs])
+                compare_keymap("resize", name, keymaps[lhs] or keymaps[lhs:upper()])
             end
+
+            winmove.stop_mode()
         end)
     end)
 
     it("restores mappings after exiting a mode", function()
-        given("", function()
+        given(function()
             vim.cmd("new") -- Create another buffer to activate move mode
 
             local buffer = vim.api.nvim_get_current_buf()

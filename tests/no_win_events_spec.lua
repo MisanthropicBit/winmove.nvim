@@ -24,7 +24,7 @@ describe("no window events", function()
     local triggers = {}
 
     it("does not trigger any window events when moving", function()
-        given("", function()
+        given(function()
             vim.cmd.vnew()
 
             -- Set up autocmds *after* splitting

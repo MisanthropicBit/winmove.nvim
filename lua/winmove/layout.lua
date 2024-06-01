@@ -74,6 +74,34 @@ function layout.get_wraparound_neighbor(dir)
     return vim.fn.win_getid(neighbor)
 end
 
+--- Apply a function to each neighbor in a direction
+---@param dir winmove.Direction
+---@param func fun(win_id: integer): boolean, boolean
+function layout.apply_to_neighbors(dir, func)
+    local neighbor_win_id = layout.get_neighbor(dir)
+    local count, applied = 0, 0
+
+    while neighbor_win_id do
+        local continue, did_apply = func(neighbor_win_id)
+        applied = applied + (did_apply and 1 or 0)
+
+        if not continue then
+            break
+        end
+
+        count = count + 1
+        local next_neighbor = vim.fn.win_getid(vim.fn.winnr(("%d%s"):format(count + 1, dir)))
+
+        if next_neighbor == neighbor_win_id then
+            break
+        end
+
+        neighbor_win_id = next_neighbor
+    end
+
+    return count, applied
+end
+
 --- Determine if two windows are siblings in the same row or column
 ---@param win_id1 integer
 ---@param win_id2 integer
@@ -141,36 +169,6 @@ function layout.get_sibling_relative_dir(source_win_id, target_win_id, dir)
     end
 
     return relative_dir_by_extents(pos, extents, dirs)
-end
-
---- Get a leaf's parent or nil if it is not found
----@param win_id integer
----@return table?
-function layout.get_leaf_parent(win_id)
-    local win_layout = vim.fn.winlayout()
-
-    ---@return table?
-    local function _find(node, parent)
-        local type, data = unpack(node)
-
-        if type == "leaf" then
-            if data == win_id then
-                return parent
-            end
-        else
-            for _, child in ipairs(data) do
-                local found = _find(child, node)
-
-                if found then
-                    return found
-                end
-            end
-        end
-
-        return nil
-    end
-
-    return _find(win_layout, nil)
 end
 
 ---@param win_id integer

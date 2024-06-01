@@ -5,7 +5,7 @@ local given = vader.given
 
 describe("auto-quit mode", function()
     it("quits current mode when entering a new window", function()
-        given("", function()
+        given(function()
             vim.cmd.vnew()
             winmove.start_mode(winmove.mode.Move)
             assert.are.same(winmove.current_mode(), winmove.mode.Move)
@@ -16,7 +16,7 @@ describe("auto-quit mode", function()
     end)
 
     it("quits current mode when entering insert mode", function()
-        given("", function()
+        given(function()
             vim.cmd.vnew()
             winmove.start_mode(winmove.mode.Move)
             assert.are.same(winmove.current_mode(), winmove.mode.Move)

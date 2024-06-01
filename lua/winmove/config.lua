@@ -20,10 +20,14 @@ local config_loaded = false
 ---@field split_right string
 
 ---@class winmove.ConfigResizeModeKeymaps
----@field left         string
----@field down         string
----@field up           string
----@field right        string
+---@field left           string
+---@field down           string
+---@field up             string
+---@field right          string
+---@field left_botright  string
+---@field down_botright  string
+---@field up_botright    string
+---@field right_botright string
 
 ---@class winmove.ConfigModeKeymaps
 ---@field help        string
@@ -82,6 +86,10 @@ local default_config = {
             down = "j",
             up = "k",
             right = "l",
+            left_botright = "<c-h>",
+            down_botright = "<c-j>",
+            up_botright = "<c-k>",
+            right_botright = "<c-l>",
         },
     },
 }
@@ -110,6 +118,10 @@ local mapping_descriptions = {
         down = "Resize window down",
         up = "Resize window up",
         right = "Resize window right",
+        left_botright = "Resize window left with bottom-right anchor",
+        down_botright = "Resize window down with bottom-right anchor",
+        up_botright = "Resize window up with bottom-right anchor",
+        right_botright = "Resize window right with bottom-right anchor",
     },
 }
 
@@ -155,7 +167,7 @@ local function validate_keys(specs)
             local expected = spec[2]
 
             local validated, error = pcall(vim.validate, {
-                [key] = { tbl[key], spec[2], spec[3] },
+                [key] = { tbl[key], expected, spec[3] },
             })
 
             if not validated then
@@ -239,6 +251,10 @@ function config.validate(_config)
                 { "down",  is_non_empty_string, expected_non_empty_string },
                 { "up",    is_non_empty_string, expected_non_empty_string },
                 { "right", is_non_empty_string, expected_non_empty_string },
+                { "left_botright", is_non_empty_string, expected_non_empty_string },
+                { "down_botright", is_non_empty_string, expected_non_empty_string },
+                { "up_botright", is_non_empty_string, expected_non_empty_string },
+                { "right_botright", is_non_empty_string, expected_non_empty_string },
             }),
         },
     })

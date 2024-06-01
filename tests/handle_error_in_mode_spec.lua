@@ -8,7 +8,7 @@ local make_layout = test_helpers.make_layout
 
 describe("error handling in modes", function()
     it("handles errors in move mode and restores mappings", function()
-        given("", function()
+        given(function()
             make_layout({
                 "row",
                 { "leaf", "leaf" },

@@ -38,6 +38,7 @@ end
 ---@alias SkeletonWinLayout string | SkeletonRow | SkeletonCol
 
 ---@param layout SkeletonWinLayout
+---@return table<string, integer>
 function test_helpers.make_layout(layout)
     local win_ids = {}
 
@@ -134,7 +135,7 @@ local function compare_tree(tree1, tree2)
 end
 
 ---@param _ any
----@param arguments any[]
+---@param arguments { [1]: ConcreteWinLayout, [2]: AbstractWinLayout }
 local function matches_winlayout(_, arguments)
     if #arguments ~= 2 then
         error("matches_winlayout expected two table arguments")

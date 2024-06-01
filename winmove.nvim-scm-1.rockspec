@@ -21,7 +21,7 @@ dependencies = {
 }
 
 source = {
-   url = "git+https://github.com/MisanthropicBit/winmove.nvim",
+   url = "git://github.com/MisanthropicBit/winmove.nvim",
 }
 
 build = {

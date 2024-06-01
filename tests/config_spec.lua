@@ -58,6 +58,13 @@ describe("config", function()
                     },
                 },
             },
+            {
+                keymaps = {
+                    resize = {
+                        left_botright = true,
+                    },
+                },
+            },
         }
 
         stub(message, "error")
@@ -110,6 +117,10 @@ describe("config", function()
                     down = "<Down>",
                     up = "<Up>",
                     right = "<Right>",
+                    left_botright = "<s-h>",
+                    down_botright = "<s-j>",
+                    up_botright = "<s-k>",
+                    right_botright = "<s-l>",
                 },
             },
         })

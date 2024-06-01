@@ -54,8 +54,25 @@ function winutil.wincall_no_events(func, ...)
     return ok
 end
 
+--- Call a function in the context of a window without triggering any window/buffer events
+---@param win_id integer
+---@param func function
+---@param ... any
+---@return boolean
+function winutil.win_id_context_call(win_id, func, ...)
+    local args = { ... }
+    local ok
+
+    vim.api.nvim_win_call(win_id, function()
+        ok = winutil.wincall_no_events(func, unpack(args))
+    end)
+
+    return ok
+end
+
 ---@param dir winmove.Direction
 function winutil.is_horizontal(dir)
+    -- TODO: Move direction functions into a direction.lua file?
     return dir == "h" or dir == "l"
 end
 

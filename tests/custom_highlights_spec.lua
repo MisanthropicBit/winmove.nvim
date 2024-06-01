@@ -48,7 +48,7 @@ describe("custom highlights", function()
             },
         })
 
-        given("", function()
+        given(function()
             make_layout({
                 "row",
                 { "leaf", "leaf" },
@@ -87,7 +87,7 @@ describe("custom highlights", function()
             },
         })
 
-        given("", function()
+        given(function()
             make_layout({
                 "row",
                 { "leaf", "leaf" },

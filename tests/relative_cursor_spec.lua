@@ -9,7 +9,7 @@ describe("relative cursor", function()
     assert:set_parameter("TableFormatLevel", 10)
 
     it("moves window above target", function()
-        given("", function()
+        given(function()
             local win_ids = make_layout({
                 "row",
                 {
@@ -54,7 +54,7 @@ describe("relative cursor", function()
     end)
 
     it("moves window below target", function()
-        given("", function()
+        given(function()
             local win_ids = make_layout({
                 "row",
                 {
@@ -99,7 +99,7 @@ describe("relative cursor", function()
     end)
 
     it("moves window between targets", function()
-        given("", function()
+        given(function()
             local win_ids = make_layout({
                 "row",
                 {
@@ -158,7 +158,7 @@ describe("relative cursor", function()
     end)
 
     it("moves window to the right of window above it with long line", function()
-        given("", function()
+        given(function()
             local win_id = make_layout({
                 "row",
                 {

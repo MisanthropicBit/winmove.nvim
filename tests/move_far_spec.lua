@@ -9,7 +9,7 @@ describe("basic movements", function()
     assert:set_parameter("TableFormatLevel", 10)
 
     it("moves window far to the left", function()
-        given("", function()
+        given(function()
             local win_ids = make_layout({
                 "row",
                 {
@@ -49,7 +49,7 @@ describe("basic movements", function()
     end)
 
     it("moves window far down", function()
-        given("", function()
+        given(function()
             local win_ids = make_layout({
                 "col",
                 {
@@ -89,7 +89,7 @@ describe("basic movements", function()
     end)
 
     it("moves window far up", function()
-        given("", function()
+        given(function()
             local win_ids = make_layout({
                 "col",
                 {
@@ -129,7 +129,7 @@ describe("basic movements", function()
     end)
 
     it("moves window far to the right", function()
-        given("", function()
+        given(function()
             local win_ids = make_layout({
                 "row",
                 {

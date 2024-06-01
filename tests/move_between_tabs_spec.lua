@@ -20,7 +20,7 @@ describe("moving between tabs", function()
     assert:set_parameter("TableFormatLevel", 10)
 
     it("moves window to the tab to the right and ignores switchbuf option", function()
-        given("", function()
+        given(function()
             vim.opt_local.switchbuf = "newtab"
 
             local win_id = make_layout({
@@ -99,7 +99,7 @@ describe("moving between tabs", function()
     end)
 
     it("wraps around on the first tabpage", function()
-        given("", function()
+        given(function()
             local source_win_ids = make_layout({
                 "row",
                 {
@@ -177,7 +177,7 @@ describe("moving between tabs", function()
     end)
 
     it("wraps around on the last tabpage", function()
-        given("", function()
+        given(function()
             local target_win_ids = make_layout({
                 "row",
                 {
@@ -255,7 +255,7 @@ describe("moving between tabs", function()
     end)
 
     it("splits left into another tab", function()
-        given("", function()
+        given(function()
             local target_win_ids = make_layout({
                 "row",
                 {
@@ -346,7 +346,7 @@ describe("moving between tabs", function()
     end)
 
     it("splits right into another tab", function()
-        given("", function()
+        given(function()
             local source_win_ids = make_layout({
                 "row",
                 {
@@ -420,7 +420,7 @@ describe("moving between tabs", function()
     end)
 
     it("splits full width window across tabs", function()
-        given("", function()
+        given(function()
             local source_win_ids = make_layout({
                 "col",
                 {
@@ -475,7 +475,7 @@ describe("moving between tabs", function()
     end)
 
     it("splits full height window across tabs", function()
-        given("", function()
+        given(function()
             local target_win_ids = make_layout({
                 "col",
                 {
@@ -535,7 +535,7 @@ describe("moving between tabs", function()
     end)
 
     it("moves full width window", function()
-        given("", function()
+        given(function()
             local source_win_ids = make_layout({
                 "col",
                 {
@@ -597,7 +597,7 @@ describe("moving between tabs", function()
     end)
 
     it("moves full height window", function()
-        given("", function()
+        given(function()
             local source_win_ids = make_layout({
                 "row",
                 {
@@ -654,7 +654,7 @@ describe("moving between tabs", function()
     end)
 
     it("closes tab if moving single window", function()
-        given("", function()
+        given(function()
             local target_win_ids = make_layout({
                 "row",
                 {
@@ -694,7 +694,7 @@ describe("moving between tabs", function()
     end)
 
     it("does not move window if there is only one window and one tab", function()
-        given("", function()
+        given(function()
             stub(message, "error")
 
             local win_id = vim.api.nvim_get_current_win()
@@ -711,7 +711,7 @@ describe("moving between tabs", function()
     end)
 
     it("does not start move mode if there is only one window and one tab", function()
-        given("", function()
+        given(function()
             stub(message, "error")
 
             winmove.start_mode(winmove.mode.Move)

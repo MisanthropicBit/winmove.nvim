@@ -26,7 +26,7 @@ describe("wrap-around when moving windows", function()
             },
         })
 
-        given("", function()
+        given(function()
             local win_ids = make_layout({
                 "row",
                 { "main", "leaf" },
@@ -71,7 +71,7 @@ describe("wrap-around when moving windows", function()
             },
         })
 
-        given("", function()
+        given(function()
             local main_win_id = make_layout({
                 "row",
                 { "main", "leaf" },
@@ -114,7 +114,7 @@ describe("wrap-around when moving windows", function()
             },
         })
 
-        given("", function()
+        given(function()
             local main_win_id = make_layout({
                 "col",
                 {
@@ -176,7 +176,7 @@ describe("wrap-around when moving windows", function()
             },
         })
 
-        given("", function()
+        given(function()
             local main_win_id = make_layout({
                 "row",
                 {

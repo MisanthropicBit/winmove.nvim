@@ -93,6 +93,10 @@ require('winmove').configure({
             down = "j", -- Resize down
             up = "k", -- Resize up
             right = "l", -- Resize to the right
+            left_botright = "<c-h>", -- Resize left with bottom-right anchor
+            down_botright = "<c-j>", -- Resize down with bottom-right anchor
+            up_botright = "<c-k>", -- Resize up with bottom-right anchor
+            right_botright = "<c-l>", -- Resize right with bottom-right anchor
         },
     },
 })

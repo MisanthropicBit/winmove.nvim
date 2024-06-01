@@ -17,7 +17,7 @@ describe("shows floating window help", function()
     })
 
     it("shows help in resize mode", function()
-        given("", function()
+        given(function()
             make_layout({
                 "row",
                 { "leaf", "leaf" },
