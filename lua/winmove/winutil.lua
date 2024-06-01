@@ -54,7 +54,7 @@ function winutil.wincall_no_events(func, ...)
     return ok
 end
 
---- Call a function in the context of a window
+--- Call a function in the context of a window without triggering any window/buffer events
 ---@param win_id integer
 ---@param func function
 ---@param ... any

@@ -58,6 +58,13 @@ describe("config", function()
                     },
                 },
             },
+            {
+                keymaps = {
+                    resize = {
+                        left_botright = true,
+                    },
+                },
+            },
         }
 
         stub(message, "error")

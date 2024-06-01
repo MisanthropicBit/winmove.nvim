@@ -30,6 +30,8 @@ describe("mode mappings", function()
             for name, lhs in pairs(config.keymaps.move) do
                 compare_keymap("move", name, keymaps[lhs] or keymaps[lhs:upper()])
             end
+
+            winmove.stop_mode()
         end)
     end)
 
@@ -44,6 +46,8 @@ describe("mode mappings", function()
             for name, lhs in pairs(config.keymaps.resize) do
                 compare_keymap("resize", name, keymaps[lhs] or keymaps[lhs:upper()])
             end
+
+            winmove.stop_mode()
         end)
     end)
 

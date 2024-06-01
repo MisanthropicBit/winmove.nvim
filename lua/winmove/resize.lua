@@ -119,7 +119,7 @@ end
 ---@param dir winmove.Direction
 ---@param count integer
 ---@param anchor winmove.ResizeAnchor?
----@diagnostic disable-next-line: unused-local
+---@param ignore_neighbors boolean?
 function resize.resize_window(win_id, dir, count, anchor, ignore_neighbors)
     if count < 1 then
         return

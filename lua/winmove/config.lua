@@ -167,7 +167,7 @@ local function validate_keys(specs)
             local expected = spec[2]
 
             local validated, error = pcall(vim.validate, {
-                [key] = { tbl[key], spec[2], spec[3] },
+                [key] = { tbl[key], expected, spec[3] },
             })
 
             if not validated then
@@ -251,6 +251,10 @@ function config.validate(_config)
                 { "down",  is_non_empty_string, expected_non_empty_string },
                 { "up",    is_non_empty_string, expected_non_empty_string },
                 { "right", is_non_empty_string, expected_non_empty_string },
+                { "left_botright", is_non_empty_string, expected_non_empty_string },
+                { "down_botright", is_non_empty_string, expected_non_empty_string },
+                { "up_botright", is_non_empty_string, expected_non_empty_string },
+                { "right_botright", is_non_empty_string, expected_non_empty_string },
             }),
         },
     })
