@@ -75,19 +75,21 @@ end
 ---@param func function
 ---@param ... any
 local function wincall(source_win_id, func, ...)
-    -- NOTE: Using vim.api.nvim_win_call seems to trigger 'textlock' or leaves nvim
-    -- in a weird state where the process exists with either code 134 or 139 so we
-    -- are instead using 'wincall_no_events'. This might also happen because we would
-    -- close the window inside the vim.api.nvim_win_call call
+    -- NOTE: Using vim.api.nvim_win_call seems to trigger 'textlock' or leaves
+    -- nvim in a weird state where the process exists with either code 134 or
+    -- 139 so we are instead using 'wincall_no_events'. This might also happen
+    -- because we would close the window inside the vim.api.nvim_win_call call
+    -- when moving the window to another tab
     local cur_win_id = api.nvim_get_current_win()
+    local is_same_window_id = cur_win_id == source_win_id
 
-    if cur_win_id ~= source_win_id then
+    if not is_same_window_id then
         winutil.wincall_no_events(api.nvim_set_current_win, source_win_id)
     end
 
     winutil.wincall_no_events(func, ...)
 
-    if cur_win_id ~= source_win_id then
+    if not is_same_window_id then
         winutil.wincall_no_events(api.nvim_set_current_win, cur_win_id)
     end
 end
