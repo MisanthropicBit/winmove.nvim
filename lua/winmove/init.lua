@@ -72,6 +72,27 @@ end
 ---@alias winmove.Direction winmove.HorizontalDirection | winmove.VerticalDirection
 
 ---@param source_win_id integer
+---@param func function
+---@param ... any
+local function wincall(source_win_id, func, ...)
+    -- NOTE: Using vim.api.nvim_win_call seems to trigger 'textlock' or leaves nvim
+    -- in a weird state where the process exists with either code 134 or 139 so we
+    -- are instead using 'wincall_no_events'. This might also happen because we would
+    -- close the window inside the vim.api.nvim_win_call call
+    local cur_win_id = api.nvim_get_current_win()
+
+    if cur_win_id ~= source_win_id then
+        winutil.wincall_no_events(api.nvim_set_current_win, source_win_id)
+    end
+
+    winutil.wincall_no_events(func, ...)
+
+    if cur_win_id ~= source_win_id then
+        winutil.wincall_no_events(api.nvim_set_current_win, cur_win_id)
+    end
+end
+
+---@param source_win_id integer
 ---@param target_win_id integer
 ---@param dir winmove.Direction
 ---@param vertical boolean
@@ -222,9 +243,7 @@ end
 ---@param source_win_id integer
 ---@param dir winmove.Direction
 function winmove.move_window(source_win_id, dir)
-    winutil.win_id_context_call(source_win_id, function()
-        move_window(source_win_id, dir)
-    end)
+    wincall(source_win_id, move_window, source_win_id, dir)
 end
 --
 --- Split a window into another window in a given direction
@@ -272,9 +291,7 @@ end
 ---@param source_win_id integer
 ---@param dir winmove.Direction
 function winmove.split_into(source_win_id, dir)
-    winutil.win_id_context_call(source_win_id, function()
-        split_into(source_win_id, dir)
-    end)
+    wincall(source_win_id, split_into, source_win_id, dir)
 end
 
 ---@diagnostic disable-next-line:unused-local
@@ -282,7 +299,7 @@ end
 ---@param source_win_id integer
 ---@param dir winmove.Direction
 function winmove.move_window_far(source_win_id, dir)
-    winutil.win_id_context_call(source_win_id, function()
+    wincall(source_win_id, function()
         vim.cmd("wincmd " .. dir:upper())
     end)
 end
