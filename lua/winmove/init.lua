@@ -306,6 +306,14 @@ function winmove.move_window_far(source_win_id, dir)
     end)
 end
 
+local function toggle_mode()
+    local mode = winmove.current_mode()
+    local new_mode = mode == winmove.mode.Move and winmove.mode.Resize or winmove.mode.Move
+
+    stop_mode(mode)
+    start_mode(new_mode)
+end
+
 ---@param keys string
 local function move_mode_key_handler(keys)
     local keymaps = config.keymaps.move
@@ -338,7 +346,7 @@ local function move_mode_key_handler(keys)
     elseif keys == keymaps.far_right then
         winmove.move_window_far(win_id, "l")
     elseif keys == keymaps.resize_mode then
-        winmove.toggle_mode()
+        toggle_mode()
     end
 end
 
@@ -372,7 +380,7 @@ local function resize_mode_key_handler(keys)
     elseif keys == keymaps.right_botright then
         resize.resize_window(win_id, "l", count, resize.anchor.BottomRight)
     elseif keys == keymaps.move_mode then
-        winmove.toggle_mode()
+        toggle_mode()
     end
 end
 
@@ -474,7 +482,7 @@ local function set_keymaps(win_id, bufnr, mode)
         win_id,
         bufnr,
         config.keymaps.toggle_mode,
-        winmove.toggle_mode,
+        toggle_mode,
         config.get_keymap_description("toggle_mode")
     )
 
@@ -625,14 +633,6 @@ stop_mode = function(mode)
         modeline = false,
         data = { mode = mode },
     })
-end
-
-function winmove.toggle_mode()
-    local mode = winmove.current_mode()
-    local new_mode = mode == winmove.mode.Move and winmove.mode.Resize or winmove.mode.Move
-
-    stop_mode(mode)
-    start_mode(new_mode)
 end
 
 local sorted_modes = vim.tbl_values(winmove.mode)
