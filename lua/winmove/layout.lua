@@ -1,6 +1,7 @@
 local layout = {}
 
 local winutil = require("winmove.winutil")
+local Mode = require("winmove.mode")
 
 ---@class winmove.BoundingBox
 ---@field top integer
@@ -149,10 +150,24 @@ end
 ---@param source_win_id integer
 ---@param target_win_id integer
 ---@param dir winmove.Direction
+---@param mode winmove.Mode?
 ---@return winmove.Direction
-function layout.get_sibling_relative_dir(source_win_id, target_win_id, dir)
-    local grow, gcol = get_cursor_screen_position(source_win_id)
+function layout.get_sibling_relative_dir(source_win_id, target_win_id, dir, mode)
+    local grow, gcol
     local bbox = window_bounding_box(target_win_id)
+
+    if mode == Mode.Move then
+        grow, gcol = get_cursor_screen_position(source_win_id)
+    else
+        -- Not in move mode, move relative to the middle of the window in global
+        -- coordinates
+        local win_row, win_col = unpack(vim.api.nvim_win_get_position(source_win_id))
+        local height = bbox.bottom - bbox.top
+        local width = bbox.right - bbox.left
+
+        grow, gcol = win_row + height / 2, win_col + width / 2
+    end
+
     local vertical = winutil.is_horizontal(dir)
     local pos = 0
     local extents = {} ---@type integer[]

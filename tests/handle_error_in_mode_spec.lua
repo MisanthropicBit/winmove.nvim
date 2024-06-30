@@ -36,11 +36,7 @@ describe("error handling in modes", function()
                 script = false,
             })
 
-            -- Create stubs
             stub(vim.api, "nvim_echo")
-            stub(winmove, "move_window", function()
-                error("Oh noes", 0)
-            end)
 
             winmove.start_mode(winmove.Mode.Move)
             vim.cmd.normal("l")
