@@ -148,7 +148,7 @@ Start a mode.
 winmove.start_mode(mode)
 
 -- Example:
-winmove.start_mode(winmove.mode.Move)
+winmove.start_mode(winmove.Mode.Move)
 winmove.start_mode("resize")
 ```
 
