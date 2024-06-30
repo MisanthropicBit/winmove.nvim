@@ -115,6 +115,12 @@ local function adjust_neighbors_in_direction(dir, get_dimension, get_min_dimensi
     end)
 end
 
+---@param value any
+---@return boolean
+function resize.is_valid_anchor(value)
+    return value == nil or (value == resize.anchor.TopLeft or value == resize.anchor.BottomRight)
+end
+
 ---@param win_id integer
 ---@param dir winmove.Direction
 ---@param count integer
