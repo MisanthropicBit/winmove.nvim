@@ -42,7 +42,7 @@ describe("error handling in modes", function()
                 error("Oh noes", 0)
             end)
 
-            winmove.start_mode(winmove.mode.Move)
+            winmove.start_mode(winmove.Mode.Move)
             vim.cmd.normal("l")
 
             assert.is_nil(winmove.current_mode())
