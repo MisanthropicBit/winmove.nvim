@@ -23,7 +23,7 @@ describe("mode mappings", function()
         given(function()
             vim.cmd("new") -- Create another buffer to activate move mode
 
-            winmove.start_mode(winmove.mode.Move)
+            winmove.start_mode(winmove.Mode.Move)
 
             local keymaps = test_helpers.get_buf_mapped_keymaps(vim.api.nvim_get_current_buf())
 
@@ -39,7 +39,7 @@ describe("mode mappings", function()
         given(function()
             vim.cmd("new") -- Create another buffer to activate move mode
 
-            winmove.start_mode(winmove.mode.Resize)
+            winmove.start_mode(winmove.Mode.Resize)
 
             local keymaps = test_helpers.get_buf_mapped_keymaps(vim.api.nvim_get_current_buf())
 
@@ -69,7 +69,7 @@ describe("mode mappings", function()
                 script = false,
             })
 
-            winmove.start_mode(winmove.mode.Move)
+            winmove.start_mode(winmove.Mode.Move)
 
             local keymaps = test_helpers.get_buf_mapped_keymaps(buffer)
             compare_keymap("move", "split_down", keymaps["sj"])

@@ -53,7 +53,7 @@ describe("split_into", function()
             })
 
             vim.api.nvim_set_current_win(win_id)
-            winmove.start_mode(winmove.mode.Move)
+            winmove.start_mode(winmove.Mode.Move)
             vim.cmd.normal("sh")
 
             assert.matches_winlayout(vim.fn.winlayout(), {
@@ -107,7 +107,7 @@ describe("split_into", function()
             })
 
             vim.api.nvim_set_current_win(win_id)
-            winmove.start_mode(winmove.mode.Move)
+            winmove.start_mode(winmove.Mode.Move)
             vim.cmd.normal("sj")
 
             assert.matches_winlayout(vim.fn.winlayout(), {
@@ -168,7 +168,7 @@ describe("split_into", function()
 
             vim.api.nvim_set_current_win(win_id)
 
-            winmove.start_mode(winmove.mode.Move)
+            winmove.start_mode(winmove.Mode.Move)
             vim.cmd.normal("sk")
 
             assert.matches_winlayout(vim.fn.winlayout(), {
@@ -205,7 +205,7 @@ describe("split_into", function()
             })
 
             vim.api.nvim_set_current_win(win_id)
-            winmove.start_mode(winmove.mode.Move)
+            winmove.start_mode(winmove.Mode.Move)
             vim.cmd.normal("l")
 
             assert.matches_winlayout(vim.fn.winlayout(), {

@@ -11,7 +11,7 @@ local resize = require("winmove.resize")
 local str = require("winmove.util.str")
 local winutil = require("winmove.winutil")
 
-winmove.mode = require("winmove.mode")
+winmove.Mode = require("winmove.mode")
 winmove.ResizeAnchor = require("winmove.resize").anchor
 
 local api = vim.api
@@ -119,11 +119,11 @@ local function move_window_to_tab(source_win_id, target_win_id, dir, vertical)
     })
 
     local new_win_id = api.nvim_get_current_win()
-    local mode = winmove.mode.Move
+    local mode = winmove.Mode.Move
 
     highlight.highlight_window(new_win_id, mode)
 
-    if winmove.current_mode() == winmove.mode.Move then
+    if winmove.current_mode() == winmove.Mode.Move then
         -- Update state with the new window
         update_state({ win_id = new_win_id })
     end
@@ -194,7 +194,7 @@ local function can_move(win_id, mode)
         end
     end
 
-    if mode == winmove.mode.Move and winutil.is_floating_window(win_id) then
+    if mode == winmove.Mode.Move and winutil.is_floating_window(win_id) then
         message.error("Cannot move floating window")
         return false
     end
@@ -206,7 +206,7 @@ end
 ---@param source_win_id integer
 ---@param dir winmove.Direction
 local function move_window(source_win_id, dir)
-    if not can_move(source_win_id, winmove.mode.Move) then
+    if not can_move(source_win_id, winmove.Mode.Move) then
         return
     end
 
@@ -308,7 +308,7 @@ end
 
 local function toggle_mode()
     local mode = winmove.current_mode()
-    local new_mode = mode == winmove.mode.Move and winmove.mode.Resize or winmove.mode.Move
+    local new_mode = mode == winmove.Mode.Move and winmove.Mode.Resize or winmove.Mode.Move
 
     stop_mode(mode)
     start_mode(new_mode)
@@ -430,7 +430,7 @@ local function get_existing_buffer_keymaps(bufnr)
 end
 
 local function create_pcall_mode_key_handler(mode)
-    local handler = mode == winmove.mode.Move and move_mode_key_handler or resize_mode_key_handler
+    local handler = mode == winmove.Mode.Move and move_mode_key_handler or resize_mode_key_handler
 
     return function(keys)
         local ok, error = pcall(handler, keys)
@@ -640,7 +640,7 @@ stop_mode = function(mode)
     })
 end
 
-local sorted_modes = vim.tbl_values(winmove.mode)
+local sorted_modes = vim.tbl_values(winmove.Mode)
 table.sort(sorted_modes)
 
 local check_mode_error_message = ("valid mode (%s)"):format(table.concat(sorted_modes, ", "))
@@ -648,7 +648,7 @@ local check_mode_error_message = ("valid mode (%s)"):format(table.concat(sorted_
 ---@param mode any
 ---@return boolean
 local function is_valid_mode(mode)
-    return mode == winmove.mode.Move or mode == winmove.mode.Resize
+    return mode == winmove.Mode.Move or mode == winmove.Mode.Resize
 end
 
 ---@param mode winmove.Mode
