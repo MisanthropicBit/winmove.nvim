@@ -58,7 +58,8 @@ use 'MisanthropicBit/winmove.nvim'
 ## Configuration
 
 If you are content with the defaults that are shown below, you don't need to
-call the `configure` function.
+call the `configure` function. No default keymaps are set other than those
+active during modes.
 
 ```lua
 require('winmove').configure({
@@ -104,10 +105,7 @@ require('winmove').configure({
 
 ## Autocommands
 
-You can define autocommands for when modes start and end.
-
-* `"WinmoveModeStart"`
-* `"WinmoveModeEnd"`
+You can define autocommands that trigger when a mode starts and ends.
 
 ```lua
 vim.api.nvim_create_autocmd("WinmoveModeStart", {
@@ -125,34 +123,97 @@ vim.api.nvim_create_autocmd("WinmoveModeEnd", {
 
 ## Public API
 
-Consider only the functions below part of the official API. All other functions
-are subject to change.
+> [!WARNING]  
+> Consider only the functions below part of the public API. All other functions
+> are subject to change.
 
-Setup `winmove`.
+#### `winmove.configure`
 
-```lua
-winmove.configure({ ... })
-```
+Configure `winmove`. Also see [Configuration](#configuration).
+
+#### `winmove.version`
 
 Get the current version of `winmove`.
 
-```lua
-winmove.version()
-```
+#### `winmove.current_mode`
 
 Check which mode is currently active. Returns `"move"`, `"resize"`, or `nil`.
 
+#### `winmove.start_mode`
+
+Start a mode.
+
 ```lua
-winmove.current_mode()
+---@param mode winmove.Mode
+winmove.start_mode(mode)
+
+-- Example:
+winmove.start_mode(winmove.mode.Move)
+winmove.start_mode("resize")
 ```
 
-> [!IMPORTANT]  
-> Moving windows takes into account the cursor position of the current window
-> relative to the target window in the direction you are moving.
->
-> For example, if your cursor position is closest to the bottom of one window in
-> the target direction, the window will be moved below that window. See
-> [this example](#moving-using-relative-cursor-position) for a visual explanation.
+#### `winmove.stop_mode`
+
+Stop the current mode. Fails if no mode is currently active.
+
+#### `winmove.move_window`
+
+Move a window (does not need to be the current window). See [a
+showcase](#moving-around-windows).
+
+```lua
+---@param source_win_id integer
+---@param dir winmove.Direction
+winmove.move_window(source_win_id, dir)
+
+-- Example:
+winmove.move_window(1000, "k")
+```
+
+#### `winmove.split_into`
+
+Split into a window (does not need to be the current window). See [a
+showcase](#split-into-other-windows).
+
+```lua
+---@param source_win_id integer
+---@param dir winmove.Direction
+winmove.split_into(source_win_id, dir)
+
+-- Example:
+winmove.split_into(1000, "l")
+```
+
+#### `winmove.move_window_far`
+
+Move a window as far as possible in a direction (does not need to be the current
+window). See [a showcase](#moving-as-far-as-possible-in-a-direction).
+
+```lua
+---@param source_win_id integer
+---@param dir winmove.Direction
+winmove.move_window_far(source_win_id, dir)
+
+-- Example:
+winmove.move_window_far(1000, "h")
+```
+
+#### `winmove.resize_window`
+
+Resize a window (does not need to be the current window). See a
+[showcase](#moving-and-resizing-windows).
+
+```lua
+---@param win_id integer
+---@param dir winmove.Direction
+---@param count integer
+---@param anchor winmove.ResizeAnchor?
+winmove.resize_window(win_id, dir, count, anchor)
+
+-- Example:
+winmove.resize_window(1000, "j", 3, winmove.ResizeAnchor.TopLeft)
+winmove.resize_window(1000, "l", 1, winmove.ResizeAnchor.BottomRight)
+```
 
 ## Contributing
 
@@ -171,7 +232,17 @@ others suit your needs then by all means use them.
 
 ### Moving around windows
 
+> [!IMPORTANT]  
+> Moving windows takes into account the cursor position of the current window
+> relative to the target window in the direction you are moving.
+>
+> For example, if your cursor position is closest to the bottom of one window in
+> the target direction, the window will be moved below that window. See
+> [this example](#moving-using-relative-cursor-position) for a visual explanation.
+
 ### Moving and resizing windows
+
+### Moving as far as possible in a direction
 
 ### Move between tabs
 
