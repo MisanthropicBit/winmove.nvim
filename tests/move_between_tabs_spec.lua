@@ -714,7 +714,7 @@ describe("moving between tabs", function()
         given(function()
             stub(message, "error")
 
-            winmove.start_mode(winmove.mode.Move)
+            winmove.start_mode(winmove.Mode.Move)
             assert.stub(message.error).was.called_with("Only one window and tab")
 
             message.error:revert()
