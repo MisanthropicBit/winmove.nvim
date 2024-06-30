@@ -613,6 +613,11 @@ end
 
 ---@param mode winmove.Mode
 stop_mode = function(mode)
+    if winmove.current_mode() == nil then
+        message.error("No mode is currently activate")
+        return
+    end
+
     if winmove.current_mode() ~= mode then
         message.error("Window " .. mode .. " mode is not activated")
         return
