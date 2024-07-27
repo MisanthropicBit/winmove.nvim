@@ -352,8 +352,6 @@ local function move_mode_key_handler(keys)
     ---@type integer
     local win_id = state.win_id
 
-    -- Make sure to call the local functions to avoid ignoring window and buffer
-    -- events in move mode
     if keys == keymaps.left then
         move_window(win_id, "h")
     elseif keys == keymaps.down then
@@ -378,8 +376,6 @@ local function move_mode_key_handler(keys)
         move_window_far("k")
     elseif keys == keymaps.far_right then
         move_window_far("l")
-    elseif keys == keymaps.resize_mode then
-        toggle_mode()
     end
 end
 
@@ -412,8 +408,6 @@ local function resize_mode_key_handler(keys)
         resize.resize_window(win_id, "k", count, resize.anchor.BottomRight)
     elseif keys == keymaps.right_botright then
         resize.resize_window(win_id, "l", count, resize.anchor.BottomRight)
-    elseif keys == keymaps.move_mode then
-        toggle_mode()
     end
 end
 
