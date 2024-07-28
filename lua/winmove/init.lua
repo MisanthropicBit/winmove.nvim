@@ -42,9 +42,19 @@ local function is_nonnegative_number(value)
 end
 
 ---@param value any
+local function win_id_validator(value)
+    return { value, is_nonnegative_number, "a non-negative number" },
+end
+
+---@param value any
 ---@return boolean
 local function is_valid_direction(value)
     return value == "h" or value == "j" or value == "k" or value == "l"
+end
+
+---@param value any
+local function dir_validator(value)
+    return { value, is_valid_direction, "a valid direction" },
 end
 
 --- Set current state
@@ -258,8 +268,8 @@ end
 ---@param dir winmove.Direction
 function winmove.move_window(win_id, dir)
     vim.validate({
-        win_id = { win_id, is_nonnegative_number, "a non-negative number" },
-        dir = { dir, is_valid_direction, "a valid direction" },
+        win_id = win_id_validator(win_id),
+        dir = dir_validator(dir),
     })
 
     wincall(win_id, move_window, win_id, dir)
@@ -312,8 +322,8 @@ end
 ---@param dir winmove.Direction
 function winmove.split_into(win_id, dir)
     vim.validate({
-        win_id = { win_id, is_nonnegative_number, "a non-negative number" },
-        dir = { dir, is_valid_direction, "a valid direction" },
+        win_id = win_id_validator(win_id),
+        dir = dir_validator(dir),
     })
 
     wincall(win_id, split_into, win_id, dir)
@@ -330,8 +340,8 @@ end
 ---@param dir winmove.Direction
 function winmove.move_window_far(win_id, dir)
     vim.validate({
-        win_id = { win_id, is_nonnegative_number, "a non-negative number" },
-        dir = { dir, is_valid_direction, "a valid direction" },
+        win_id = win_id_validator(win_id),
+        dir = dir_validator(dir),
     })
 
     wincall(win_id, move_window_far, dir)
