@@ -37,7 +37,8 @@ INSTALLING                                                *winmove-installing*
 CONFIGURATION                                          *winmove-configuration*
 
 If you are content with the defaults that are shown below, you don’t need to
-call the `configure` function.
+call the `configure` function. No default keymaps are set other than those
+active during modes.
 
 >lua
     require('winmove').configure({
@@ -84,10 +85,7 @@ call the `configure` function.
 
 AUTOCOMMANDS                                            *winmove-autocommands*
 
-You can define autocommands for when modes start and end.
-
-- `"WinmoveModeStart"`
-- `"WinmoveModeEnd"`
+You can define autocommands that trigger when a mode starts and ends.
 
 >lua
     vim.api.nvim_create_autocmd("WinmoveModeStart", {
@@ -106,33 +104,106 @@ You can define autocommands for when modes start and end.
 
 PUBLIC API                                                *winmove-public-api*
 
-Consider only the functions below part of the official API. All other functions
-are subject to change.
 
-Setup `winmove`.
+  [!WARNING] Consider only the functions below part of the public API. All other
+  functions are subject to change.
 
->lua
-    winmove.configure({ ... })
-<
+WINMOVE.CONFIGURE
+
+Configure `winmove`. Also see |winmove-configuration|.
+
+
+WINMOVE.VERSION
 
 Get the current version of `winmove`.
 
->lua
-    winmove.version()
-<
+
+WINMOVE.CURRENT_MODE
 
 Check which mode is currently active. Returns `"move"`, `"resize"`, or `nil`.
 
+
+WINMOVE.START_MODE
+
+Start a mode.
+
 >lua
-    winmove.current_mode()
+    ---@param mode winmove.Mode
+    winmove.start_mode(mode)
+    
+    -- Example:
+    winmove.start_mode(winmove.Mode.Move)
+    winmove.start_mode("resize")
 <
 
 
-  [!IMPORTANT] Moving windows takes into account the cursor position of the
-  current window relative to the target window in the direction you are moving.
-  For example, if your cursor position is closest to the bottom of one window in
-  the target direction, the window will be moved below that window. See
-  |winmove-this-example| for a visual explanation.
+WINMOVE.STOP_MODE
+
+Stop the current mode. Fails if no mode is currently active.
+
+
+WINMOVE.MOVE_WINDOW
+
+Move a window (does not need to be the current window). See
+|winmove-a-showcase|.
+
+>lua
+    ---@param win_id integer
+    ---@param dir winmove.Direction
+    winmove.move_window(win_id, dir)
+    
+    -- Example:
+    winmove.move_window(1000, "k")
+<
+
+
+WINMOVE.SPLIT_INTO
+
+Split into a window (does not need to be the current window). See
+|winmove-a-showcase|.
+
+>lua
+    ---@param win_id integer
+    ---@param dir winmove.Direction
+    winmove.split_into(win_id, dir)
+    
+    -- Example:
+    winmove.split_into(1000, "l")
+<
+
+
+WINMOVE.MOVE_WINDOW_FAR
+
+Move a window as far as possible in a direction (does not need to be the
+current window). See |winmove-a-showcase|.
+
+>lua
+    ---@param win_id integer
+    ---@param dir winmove.Direction
+    winmove.move_window_far(win_id, dir)
+    
+    -- Example:
+    winmove.move_window_far(1000, "h")
+<
+
+
+WINMOVE.RESIZE_WINDOW
+
+Resize a window (does not need to be the current window). See a
+|winmove-showcase|.
+
+>lua
+    ---@param win_id integer
+    ---@param dir winmove.Direction
+    ---@param count integer
+    ---@param anchor winmove.ResizeAnchor?
+    winmove.resize_window(win_id, dir, count, anchor)
+    
+    -- Example:
+    winmove.resize_window(1000, "j", 3, winmove.ResizeAnchor.TopLeft)
+    winmove.resize_window(1000, "l", 1, winmove.ResizeAnchor.BottomRight)
+<
+
 
 CONTRIBUTING                                            *winmove-contributing*
 
@@ -156,7 +227,16 @@ SHOWCASE                                                    *winmove-showcase*
 MOVING AROUND WINDOWS ~
 
 
+  [!IMPORTANT] Moving windows takes into account the cursor position of the
+  current window relative to the target window in the direction you are moving.
+  For example, if your cursor position is closest to the bottom of one window in
+  the target direction, the window will be moved below that window. See
+  |winmove-this-example| for a visual explanation.
+
 MOVING AND RESIZING WINDOWS ~
+
+
+MOVING AS FAR AS POSSIBLE IN A DIRECTION ~
 
 
 MOVE BETWEEN TABS ~
