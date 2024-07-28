@@ -162,9 +162,9 @@ Move a window (does not need to be the current window). See [a
 showcase](#moving-around-windows).
 
 ```lua
----@param source_win_id integer
+---@param win_id integer
 ---@param dir winmove.Direction
-winmove.move_window(source_win_id, dir)
+winmove.move_window(win_id, dir)
 
 -- Example:
 winmove.move_window(1000, "k")
@@ -176,9 +176,9 @@ Split into a window (does not need to be the current window). See [a
 showcase](#split-into-other-windows).
 
 ```lua
----@param source_win_id integer
+---@param win_id integer
 ---@param dir winmove.Direction
-winmove.split_into(source_win_id, dir)
+winmove.split_into(win_id, dir)
 
 -- Example:
 winmove.split_into(1000, "l")
@@ -190,9 +190,9 @@ Move a window as far as possible in a direction (does not need to be the current
 window). See [a showcase](#moving-as-far-as-possible-in-a-direction).
 
 ```lua
----@param source_win_id integer
+---@param win_id integer
 ---@param dir winmove.Direction
-winmove.move_window_far(source_win_id, dir)
+winmove.move_window_far(win_id, dir)
 
 -- Example:
 winmove.move_window_far(1000, "h")
