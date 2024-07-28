@@ -43,7 +43,7 @@ end
 
 ---@param value any
 local function win_id_validator(value)
-    return { value, is_nonnegative_number, "a non-negative number" },
+    return { value, is_nonnegative_number, "a non-negative number" }
 end
 
 ---@param value any
@@ -54,7 +54,7 @@ end
 
 ---@param value any
 local function dir_validator(value)
-    return { value, is_valid_direction, "a valid direction" },
+    return { value, is_valid_direction, "a valid direction" }
 end
 
 --- Set current state
@@ -740,8 +740,8 @@ end
 ---@param anchor winmove.ResizeAnchor?
 function winmove.resize_window(win_id, dir, count, anchor)
     vim.validate({
-        win_id = { win_id, is_nonnegative_number, "a non-negative number" },
-        dir = { dir, is_valid_direction, "a valid direction" },
+        win_id = win_id_validator(win_id),
+        dir = dir_validator(dir),
         count = { count, is_nonnegative_number, "a non-negative number" },
         anchor = { anchor, resize.is_valid_anchor, "a valid anchor" },
     })
