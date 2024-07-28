@@ -456,16 +456,41 @@ local function get_existing_buffer_keymaps(bufnr)
     return keymaps
 end
 
-local function create_pcall_mode_key_handler(mode)
+---@param mode winmove.Mode?
+---@param err unknown?
+local function handle_error_in_mode(mode, err)
+    -- There was an error during a mode, restore keymaps and quit current mode
+    local cur_mode = mode or winmove.current_mode()
+
+    winmove.stop_mode()
+    message.error((("Got error in '%s' mode: %s"):format(cur_mode, err)))
+end
+
+---@param func function
+---@param ... unknown
+---@return function
+local function safe_call_autorestore_mode(func, ...)
+    local args = { ... }
+
+    return function()
+        local ok, err = pcall(func, unpack(args))
+
+        if not ok then
+            handle_error_in_mode(nil, err)
+        end
+    end
+end
+
+---@param mode winmove.Mode
+---@return fun(keys: string)
+local function create_mode_key_handler(mode)
     local handler = mode == winmove.Mode.Move and move_mode_key_handler or resize_mode_key_handler
 
     return function(keys)
-        local ok, error = pcall(handler, keys)
+        local ok, err = pcall(handler, keys)
 
         if not ok then
-            -- There was an error in the call, restore keymaps and quit current mode
-            winmove.stop_mode()
-            message.error((("Got error in '%s' mode: %s"):format(mode, error)))
+            handle_error_in_mode(mode, err)
         end
     end
 end
@@ -478,7 +503,7 @@ end
 local function set_keymaps(win_id, bufnr, mode)
     local existing_buf_keymaps = get_existing_buffer_keymaps(bufnr)
     local saved_buf_keymaps = {}
-    local handler = create_pcall_mode_key_handler(mode)
+    local handler = create_mode_key_handler(mode)
 
     for name, map in pairs(config.keymaps[mode]) do
         local description = config.get_keymap_description(name, mode)
@@ -493,10 +518,16 @@ local function set_keymaps(win_id, bufnr, mode)
         end
     end
 
-    set_mode_keymap(win_id, bufnr, config.keymaps.help, function()
-        float.open(mode)
-    end, config.get_keymap_description("help"))
+    set_mode_keymap(
+        win_id,
+        bufnr,
+        config.keymaps.help,
+        safe_call_autorestore_mode(float.open, mode),
+        config.get_keymap_description("help")
+    )
 
+    -- We cannot use safe_call_autorestore_mode here as it would call stop_mode
+    -- indefintely on error
     set_mode_keymap(
         win_id,
         bufnr,
@@ -509,7 +540,7 @@ local function set_keymaps(win_id, bufnr, mode)
         win_id,
         bufnr,
         config.keymaps.toggle_mode,
-        toggle_mode,
+        safe_call_autorestore_mode(toggle_mode),
         config.get_keymap_description("toggle_mode")
     )
 
@@ -650,8 +681,18 @@ stop_mode = function(mode)
         return
     end
 
-    highlight.unhighlight_window(state.win_id)
-    restore_keymaps(mode)
+    local unhighlight_ok = pcall(highlight.unhighlight_window, state.win_id)
+
+    if not unhighlight_ok then
+        message.error("Failed to unhighlight window when stopping mode")
+    end
+
+    local restore_ok = pcall(restore_keymaps, mode)
+
+    if not restore_ok then
+        message.error("Failed to restore keymaps when stopping mode")
+    end
+
     reset_state()
 
     for _, autocmd in ipairs(autocmds) do

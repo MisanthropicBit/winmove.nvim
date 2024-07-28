@@ -1,7 +1,8 @@
-local winmove = require("winmove")
+local float = require("winmove.float")
+local stub = require("luassert.stub")
 local test_helpers = require("winmove.util.test_helpers")
 local vader = require("winmove.util.vader")
-local stub = require("luassert.stub")
+local winmove = require("winmove")
 
 local given = vader.given
 local make_layout = test_helpers.make_layout
@@ -22,6 +23,10 @@ describe("error handling in modes", function()
                 },
             })
 
+            stub(float, "open", function()
+                error("Oh noes", 0)
+            end)
+
             local function func()
                 vim.cmd("echo 'Hello'")
             end
@@ -39,7 +44,7 @@ describe("error handling in modes", function()
             stub(vim.api, "nvim_echo")
 
             winmove.start_mode(winmove.Mode.Move)
-            vim.cmd.normal("l")
+            vim.cmd.normal("?")
 
             assert.is_nil(winmove.current_mode())
 
@@ -60,9 +65,8 @@ describe("error handling in modes", function()
             assert.are.same(keymap.silent, 1)
             assert.are.same(keymap.nowait, 0)
 
-            -- Revert stubs
             vim.api.nvim_echo:revert()
-            winmove.move_window:revert()
+            float.open:revert()
         end)
     end)
 end)
