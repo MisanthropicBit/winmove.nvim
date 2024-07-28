@@ -62,7 +62,7 @@ describe("custom highlights", function()
                 },
             })
 
-            winmove.start_mode(winmove.mode.Move)
+            winmove.start_mode(winmove.Mode.Move)
 
             local win_id = vim.api.nvim_get_current_win()
 
@@ -101,7 +101,7 @@ describe("custom highlights", function()
                 },
             })
 
-            winmove.start_mode(winmove.mode.Resize)
+            winmove.start_mode(winmove.Mode.Resize)
 
             local win_id = vim.api.nvim_get_current_win()
 
