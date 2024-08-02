@@ -308,7 +308,8 @@ local function split_into(win_id, dir)
     ---@diagnostic disable-next-line:param-type-mismatch
     if layout.are_siblings(win_id, target_win_id) then
         ---@diagnostic disable-next-line:param-type-mismatch
-        local reldir = layout.get_sibling_relative_dir(win_id, target_win_id, dir, winmove.current_mode())
+        local reldir =
+            layout.get_sibling_relative_dir(win_id, target_win_id, dir, winmove.current_mode())
 
         split_options.vertical = not split_options.vertical
         split_options.rightbelow = reldir == "l" or reldir == "j"
