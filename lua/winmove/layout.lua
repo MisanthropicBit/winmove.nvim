@@ -1,7 +1,7 @@
 local layout = {}
 
 local winutil = require("winmove.winutil")
-local Mode = require("winmove.mode")
+local Mode = require("winmove.mode").Mode
 
 ---@class winmove.BoundingBox
 ---@field top integer
@@ -128,6 +128,8 @@ function layout.are_siblings(win_id1, win_id2)
                 end
             end
         end
+
+        return false
     end
 
     return _are_siblings(win_layout, nil, win_id1)

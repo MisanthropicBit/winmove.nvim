@@ -35,7 +35,8 @@ describe("relative cursor", function()
             })
 
             vim.api.nvim_set_current_win(main_win_id)
-            winmove.move_window(main_win_id, "l")
+            winmove.start_mode(winmove.Mode.Move)
+            vim.cmd.normal("l")
 
             assert.matches_winlayout(vim.fn.winlayout(), {
                 "row",
@@ -80,7 +81,8 @@ describe("relative cursor", function()
             })
 
             vim.api.nvim_set_current_win(main_win_id)
-            winmove.move_window(main_win_id, "l")
+            winmove.start_mode(winmove.Mode.Move)
+            vim.cmd.normal("l")
 
             assert.matches_winlayout(vim.fn.winlayout(), {
                 "row",
@@ -132,7 +134,8 @@ describe("relative cursor", function()
             })
 
             vim.api.nvim_set_current_win(main_win_id)
-            winmove.move_window(main_win_id, "l")
+            winmove.start_mode(winmove.Mode.Move)
+            vim.cmd.normal("l")
 
             assert.matches_winlayout(vim.fn.winlayout(), {
                 "row",
@@ -206,7 +209,8 @@ describe("relative cursor", function()
             local long_line = ("x"):rep(width * 0.75)
 
             vim.api.nvim_buf_set_lines(buffer, 0, 1, true, { long_line })
-            winmove.move_window(win_id, "k")
+            winmove.start_mode(winmove.Mode.Move)
+            vim.cmd.normal("k")
 
             assert.matches_winlayout(vim.fn.winlayout(), {
                 "row",
