@@ -242,7 +242,11 @@ others suit your needs then by all means use them.
 
 ### Moving and resizing windows
 
-![placeholder]
+![](https://github.com/user-attachments/assets/417023dd-9d5d-4ae9-891d-514e0f3038d5)
+
+<video width="320" height="240" controls>
+  <source src="https://github.com/user-attachments/assets/417023dd-9d5d-4ae9-891d-514e0f3038d5" type="video/mov">
+</video>
 
 ### Moving as far as possible in a direction
 
