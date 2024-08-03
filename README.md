@@ -242,6 +242,8 @@ others suit your needs then by all means use them.
 
 ### Moving and resizing windows
 
+![placeholder]
+
 ### Moving as far as possible in a direction
 
 ### Move between tabs
