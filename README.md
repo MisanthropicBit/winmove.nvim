@@ -240,11 +240,13 @@ others suit your needs then by all means use them.
 > the target direction, the window will be moved below that window. See
 > [this example](#moving-using-relative-cursor-position) for a visual explanation.
 
-### Moving and resizing windows
-
 https://github.com/user-attachments/assets/417023dd-9d5d-4ae9-891d-514e0f3038d5
 
+### Moving and resizing windows
+
 ### Moving as far as possible in a direction
+
+https://github.com/user-attachments/assets/b3550d2d-287b-4b5d-9ea9-3466ac47c0d1
 
 ### Move between tabs
 
