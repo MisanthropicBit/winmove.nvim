@@ -259,13 +259,11 @@ https://github.com/user-attachments/assets/b3550d2d-287b-4b5d-9ea9-3466ac47c0d1
 
 ### Move between tabs
 
+https://github.com/user-attachments/assets/6d5bf9ca-3b8b-4a72-978a-520eb2db779b
+
 ### Moving using relative cursor position
 
 ### Toggle help
-
-### Split as far as possible in a direction
-
-### Split into other windows
 
 ### Works with asynchronous output
 
