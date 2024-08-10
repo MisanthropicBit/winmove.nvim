@@ -242,7 +242,9 @@ others suit your needs then by all means use them.
 
 <details>
     <summary>Video</summary>
+
     https://github.com/user-attachments/assets/417023dd-9d5d-4ae9-891d-514e0f3038d5
+
 </details>
 
 ### Splitting into windows
