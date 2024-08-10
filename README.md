@@ -240,12 +240,17 @@ others suit your needs then by all means use them.
 > the target direction, the window will be moved below that window. See
 > [this example](#moving-using-relative-cursor-position) for a visual explanation.
 
-https://github.com/user-attachments/assets/417023dd-9d5d-4ae9-891d-514e0f3038d5
+<details>
+    <summary>Video</summary>
+    https://github.com/user-attachments/assets/417023dd-9d5d-4ae9-891d-514e0f3038d5
+</details>
 
 ### Splitting into windows
 
 As opposed to moving windows, which will squeeze a window in between other
 windows, splitting into a window will move it next to a target window.
+
+https://github.com/user-attachments/assets/4bf49e27-d08b-4926-9f17-57bf2e702c64
 
 ### Resizing windows
 
