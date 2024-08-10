@@ -242,6 +242,8 @@ others suit your needs then by all means use them.
 
 https://github.com/user-attachments/assets/417023dd-9d5d-4ae9-891d-514e0f3038d5
 
+### Moving using relative cursor position
+
 ### Splitting into windows
 
 As opposed to moving windows, which will squeeze a window in between other
@@ -261,11 +263,9 @@ https://github.com/user-attachments/assets/b3550d2d-287b-4b5d-9ea9-3466ac47c0d1
 
 https://github.com/user-attachments/assets/6d5bf9ca-3b8b-4a72-978a-520eb2db779b
 
-### Moving using relative cursor position
-
-### Toggle help
-
 ### Works with asynchronous output
+
+https://github.com/user-attachments/assets/88abfe11-55bb-4096-979e-7a5754feaa6a
 
 ## Similar projects
 
