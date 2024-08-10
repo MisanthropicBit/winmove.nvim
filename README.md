@@ -242,7 +242,14 @@ others suit your needs then by all means use them.
 
 https://github.com/user-attachments/assets/417023dd-9d5d-4ae9-891d-514e0f3038d5
 
-### Moving and resizing windows
+### Splitting into windows
+
+As opposed to moving windows, which will squeeze a window in between other
+windows, splitting into a window will move it next to a target window.
+
+### Resizing windows
+
+https://github.com/user-attachments/assets/8f77c9c4-dca1-4647-9049-8695e5351431
 
 ### Moving as far as possible in a direction
 
