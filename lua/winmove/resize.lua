@@ -21,8 +21,16 @@ end
 local function _resize(horizontal, sign, count, winnr)
     local win_id = winnr and tostring(winnr) or ""
     local vertical = horizontal and "vertical " or ""
+    vim.print(count <= 0 and 1 or count)
 
-    vim.cmd(("%s%sresize %s%d"):format(vertical, win_id, sign > 0 and "+" or "-", count or 1))
+    vim.cmd(
+        ("%s%sresize %s%d"):format(
+            vertical,
+            win_id,
+            sign > 0 and "+" or "-",
+            count <= 0 and 1 or count
+        )
+    )
 end
 
 ---@type table<boolean, table<boolean, winmove.Direction>>
@@ -132,6 +140,7 @@ function resize.resize_window(win_id, dir, count, anchor, ignore_neighbors)
     local horizontal = winutil.is_horizontal(dir)
     local is_full_dimension, get_dimension, get_min_dimension, edges
 
+    -- TODO: Make local width/height values take priority?
     if horizontal then
         is_full_dimension = winutil.is_full_width
         get_dimension = vim.api.nvim_win_get_width
