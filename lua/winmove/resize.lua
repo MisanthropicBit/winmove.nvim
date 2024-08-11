@@ -106,8 +106,6 @@ local function adjust_neighbors_in_direction(dir, get_dimension, get_min_dimensi
                 nil
             )
 
-            vim.api.nvim_win_set_width(neighbor_win_id, min_dimension)
-
             return true, true
         end
 
