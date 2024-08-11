@@ -244,6 +244,8 @@ https://github.com/user-attachments/assets/417023dd-9d5d-4ae9-891d-514e0f3038d5
 
 ### Moving using relative cursor position
 
+https://github.com/user-attachments/assets/7fce8ab8-4ba4-4869-8ab8-220f653541d8
+
 ### Splitting into windows
 
 As opposed to moving windows, which will squeeze a window in between other
