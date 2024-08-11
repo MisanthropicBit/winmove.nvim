@@ -203,7 +203,7 @@ resized relative to an anchor in the top-left or bottom-right corner of the
 window.
 
 Resizing respects the `winwidth`/`winminwidth` and `winheight`/`winminheight`
-options respectively, with local options taking priority. If a window being
+options respectively, with the largest value taking priority. If a window being
 resized would shrink another window's size beyond the values of those options,
 the whole row/column of windows are adjusted except if all windows in the
 direction of resizing are as small as they can get.
@@ -265,7 +265,7 @@ https://github.com/user-attachments/assets/4bf49e27-d08b-4926-9f17-57bf2e702c64
 https://github.com/user-attachments/assets/8f77c9c4-dca1-4647-9049-8695e5351431
 
 Resizing respects the `winwidth`/`winminwidth` and `winheight`/`winminheight`
-options respectively, with local options taking priority. If a window being
+options respectively, with the largest value taking priority. If a window being
 resized would shrink another window's size beyond the values of those options,
 the whole row/column of windows are adjusted except if all windows in the
 direction of resizing are as small as they can get.
