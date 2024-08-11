@@ -21,7 +21,6 @@ end
 local function _resize(horizontal, sign, count, winnr)
     local win_id = winnr and tostring(winnr) or ""
     local vertical = horizontal and "vertical " or ""
-    vim.print(count <= 0 and 1 or count)
 
     vim.cmd(
         ("%s%sresize %s%d"):format(
