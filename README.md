@@ -270,6 +270,8 @@ resized would shrink another window's size beyond the values of those options,
 the whole row/column of windows are adjusted except if all windows in the
 direction of resizing are as small as they can get.
 
+https://github.com/user-attachments/assets/8f1fff43-2830-48f5-a29b-0b1aa7d865b2
+
 ### Moving as far as possible in a direction
 
 https://github.com/user-attachments/assets/b3550d2d-287b-4b5d-9ea9-3466ac47c0d1
