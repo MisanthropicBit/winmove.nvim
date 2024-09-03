@@ -145,7 +145,7 @@ Stop the current mode. Fails if no mode is currently active.
 WINMOVE.MOVE_WINDOW
 
 Move a window (does not need to be the current window). See
-|winmove-a-showcase|.
+|winmove-this-showcase|.
 
 >lua
     ---@param win_id integer
@@ -160,7 +160,7 @@ Move a window (does not need to be the current window). See
 WINMOVE.SPLIT_INTO
 
 Split into a window (does not need to be the current window). See
-|winmove-a-showcase|.
+|winmove-this-showcase|.
 
 >lua
     ---@param win_id integer
@@ -175,7 +175,7 @@ Split into a window (does not need to be the current window). See
 WINMOVE.MOVE_WINDOW_FAR
 
 Move a window as far as possible in a direction (does not need to be the
-current window). See |winmove-a-showcase|.
+current window). See |winmove-this-showcase|.
 
 >lua
     ---@param win_id integer
@@ -189,8 +189,17 @@ current window). See |winmove-a-showcase|.
 
 WINMOVE.RESIZE_WINDOW
 
-Resize a window (does not need to be the current window). See a
-|winmove-showcase|.
+Resize a window (does not need to be the current window). The window can be
+resized relative to an anchor in the top-left or bottom-right corner of the
+window.
+
+Resizing respects the `winwidth`/`winminwidth` and `winheight`/`winminheight`
+options respectively, with the largest value taking priority. If a window being
+resized would shrink another window’s size beyond the values of those
+options, the whole row/column of windows are adjusted except if all windows in
+the direction of resizing are as small as they can get.
+
+See |winmove-this-showcase|.
 
 >lua
     ---@param win_id integer
@@ -233,28 +242,55 @@ MOVING AROUND WINDOWS ~
   the target direction, the window will be moved below that window. See
   |winmove-this-example| for a visual explanation.
 
-MOVING AND RESIZING WINDOWS ~
-
-
-MOVING AS FAR AS POSSIBLE IN A DIRECTION ~
-
-
-MOVE BETWEEN TABS ~
+https://github.com/user-attachments/assets/417023dd-9d5d-4ae9-891d-514e0f3038d5
 
 
 MOVING USING RELATIVE CURSOR POSITION ~
 
 
-TOGGLE HELP ~
+https://github.com/user-attachments/assets/7fce8ab8-4ba4-4869-8ab8-220f653541d8
 
 
-SPLIT AS FAR AS POSSIBLE IN A DIRECTION ~
+SPLITTING INTO WINDOWS ~
+
+As opposed to moving windows, which will squeeze a window in between other
+windows, splitting into a window will move it next to a target window.
 
 
-SPLIT INTO OTHER WINDOWS ~
+https://github.com/user-attachments/assets/4bf49e27-d08b-4926-9f17-57bf2e702c64
+
+
+RESIZING WINDOWS ~
+
+
+https://github.com/user-attachments/assets/8f77c9c4-dca1-4647-9049-8695e5351431
+
+Resizing respects the `winwidth`/`winminwidth` and `winheight`/`winminheight`
+options respectively, with the largest value taking priority. If a window being
+resized would shrink another window’s size beyond the values of those
+options, the whole row/column of windows are adjusted except if all windows in
+the direction of resizing are as small as they can get.
+
+
+https://github.com/user-attachments/assets/8f1fff43-2830-48f5-a29b-0b1aa7d865b2
+
+
+MOVING AS FAR AS POSSIBLE IN A DIRECTION ~
+
+
+https://github.com/user-attachments/assets/b3550d2d-287b-4b5d-9ea9-3466ac47c0d1
+
+
+MOVE BETWEEN TABS ~
+
+
+https://github.com/user-attachments/assets/6d5bf9ca-3b8b-4a72-978a-520eb2db779b
 
 
 WORKS WITH ASYNCHRONOUS OUTPUT ~
+
+
+https://github.com/user-attachments/assets/88abfe11-55bb-4096-979e-7a5754feaa6a
 
 
 SIMILAR PROJECTS                                    *winmove-similar-projects*
