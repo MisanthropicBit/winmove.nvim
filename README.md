@@ -23,6 +23,8 @@
 
 🚧 **This plugin is under development** 🚧
 
+https://github.com/user-attachments/assets/417023dd-9d5d-4ae9-891d-514e0f3038d5
+
 </div>
 
 - [Requirements](#requirements)
@@ -158,8 +160,7 @@ Stop the current mode. Fails if no mode is currently active.
 
 #### `winmove.move_window`
 
-Move a window (does not need to be the current window). See [a
-showcase](#moving-around-windows).
+Move a window (does not need to be the current window). See [this showcase](#moving-around-windows).
 
 ```lua
 ---@param win_id integer
@@ -172,8 +173,7 @@ winmove.move_window(1000, "k")
 
 #### `winmove.split_into`
 
-Split into a window (does not need to be the current window). See [a
-showcase](#split-into-other-windows).
+Split into a window (does not need to be the current window). See [this showcase](#split-into-other-windows).
 
 ```lua
 ---@param win_id integer
@@ -187,7 +187,7 @@ winmove.split_into(1000, "l")
 #### `winmove.move_window_far`
 
 Move a window as far as possible in a direction (does not need to be the current
-window). See [a showcase](#moving-as-far-as-possible-in-a-direction).
+window). See [this showcase](#moving-as-far-as-possible-in-a-direction).
 
 ```lua
 ---@param win_id integer
@@ -200,8 +200,17 @@ winmove.move_window_far(1000, "h")
 
 #### `winmove.resize_window`
 
-Resize a window (does not need to be the current window). See a
-[showcase](#moving-and-resizing-windows).
+Resize a window (does not need to be the current window). The window can be
+resized relative to an anchor in the top-left or bottom-right corner of the
+window.
+
+Resizing respects the `winwidth`/`winminwidth` and `winheight`/`winminheight`
+options respectively, with the largest value taking priority. If a window being
+resized would shrink another window's size beyond the values of those options,
+the whole row/column of windows are adjusted except if all windows in the
+direction of resizing are as small as they can get.
+
+See [this showcase](#moving-and-resizing-windows).
 
 ```lua
 ---@param win_id integer
@@ -240,21 +249,42 @@ others suit your needs then by all means use them.
 > the target direction, the window will be moved below that window. See
 > [this example](#moving-using-relative-cursor-position) for a visual explanation.
 
-### Moving and resizing windows
-
-### Moving as far as possible in a direction
-
-### Move between tabs
+https://github.com/user-attachments/assets/417023dd-9d5d-4ae9-891d-514e0f3038d5
 
 ### Moving using relative cursor position
 
-### Toggle help
+https://github.com/user-attachments/assets/7fce8ab8-4ba4-4869-8ab8-220f653541d8
 
-### Split as far as possible in a direction
+### Splitting into windows
 
-### Split into other windows
+As opposed to moving windows, which will squeeze a window in between other
+windows, splitting into a window will move it next to a target window.
+
+https://github.com/user-attachments/assets/4bf49e27-d08b-4926-9f17-57bf2e702c64
+
+### Resizing windows
+
+https://github.com/user-attachments/assets/8f77c9c4-dca1-4647-9049-8695e5351431
+
+Resizing respects the `winwidth`/`winminwidth` and `winheight`/`winminheight`
+options respectively, with the largest value taking priority. If a window being
+resized would shrink another window's size beyond the values of those options,
+the whole row/column of windows are adjusted except if all windows in the
+direction of resizing are as small as they can get.
+
+https://github.com/user-attachments/assets/8f1fff43-2830-48f5-a29b-0b1aa7d865b2
+
+### Moving as far as possible in a direction
+
+https://github.com/user-attachments/assets/b3550d2d-287b-4b5d-9ea9-3466ac47c0d1
+
+### Move between tabs
+
+https://github.com/user-attachments/assets/6d5bf9ca-3b8b-4a72-978a-520eb2db779b
 
 ### Works with asynchronous output
+
+https://github.com/user-attachments/assets/88abfe11-55bb-4096-979e-7a5754feaa6a
 
 ## Similar projects
 
