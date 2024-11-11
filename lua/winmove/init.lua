@@ -8,12 +8,10 @@ local highlight = require("winmove.highlight")
 local layout = require("winmove.layout")
 local message = require("winmove.message")
 local _mode = require("winmove.mode")
-local resize = require("winmove.resize")
 local str = require("winmove.util.str")
 local winutil = require("winmove.winutil")
 
 winmove.Mode = _mode.Mode
-winmove.ResizeAnchor = require("winmove.resize").anchor
 
 local api = vim.api
 local winmove_version = "0.1.0"
@@ -348,14 +346,6 @@ function winmove.move_window_far(win_id, dir)
     wincall(win_id, move_window_far, dir)
 end
 
-local function toggle_mode()
-    local mode = winmove.current_mode()
-    local new_mode = mode == winmove.Mode.Move and winmove.Mode.Resize or winmove.Mode.Move
-
-    stop_mode(mode)
-    start_mode(new_mode)
-end
-
 ---@param keys string
 local function move_mode_key_handler(keys)
     local keymaps = config.keymaps.move
@@ -387,38 +377,6 @@ local function move_mode_key_handler(keys)
         move_window_far("k")
     elseif keys == keymaps.far_right then
         move_window_far("l")
-    end
-end
-
----@param keys string
-local function resize_mode_key_handler(keys)
-    ---@type integer
-    local win_id = state.win_id
-    local count = vim.v.count
-
-    -- If no count is provided use the default count otherwise use the provided count
-    if count == 0 then
-        count = config.default_resize_count
-    end
-
-    local keymaps = config.keymaps.resize
-
-    if keys == keymaps.left then
-        resize.resize_window(win_id, "h", count, resize.anchor.TopLeft)
-    elseif keys == keymaps.down then
-        resize.resize_window(win_id, "j", count, resize.anchor.TopLeft)
-    elseif keys == keymaps.up then
-        resize.resize_window(win_id, "k", count, resize.anchor.TopLeft)
-    elseif keys == keymaps.right then
-        resize.resize_window(win_id, "l", count, resize.anchor.TopLeft)
-    elseif keys == keymaps.left_botright then
-        resize.resize_window(win_id, "h", count, resize.anchor.BottomRight)
-    elseif keys == keymaps.down_botright then
-        resize.resize_window(win_id, "j", count, resize.anchor.BottomRight)
-    elseif keys == keymaps.up_botright then
-        resize.resize_window(win_id, "k", count, resize.anchor.BottomRight)
-    elseif keys == keymaps.right_botright then
-        resize.resize_window(win_id, "l", count, resize.anchor.BottomRight)
     end
 end
 
@@ -495,7 +453,7 @@ end
 ---@param mode winmove.Mode
 ---@return fun(keys: string)
 local function create_mode_key_handler(mode)
-    local handler = mode == winmove.Mode.Move and move_mode_key_handler or resize_mode_key_handler
+    local handler = move_mode_key_handler
 
     return function(keys)
         local ok, err = pcall(handler, keys)
@@ -547,14 +505,6 @@ local function set_keymaps(win_id, bufnr, mode)
         config.get_keymap_description("quit")
     )
 
-    set_mode_keymap(
-        win_id,
-        bufnr,
-        config.keymaps.toggle_mode,
-        safe_call_autorestore_mode(toggle_mode),
-        config.get_keymap_description("toggle_mode")
-    )
-
     return saved_buf_keymaps
 end
 
@@ -573,7 +523,6 @@ local function restore_keymaps(mode)
 
     pcall(api.nvim_buf_del_keymap, state.bufnr, "n", config.keymaps.help)
     pcall(api.nvim_buf_del_keymap, state.bufnr, "n", config.keymaps.quit)
-    pcall(api.nvim_buf_del_keymap, state.bufnr, "n", config.keymaps.toggle_mode)
 
     -- Restore old keymaps
     for _, keymap in ipairs(state.saved_keymaps) do
@@ -605,8 +554,8 @@ local function create_mode_autocmds(mode, win_id)
             callback = function()
                 local cur_win_id = api.nvim_get_current_win()
 
-                -- Do not stop the current mode if we are entering the window we are
-                -- moving/resizing or if we are entering the help window
+                -- Do not stop the current mode if we are entering the window
+                -- we are moving or if we are entering the help window
                 if cur_win_id ~= win_id and not float.is_help_window(cur_win_id) then
                     stop_mode(mode)
                     return true
@@ -733,23 +682,6 @@ end
 
 function winmove.stop_mode()
     stop_mode(winmove.current_mode())
-end
-
----@param win_id integer
----@param dir winmove.Direction
----@param count integer
----@param anchor winmove.ResizeAnchor?
-function winmove.resize_window(win_id, dir, count, anchor)
-    vim.validate({
-        win_id = win_id_validator(win_id),
-        dir = dir_validator(dir),
-        count = { count, is_nonnegative_number, "a non-negative number" },
-        anchor = { anchor, resize.is_valid_anchor, "a valid anchor" },
-    })
-
-    winutil.win_id_context_call(win_id, function()
-        resize.resize_window(win_id, dir, count, anchor)
-    end)
 end
 
 function winmove.current_mode()
