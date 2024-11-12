@@ -9,6 +9,8 @@ local layout = require("winmove.layout")
 local message = require("winmove.message")
 local _mode = require("winmove.mode")
 local str = require("winmove.util.str")
+local swap = require("winmove.swap")
+local validators = require("winmove.validators")
 local winutil = require("winmove.winutil")
 
 winmove.Mode = _mode.Mode
@@ -32,28 +34,6 @@ local state = {
     bufnr = nil,
     saved_keymaps = nil,
 }
-
----@param value any
----@return boolean
-local function is_nonnegative_number(value)
-    return type(value) == "number" and value >= 0
-end
-
----@param value any
-local function win_id_validator(value)
-    return { value, is_nonnegative_number, "a non-negative number" }
-end
-
----@param value any
----@return boolean
-local function is_valid_direction(value)
-    return value == "h" or value == "j" or value == "k" or value == "l"
-end
-
----@param value any
-local function dir_validator(value)
-    return { value, is_valid_direction, "a valid direction" }
-end
 
 --- Set current state
 ---@param mode winmove.Mode
@@ -266,14 +246,13 @@ end
 ---@param dir winmove.Direction
 function winmove.move_window(win_id, dir)
     vim.validate({
-        win_id = win_id_validator(win_id),
-        dir = dir_validator(dir),
+        win_id = validators.win_id_validator(win_id),
+        dir = validators.dir_validator(dir),
     })
 
     wincall(win_id, move_window, win_id, dir)
 end
 
---
 --- Split a window into another window in a given direction
 ---@param win_id integer
 ---@param dir winmove.Direction
@@ -321,8 +300,8 @@ end
 ---@param dir winmove.Direction
 function winmove.split_into(win_id, dir)
     vim.validate({
-        win_id = win_id_validator(win_id),
-        dir = dir_validator(dir),
+        win_id = validators.win_id_validator(win_id),
+        dir = validators.dir_validator(dir),
     })
 
     wincall(win_id, split_into, win_id, dir)
@@ -339,11 +318,39 @@ end
 ---@param dir winmove.Direction
 function winmove.move_window_far(win_id, dir)
     vim.validate({
-        win_id = win_id_validator(win_id),
-        dir = dir_validator(dir),
+        win_id = validators.win_id_validator(win_id),
+        dir = validators.dir_validator(dir),
     })
 
     wincall(win_id, move_window_far, dir)
+end
+
+---@param win_id integer
+---@param dir winmove.Direction
+function winmove.swap_window_in_direction(win_id, dir)
+    vim.validate({
+        win_id = validators.win_id_validator(win_id),
+        dir = validators.dir_validator(dir),
+    })
+
+    winutil.win_id_context_call(win_id, function()
+        swap.swap_window_in_direction(win_id, dir)
+    end)
+end
+
+---@param win_id integer
+function winmove.swap_window(win_id)
+    vim.validate({ win_id = validators.win_id_validator(win_id) })
+
+    swap.swap_window(win_id)
+end
+
+local function toggle_mode()
+    local mode = winmove.current_mode()
+    local new_mode = mode == winmove.Mode.Move and winmove.Mode.Swap or winmove.Mode.Move
+
+    stop_mode(mode)
+    start_mode(new_mode)
 end
 
 ---@param keys string
@@ -377,6 +384,25 @@ local function move_mode_key_handler(keys)
         move_window_far("k")
     elseif keys == keymaps.far_right then
         move_window_far("l")
+    end
+end
+
+---@param keys string
+local function swap_mode_key_handler(keys)
+    ---@type integer
+    local win_id = state.win_id
+    local keymaps = config.keymaps.swap
+
+    if keys == keymaps.left then
+        swap.swap_window_in_direction(win_id, "h")
+    elseif keys == keymaps.down then
+        swap.swap_window_in_direction(win_id, "j")
+    elseif keys == keymaps.up then
+        swap.swap_window_in_direction(win_id, "k")
+    elseif keys == keymaps.right then
+        swap.swap_window_in_direction(win_id, "l")
+    elseif keys == keymaps.select then
+        swap.swap_window(win_id)
     end
 end
 
@@ -431,6 +457,7 @@ local function handle_error_in_mode(mode, err)
     -- There was an error during a mode, restore keymaps and quit current mode
     local cur_mode = mode or winmove.current_mode()
 
+    vim.print("stop 3")
     winmove.stop_mode()
     message.error((("Got error in '%s' mode: %s"):format(cur_mode, err)))
 end
@@ -450,10 +477,15 @@ local function safe_call_autorestore_mode(func, ...)
     end
 end
 
+local mode_key_handlers = {
+    [winmove.Mode.Move] = move_mode_key_handler,
+    [winmove.Mode.Swap] = swap_mode_key_handler,
+}
+
 ---@param mode winmove.Mode
 ---@return fun(keys: string)
 local function create_mode_key_handler(mode)
-    local handler = move_mode_key_handler
+    local handler = mode_key_handlers[mode]
 
     return function(keys)
         local ok, err = pcall(handler, keys)
@@ -505,6 +537,14 @@ local function set_keymaps(win_id, bufnr, mode)
         config.get_keymap_description("quit")
     )
 
+    set_mode_keymap(
+        win_id,
+        bufnr,
+        config.keymaps.toggle_mode,
+        safe_call_autorestore_mode(toggle_mode),
+        config.get_keymap_description("toggle_mode")
+    )
+
     return saved_buf_keymaps
 end
 
@@ -523,6 +563,7 @@ local function restore_keymaps(mode)
 
     pcall(api.nvim_buf_del_keymap, state.bufnr, "n", config.keymaps.help)
     pcall(api.nvim_buf_del_keymap, state.bufnr, "n", config.keymaps.quit)
+    pcall(api.nvim_buf_del_keymap, state.bufnr, "n", config.keymaps.toggle_mode)
 
     -- Restore old keymaps
     for _, keymap in ipairs(state.saved_keymaps) do
@@ -557,12 +598,13 @@ local function create_mode_autocmds(mode, win_id)
                 -- Do not stop the current mode if we are entering the window
                 -- we are moving or if we are entering the help window
                 if cur_win_id ~= win_id and not float.is_help_window(cur_win_id) then
+                    vim.print("stop 1")
                     stop_mode(mode)
                     return true
                 end
             end,
             group = augroup,
-            desc = "Quits " .. mode .. " when leaving the window",
+            desc = "Quits " .. mode .. " mode when leaving the window",
         })
     )
 
@@ -592,11 +634,12 @@ local function create_mode_autocmds(mode, win_id)
         autocmds,
         api.nvim_create_autocmd("InsertEnter", {
             callback = function()
+                vim.print("stop 2")
                 stop_mode(mode)
                 return true
             end,
             group = augroup,
-            desc = "Quits " .. mode .. " when entering insert mode",
+            desc = "Quits " .. mode .. " mode when entering insert mode",
         })
     )
 end

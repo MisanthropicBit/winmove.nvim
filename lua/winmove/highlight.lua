@@ -3,6 +3,10 @@
 
 local highlight = {}
 
+---@class winmove.Highlights
+---@field move string?
+---@field swap string?
+
 local config = require("winmove.config")
 local str = require("winmove.util.str")
 
@@ -11,6 +15,7 @@ local api = vim.api
 -- Window higlights per mode
 local win_highlights = {
     move = nil,
+    swap = nil,
 }
 
 ---@type string?

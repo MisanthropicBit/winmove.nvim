@@ -18,7 +18,7 @@ describe("init", function()
         assert.has_error(function()
             ---@diagnostic disable-next-line: param-type-mismatch
             winmove.start_mode("hello")
-        end, "mode: expected a valid mode (move), got hello")
+        end, "mode: expected a valid mode (move, swap), got hello")
     end)
 
     it("fails to stop mode if no mode is currently active", function()
@@ -27,6 +27,8 @@ describe("init", function()
         winmove.stop_mode()
 
         assert.stub(message.error).was.called_with("No mode is currently active")
+
+        ---@diagnostic disable-next-line: undefined-field
         message.error:revert()
     end)
 
