@@ -19,54 +19,37 @@ local config_loaded = false
 ---@field split_up    string
 ---@field split_right string
 
----@class winmove.ConfigResizeModeKeymaps
----@field left           string
----@field down           string
----@field up             string
----@field right          string
----@field left_botright  string
----@field down_botright  string
----@field up_botright    string
----@field right_botright string
-
 ---@class winmove.ConfigModeKeymaps
 ---@field help        string
 ---@field help_close  string
 ---@field quit        string
----@field toggle_mode string
 ---@field move        winmove.ConfigMoveModeKeymaps
----@field resize      winmove.ConfigResizeModeKeymaps
 
 ---@class winmove.Highlights
 ---@field move   string?
----@field resize string?
 
 ---@class winmove.AtEdgeConfig
 ---@field horizontal false | winmove.AtEdge
 ---@field vertical   false | winmove.AtEdge
 
 ---@class winmove.Config
----@field highlights           winmove.Highlights
----@field at_edge              winmove.AtEdgeConfig
----@field default_resize_count integer
----@field keymaps              winmove.ConfigModeKeymaps
+---@field highlights winmove.Highlights
+---@field at_edge    winmove.AtEdgeConfig
+---@field keymaps    winmove.ConfigModeKeymaps
 
 ---@type winmove.Config
 local default_config = {
     highlights = {
         move = "Visual",
-        resize = "Substitute",
     },
     at_edge = {
         horizontal = at_edge.MoveToTab,
         vertical = at_edge.Wrap,
     },
-    default_resize_count = 3,
     keymaps = {
         help = "?",
         help_close = "q",
         quit = "q",
-        toggle_mode = "<tab>",
         move = {
             left = "h",
             down = "j",
@@ -81,16 +64,6 @@ local default_config = {
             split_up = "sk",
             split_right = "sl",
         },
-        resize = {
-            left = "h",
-            down = "j",
-            up = "k",
-            right = "l",
-            left_botright = "<c-h>",
-            down_botright = "<c-j>",
-            up_botright = "<c-k>",
-            right_botright = "<c-l>",
-        },
     },
 }
 
@@ -98,7 +71,6 @@ local mapping_descriptions = {
     help = "Show help",
     help_close = "Close help",
     quit = "Quit current mode",
-    toggle_mode = "Toggle between modes",
     move = {
         left = "Move a window left",
         down = "Move a window down",
@@ -112,16 +84,6 @@ local mapping_descriptions = {
         split_down = "Split a window down into another window",
         split_up = "Split a window up into another window",
         split_right = "Split a window right into another window",
-    },
-    resize = {
-        left = "Resize window left",
-        down = "Resize window down",
-        up = "Resize window up",
-        right = "Resize window right",
-        left_botright = "Resize window left with bottom-right anchor",
-        down_botright = "Resize window down with bottom-right anchor",
-        up_botright = "Resize window up with bottom-right anchor",
-        right_botright = "Resize window right with bottom-right anchor",
     },
 }
 
@@ -143,10 +105,6 @@ end
 ---@return boolean
 function config.valid_string_option(value)
     return value ~= nil and type(value) == "string" and #value > 0
-end
-
-local function is_positive_non_zero_number(value)
-    return type(value) == "number" and value > 0
 end
 
 local function is_non_empty_string(value)
@@ -192,7 +150,6 @@ function config.validate(_config)
             _config.highlights,
             validate_keys({
                 { "move",   "string" },
-                { "resize", "string" },
             }),
         },
         at_edge = {
@@ -214,17 +171,12 @@ function config.validate(_config)
                 },
             }),
         },
-        default_resize_count = {
-            _config.default_resize_count,
-            is_positive_non_zero_number,
-        },
         keymaps = {
             _config.keymaps,
             validate_keys({
                 { "help",        "string" },
                 { "help_close",  "string" },
                 { "quit",        "string" },
-                { "toggle_mode", "string" },
             }),
         },
         ["keymaps.move"] = {
@@ -242,19 +194,6 @@ function config.validate(_config)
                 { "split_down",  is_non_empty_string, expected_non_empty_string },
                 { "split_up",    is_non_empty_string, expected_non_empty_string },
                 { "split_right", is_non_empty_string, expected_non_empty_string },
-            }),
-        },
-        ["keymaps.resize"] = {
-            _config.keymaps.resize,
-            validate_keys({
-                { "left",  is_non_empty_string, expected_non_empty_string },
-                { "down",  is_non_empty_string, expected_non_empty_string },
-                { "up",    is_non_empty_string, expected_non_empty_string },
-                { "right", is_non_empty_string, expected_non_empty_string },
-                { "left_botright", is_non_empty_string, expected_non_empty_string },
-                { "down_botright", is_non_empty_string, expected_non_empty_string },
-                { "up_botright", is_non_empty_string, expected_non_empty_string },
-                { "right_botright", is_non_empty_string, expected_non_empty_string },
             }),
         },
     })

@@ -9,14 +9,16 @@ local make_layout = test_helpers.make_layout
 
 describe("shows floating window help", function()
     -- Ensure default keymaps
+    ---@diagnostic disable-next-line: missing-fields
     config.configure({
+        ---@diagnostic disable-next-line: missing-fields
         keymaps = {
             help = "?",
             help_close = "q",
         },
     })
 
-    it("shows help in resize mode", function()
+    it("shows help in move mode", function()
         given(function()
             make_layout({
                 "row",
@@ -32,7 +34,7 @@ describe("shows floating window help", function()
             })
 
             local win_id1 = vim.api.nvim_get_current_win()
-            winmove.start_mode(winmove.Mode.Resize)
+            winmove.start_mode(winmove.Mode.Move)
 
             assert.is_false(float.is_help_window(win_id1))
 

@@ -1,7 +1,7 @@
 <div align="center">
   <br />
   <h1>winmove.nvim</h1>
-  <p><i>Easily move and resize windows</i></p>
+  <p><i>Easily move windows around</i></p>
   <p>
     <img src="https://img.shields.io/badge/version-0.1.0-blue?style=flat-square" />
     <a href="https://luarocks.org/modules/misanthropicbit/winmove.nvim">
@@ -67,15 +67,12 @@ active during modes.
 require('winmove').configure({
     highlights = {
         move = "Search", -- Highlight group for move mode
-        resize = "Substitute", -- Highlight group for resize mode
     },
     wrap_around = true, -- Wrap around edges when moving windows
-    default_resize_count = 3, -- Default amount to resize windows
     keymaps = {
         help = "?", -- Open floating window with help for the current mode
         help_close = "q", -- Close the floating help window
         quit = "q", -- Quit current mode
-        toggle_mode = "<tab>", -- Toggle between move and resize modes
         move = {
             left = "h", -- Move window left
             down = "j", -- Move window down
@@ -89,17 +86,6 @@ require('winmove').configure({
             split_down = "sj", -- Create a split with the window below
             split_up = "sk", -- Create a split with the window above
             split_right = "sl", -- Create a split with the window on the right
-        },
-        resize = {
-            -- When resizing, the anchor is in the top-left corner of the window
-            left = "h", -- Resize to the left
-            down = "j", -- Resize down
-            up = "k", -- Resize up
-            right = "l", -- Resize to the right
-            left_botright = "<c-h>", -- Resize left with bottom-right anchor
-            down_botright = "<c-j>", -- Resize down with bottom-right anchor
-            up_botright = "<c-k>", -- Resize up with bottom-right anchor
-            right_botright = "<c-l>", -- Resize right with bottom-right anchor
         },
     },
 })
@@ -139,7 +125,7 @@ Get the current version of `winmove`.
 
 #### `winmove.current_mode`
 
-Check which mode is currently active. Returns `"move"`, `"resize"`, or `nil`.
+Check which mode is currently active. Returns `"move"` or `nil`.
 
 #### `winmove.start_mode`
 
@@ -151,7 +137,7 @@ winmove.start_mode(mode)
 
 -- Example:
 winmove.start_mode(winmove.Mode.Move)
-winmove.start_mode("resize")
+winmove.start_mode("move")
 ```
 
 #### `winmove.stop_mode`
@@ -198,32 +184,6 @@ winmove.move_window_far(win_id, dir)
 winmove.move_window_far(1000, "h")
 ```
 
-#### `winmove.resize_window`
-
-Resize a window (does not need to be the current window). The window can be
-resized relative to an anchor in the top-left or bottom-right corner of the
-window.
-
-Resizing respects the `winwidth`/`winminwidth` and `winheight`/`winminheight`
-options respectively, with the largest value taking priority. If a window being
-resized would shrink another window's size beyond the values of those options,
-the whole row/column of windows are adjusted except if all windows in the
-direction of resizing are as small as they can get.
-
-See [this showcase](#moving-and-resizing-windows).
-
-```lua
----@param win_id integer
----@param dir winmove.Direction
----@param count integer
----@param anchor winmove.ResizeAnchor?
-winmove.resize_window(win_id, dir, count, anchor)
-
--- Example:
-winmove.resize_window(1000, "j", 3, winmove.ResizeAnchor.TopLeft)
-winmove.resize_window(1000, "l", 1, winmove.ResizeAnchor.BottomRight)
-```
-
 ## Contributing
 
 See [here](/CONTRIBUTING.md).
@@ -261,18 +221,6 @@ As opposed to moving windows, which will squeeze a window in between other
 windows, splitting into a window will move it next to a target window.
 
 https://github.com/user-attachments/assets/4bf49e27-d08b-4926-9f17-57bf2e702c64
-
-### Resizing windows
-
-https://github.com/user-attachments/assets/8f77c9c4-dca1-4647-9049-8695e5351431
-
-Resizing respects the `winwidth`/`winminwidth` and `winheight`/`winminheight`
-options respectively, with the largest value taking priority. If a window being
-resized would shrink another window's size beyond the values of those options,
-the whole row/column of windows are adjusted except if all windows in the
-direction of resizing are as small as they can get.
-
-https://github.com/user-attachments/assets/8f1fff43-2830-48f5-a29b-0b1aa7d865b2
 
 ### Moving as far as possible in a direction
 

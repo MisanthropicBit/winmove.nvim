@@ -26,15 +26,6 @@ describe("config", function()
                 },
             },
             {
-                default_resize_count = false,
-            },
-            {
-                default_resize_count = 0,
-            },
-            {
-                default_resize_count = -3,
-            },
-            {
                 keymaps = {
                     help = function() end,
                 },
@@ -48,20 +39,8 @@ describe("config", function()
             },
             {
                 keymaps = {
-                    resize = "no",
-                },
-            },
-            {
-                keymaps = {
                     move = {
                         left = "",
-                    },
-                },
-            },
-            {
-                keymaps = {
-                    resize = {
-                        left_botright = true,
                     },
                 },
             },
@@ -79,6 +58,7 @@ describe("config", function()
             assert.is_false(ok)
         end
 
+        ---@diagnostic disable-next-line: undefined-field
         message.error:revert()
     end)
 
@@ -86,18 +66,15 @@ describe("config", function()
         local ok = config.configure({
             highlights = {
                 move = "Title",
-                resize = nil,
             },
             at_edge = {
                 horizontal = at_edge.Wrap,
                 vertical = false,
             },
-            default_resize_count = 2,
             keymaps = {
                 help = "_",
                 help_close = "z",
                 quit = "i",
-                toggle_mode = "<c-t>",
                 move = {
                     left = "<left>",
                     down = "<down>",
@@ -112,16 +89,6 @@ describe("config", function()
                     split_up = "qp",
                     split_right = "vn",
                 },
-                resize = {
-                    left = "<Left>",
-                    down = "<Down>",
-                    up = "<Up>",
-                    right = "<Right>",
-                    left_botright = "<s-h>",
-                    down_botright = "<s-j>",
-                    up_botright = "<s-k>",
-                    right_botright = "<s-l>",
-                },
             },
         })
 
@@ -129,6 +96,7 @@ describe("config", function()
     end)
 
     it("throws no errors for empty user config", function()
+        ---@diagnostic disable-next-line: missing-fields
         assert.is_true(config.configure({}))
     end)
 
