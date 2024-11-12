@@ -44,6 +44,20 @@ describe("config", function()
                     },
                 },
             },
+            {
+                keymaps = {
+                    swap = {
+                        left = 12.5,
+                    },
+                },
+            },
+            {
+                keymaps = {
+                    swap = {
+                        left = "",
+                    },
+                },
+            },
         }
 
         stub(message, "error")
@@ -75,6 +89,7 @@ describe("config", function()
                 help = "_",
                 help_close = "z",
                 quit = "i",
+                toggle_mode = "<c-t>",
                 move = {
                     left = "<left>",
                     down = "<down>",
@@ -88,6 +103,13 @@ describe("config", function()
                     split_down = "nv",
                     split_up = "qp",
                     split_right = "vn",
+                },
+                swap = {
+                    left = "<left>",
+                    down = "<down>",
+                    up = "<up>",
+                    right = "<right>",
+                    select = "-",
                 },
             },
         })

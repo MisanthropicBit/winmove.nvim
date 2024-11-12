@@ -19,14 +19,20 @@ local config_loaded = false
 ---@field split_up    string
 ---@field split_right string
 
+---@class winmove.ConfigSwapModeKeymaps
+---@field left   string
+---@field down   string
+---@field up     string
+---@field right  string
+---@field select string
+
 ---@class winmove.ConfigModeKeymaps
 ---@field help        string
 ---@field help_close  string
 ---@field quit        string
+---@field toggle_mode string
 ---@field move        winmove.ConfigMoveModeKeymaps
-
----@class winmove.Highlights
----@field move   string?
+---@field swap        winmove.ConfigSwapModeKeymaps
 
 ---@class winmove.AtEdgeConfig
 ---@field horizontal false | winmove.AtEdge
@@ -41,6 +47,7 @@ local config_loaded = false
 local default_config = {
     highlights = {
         move = "Visual",
+        swap = "Substitute",
     },
     at_edge = {
         horizontal = at_edge.MoveToTab,
@@ -50,6 +57,7 @@ local default_config = {
         help = "?",
         help_close = "q",
         quit = "q",
+        toggle_mode = "<tab>",
         move = {
             left = "h",
             down = "j",
@@ -64,6 +72,13 @@ local default_config = {
             split_up = "sk",
             split_right = "sl",
         },
+        swap = {
+            left = "h",
+            down = "j",
+            up = "k",
+            right = "l",
+            select = "x",
+        },
     },
 }
 
@@ -71,6 +86,7 @@ local mapping_descriptions = {
     help = "Show help",
     help_close = "Close help",
     quit = "Quit current mode",
+    toggle_mode = "Toggle between modes",
     move = {
         left = "Move a window left",
         down = "Move a window down",
@@ -84,6 +100,13 @@ local mapping_descriptions = {
         split_down = "Split a window down into another window",
         split_up = "Split a window up into another window",
         split_right = "Split a window right into another window",
+    },
+    swap = {
+        left = "Swap window left",
+        down = "Swap window down",
+        up = "Swap window up",
+        right = "Swap window right",
+        select = "Select window for swapping",
     },
 }
 
@@ -149,7 +172,8 @@ function config.validate(_config)
         highlights = {
             _config.highlights,
             validate_keys({
-                { "move",   "string" },
+                { "move", "string" },
+                { "swap", "string" },
             }),
         },
         at_edge = {
@@ -177,6 +201,7 @@ function config.validate(_config)
                 { "help",        "string" },
                 { "help_close",  "string" },
                 { "quit",        "string" },
+                { "toggle_mode", "string" },
             }),
         },
         ["keymaps.move"] = {
@@ -194,6 +219,16 @@ function config.validate(_config)
                 { "split_down",  is_non_empty_string, expected_non_empty_string },
                 { "split_up",    is_non_empty_string, expected_non_empty_string },
                 { "split_right", is_non_empty_string, expected_non_empty_string },
+            }),
+        },
+        ["keymaps.swap"] = {
+            _config.keymaps.swap,
+            validate_keys({
+                { "left",   is_non_empty_string, expected_non_empty_string },
+                { "down",   is_non_empty_string, expected_non_empty_string },
+                { "up",     is_non_empty_string, expected_non_empty_string },
+                { "right",  is_non_empty_string, expected_non_empty_string },
+                { "select", is_non_empty_string, expected_non_empty_string },
             }),
         },
     })
