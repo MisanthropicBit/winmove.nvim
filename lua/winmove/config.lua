@@ -24,7 +24,6 @@ local config_loaded = false
 ---@field down   string
 ---@field up     string
 ---@field right  string
----@field select string
 
 ---@class winmove.ConfigModeKeymaps
 ---@field help        string
@@ -77,7 +76,6 @@ local default_config = {
             down = "j",
             up = "k",
             right = "l",
-            select = "x",
         },
     },
 }
@@ -106,7 +104,6 @@ local mapping_descriptions = {
         down = "Swap window down",
         up = "Swap window up",
         right = "Swap window right",
-        select = "Select window for swapping",
     },
 }
 
@@ -228,7 +225,6 @@ function config.validate(_config)
                 { "down",   is_non_empty_string, expected_non_empty_string },
                 { "up",     is_non_empty_string, expected_non_empty_string },
                 { "right",  is_non_empty_string, expected_non_empty_string },
-                { "select", is_non_empty_string, expected_non_empty_string },
             }),
         },
     })
