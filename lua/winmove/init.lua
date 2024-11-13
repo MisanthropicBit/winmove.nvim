@@ -327,22 +327,43 @@ end
 
 ---@param win_id integer
 ---@param dir winmove.Direction
+local function swap_window_in_direction(win_id, dir)
+    winutil.wincall_no_events(function()
+        local new_win_id = swap.swap_window_in_direction(win_id, dir)
+
+        if not new_win_id then
+            return
+        end
+
+        -- Seems the winhighlight bug can also leak into other windows when
+        -- switching: https://github.com/neovim/neovim/issues/18283
+        highlight.unhighlight_window(new_win_id)
+        highlight.unhighlight_window(win_id)
+        highlight.highlight_window(new_win_id, winmove.Mode.Swap)
+
+        -- Update state with the new window and buffer
+        update_state({ win_id = new_win_id })
+    end)
+end
+
+---@param win_id integer
+---@param dir winmove.Direction
 function winmove.swap_window_in_direction(win_id, dir)
     vim.validate({
         win_id = validators.win_id_validator(win_id),
         dir = validators.dir_validator(dir),
     })
 
-    winutil.win_id_context_call(win_id, function()
-        swap.swap_window_in_direction(win_id, dir)
-    end)
+    swap_window_in_direction(win_id, dir)
 end
 
 ---@param win_id integer
 function winmove.swap_window(win_id)
     vim.validate({ win_id = validators.win_id_validator(win_id) })
 
-    swap.swap_window(win_id)
+    winutil.wincall_no_events(function()
+        swap.swap_window(win_id)
+    end)
 end
 
 local function toggle_mode()
@@ -394,15 +415,13 @@ local function swap_mode_key_handler(keys)
     local keymaps = config.keymaps.swap
 
     if keys == keymaps.left then
-        swap.swap_window_in_direction(win_id, "h")
+        swap_window_in_direction(win_id, "h")
     elseif keys == keymaps.down then
-        swap.swap_window_in_direction(win_id, "j")
+        swap_window_in_direction(win_id, "j")
     elseif keys == keymaps.up then
-        swap.swap_window_in_direction(win_id, "k")
+        swap_window_in_direction(win_id, "k")
     elseif keys == keymaps.right then
-        swap.swap_window_in_direction(win_id, "l")
-    elseif keys == keymaps.select then
-        swap.swap_window(win_id)
+        swap_window_in_direction(win_id, "l")
     end
 end
 
@@ -457,7 +476,6 @@ local function handle_error_in_mode(mode, err)
     -- There was an error during a mode, restore keymaps and quit current mode
     local cur_mode = mode or winmove.current_mode()
 
-    vim.print("stop 3")
     winmove.stop_mode()
     message.error((("Got error in '%s' mode: %s"):format(cur_mode, err)))
 end
@@ -598,7 +616,6 @@ local function create_mode_autocmds(mode, win_id)
                 -- Do not stop the current mode if we are entering the window
                 -- we are moving or if we are entering the help window
                 if cur_win_id ~= win_id and not float.is_help_window(cur_win_id) then
-                    vim.print("stop 1")
                     stop_mode(mode)
                     return true
                 end
@@ -619,7 +636,7 @@ local function create_mode_autocmds(mode, win_id)
 
                 -- Clear the winhighlight option if the winmove highlighting
                 -- has leaked into the new window
-                if highlight.has_winmove_highlight(cur_win_id, mode) then
+                if highlight.has_highlight(cur_win_id, mode) then
                     highlight.unhighlight_window(cur_win_id)
                 end
 
@@ -634,7 +651,6 @@ local function create_mode_autocmds(mode, win_id)
         autocmds,
         api.nvim_create_autocmd("InsertEnter", {
             callback = function()
-                vim.print("stop 2")
                 stop_mode(mode)
                 return true
             end,

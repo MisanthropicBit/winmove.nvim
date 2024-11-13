@@ -85,7 +85,7 @@ describe("custom highlights", function()
         ---@diagnostic disable-next-line: missing-fields
         config.configure({
             highlights = {
-                resize = "CustomWinmoveSwapMode",
+                swap = "CustomWinmoveSwapMode",
             },
         })
 

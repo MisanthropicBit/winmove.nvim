@@ -43,15 +43,18 @@ end
 
 ---@param win_id integer
 ---@param dir winmove.Direction
+---@return integer?
 function swap.swap_window_in_direction(win_id, dir)
     local neighbor_win_id = layout.get_neighbor(dir)
 
     if not neighbor_win_id or win_id == neighbor_win_id then
-        return
+        return nil
     end
 
     swap_windows(win_id, neighbor_win_id)
     vim.api.nvim_set_current_win(neighbor_win_id)
+
+    return neighbor_win_id
 end
 
 return swap
