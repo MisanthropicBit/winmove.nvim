@@ -9,6 +9,7 @@ local layout = require("winmove.layout")
 local message = require("winmove.message")
 local _mode = require("winmove.mode")
 local State = require("winmove.state")
+local resize = require("winmove.resize")
 local str = require("winmove.util.str")
 local swap = require("winmove.swap")
 local validators = require("winmove.validators")
@@ -16,6 +17,7 @@ local winutil = require("winmove.winutil")
 
 winmove.Mode = _mode.Mode
 winmove.AtEdge = at_edge.AtEdge
+winmove.ResizeAnchor = resize.anchor
 
 local api = vim.api
 local winmove_version = "0.1.0"
@@ -344,6 +346,14 @@ local function toggle_mode()
     start_mode(new_mode)
 end
 
+local function toggle_mode()
+    local mode = winmove.current_mode()
+    local new_mode = mode == winmove.Mode.Move and winmove.Mode.Resize or winmove.Mode.Move
+
+    stop_mode(mode)
+    start_mode(new_mode)
+end
+
 ---@param keys string
 local function move_mode_key_handler(keys)
     local keymaps = config.modes.move.keymaps
@@ -392,6 +402,38 @@ local function swap_mode_key_handler(keys)
         winmove.swap_window_in_direction(win_id, "k")
     elseif keys == keymaps.right then
         winmove.swap_window_in_direction(win_id, "l")
+    end
+end
+
+---@param keys string
+local function resize_mode_key_handler(keys)
+    ---@type integer
+    local win_id = state.win_id
+    local count = vim.v.count
+
+    -- If no count is provided use the default count otherwise use the provided count
+    if count == 0 then
+        count = config.default_resize_count
+    end
+
+    local keymaps = config.keymaps.resize
+
+    if keys == keymaps.left then
+        resize.resize_window(win_id, "h", count, resize.anchor.TopLeft)
+    elseif keys == keymaps.down then
+        resize.resize_window(win_id, "j", count, resize.anchor.TopLeft)
+    elseif keys == keymaps.up then
+        resize.resize_window(win_id, "k", count, resize.anchor.TopLeft)
+    elseif keys == keymaps.right then
+        resize.resize_window(win_id, "l", count, resize.anchor.TopLeft)
+    elseif keys == keymaps.left_botright then
+        resize.resize_window(win_id, "h", count, resize.anchor.BottomRight)
+    elseif keys == keymaps.down_botright then
+        resize.resize_window(win_id, "j", count, resize.anchor.BottomRight)
+    elseif keys == keymaps.up_botright then
+        resize.resize_window(win_id, "k", count, resize.anchor.BottomRight)
+    elseif keys == keymaps.right_botright then
+        resize.resize_window(win_id, "l", count, resize.anchor.BottomRight)
     end
 end
 
@@ -468,6 +510,7 @@ end
 local mode_key_handlers = {
     [winmove.Mode.Move] = move_mode_key_handler,
     [winmove.Mode.Swap] = swap_mode_key_handler,
+    [winmove.Mode.Resize] = resize_mode_key_handler,
 }
 
 ---@param mode winmove.Mode
@@ -722,6 +765,23 @@ end
 
 function winmove.stop_mode()
     stop_mode(winmove.current_mode())
+end
+
+---@param win_id integer
+---@param dir winmove.Direction
+---@param count integer
+---@param anchor winmove.ResizeAnchor?
+function winmove.resize_window(win_id, dir, count, anchor)
+    vim.validate({
+        win_id = win_id_validator(win_id),
+        dir = dir_validator(dir),
+        count = { count, is_nonnegative_number, "a non-negative number" },
+        anchor = { anchor, resize.is_valid_anchor, "a valid anchor" },
+    })
+
+    winutil.win_id_context_call(win_id, function()
+        resize.resize_window(win_id, dir, count, anchor)
+    end)
 end
 
 function winmove.current_mode()

@@ -123,4 +123,12 @@ function winutil.editor_height()
     return height
 end
 
+function winutil.is_full_width(win_id)
+    return vim.api.nvim_win_get_width(win_id) == winutil.editor_width()
+end
+
+function winutil.is_full_height(win_id)
+    return vim.api.nvim_win_get_height(win_id) == winutil.editor_height()
+end
+
 return winutil

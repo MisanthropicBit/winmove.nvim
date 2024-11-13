@@ -41,9 +41,25 @@ local config_loaded = false
 ---@field at_edge   winmove.AtEdgeConfig
 ---@field keymaps   winmove.ConfigSwapModeKeymaps
 
+---@class winmove.ConfigResizeModeKeymaps
+---@field left           string
+---@field down           string
+---@field up             string
+---@field right          string
+---@field left_botright  string
+---@field down_botright  string
+---@field up_botright    string
+---@field right_botright string
+
+---@class winmove.ConfigResizeMode
+---@field highlight            winmove.Highlight
+---@field default_resize_count integer
+---@field keymaps              winmove.ConfigResizeModeKeymaps
+
 ---@class winmove.ConfigModes
----@field move winmove.ConfigMoveMode
----@field swap winmove.ConfigSwapMode
+---@field move   winmove.ConfigMoveMode
+---@field swap   winmove.ConfigSwapMode
+---@field resize winmove.ConfigResizeMode
 
 ---@class winmove.AtEdgeConfig
 ---@field horizontal winmove.AtEdge
@@ -96,6 +112,20 @@ local default_config = {
                 right = "l",
             },
         },
+        resize = {
+            highlight = "Todo",
+            default_resize_count = 3,
+            keymaps = {
+                left = "h",
+                down = "j",
+                up = "k",
+                right = "l",
+                left_botright = "<c-h>",
+                down_botright = "<c-j>",
+                up_botright = "<c-k>",
+                right_botright = "<c-l>",
+            },
+        },
     },
 }
 
@@ -131,6 +161,20 @@ local mapping_descriptions = {
                 right = "Swap window right",
             },
         },
+        resize = {
+            highlight = "Todo",
+            default_resize_count = 3,
+            keymaps = {
+                left = "Resize window left",
+                down = "Resize window down",
+                up = "Resize window up",
+                right = "Resize window right",
+                left_botright = "Resize window left with bottom-right anchor",
+                down_botright = "Resize window down with bottom-right anchor",
+                up_botright = "Resize window up with bottom-right anchor",
+                right_botright = "Resize window right with bottom-right anchor",
+            },
+        },
     },
 }
 
@@ -152,6 +196,10 @@ end
 ---@return boolean
 function config.valid_string_option(value)
     return value ~= nil and type(value) == "string" and #value > 0
+end
+
+local function is_positive_non_zero_number(value)
+    return type(value) == "number" and value > 0
 end
 
 local function is_non_empty_string(value)
@@ -257,6 +305,22 @@ function config.validate(_config)
                     down        = non_empty_string_validator,
                     up          = non_empty_string_validator,
                     right       = non_empty_string_validator,
+                },
+            },
+            resize = {
+                highlight = "string",
+                default_resize_count = {
+                    is_positive_non_zero_number,
+                },
+                keymaps = {
+                    left = non_empty_string_validator,
+                    down = non_empty_string_validator,
+                    up =   non_empty_string_validator,
+                    right = non_empty_string_validator,
+                    left_botright = non_empty_string_validator,
+                    down_botright = non_empty_string_validator,
+                    up_botright = non_empty_string_validator,
+                    right_botright = non_empty_string_validator,
                 },
             },
         },

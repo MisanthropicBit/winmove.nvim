@@ -48,6 +48,15 @@ describe("config", function()
                 },
             },
             {
+                default_resize_count = false,
+            },
+            {
+                default_resize_count = 0,
+            },
+            {
+                default_resize_count = -3,
+            },
+            {
                 keymaps = {
                     help = function() end,
                 },
@@ -62,11 +71,33 @@ describe("config", function()
                 },
             },
             {
+<<<<<<< HEAD
                 modes = {
                     swap = {
                         keymaps = {
                             left = "",
                         },
+||||||| parent of 1c6907a (Revert "Remove resize mode for now (#16)")
+                keymaps = {
+                    move = {
+                        left = "",
+=======
+                keymaps = {
+                    resize = "no",
+                },
+            },
+            {
+                keymaps = {
+                    move = {
+                        left = "",
+>>>>>>> 1c6907a (Revert "Remove resize mode for now (#16)")
+                    },
+                },
+            },
+            {
+                keymaps = {
+                    resize = {
+                        left_botright = true,
                     },
                 },
             },
@@ -84,19 +115,43 @@ describe("config", function()
             assert.is_false(ok)
         end
 
-        ---@diagnostic disable-next-line: undefined-field
         message.error:revert()
     end)
 
     it("throws no errors for a valid config", function()
         local ok = config.configure({
+<<<<<<< HEAD
+||||||| parent of 1c6907a (Revert "Remove resize mode for now (#16)")
+            highlights = {
+                move = "Title",
+            },
+            at_edge = {
+                horizontal = at_edge.Wrap,
+                vertical = false,
+            },
+=======
+            highlights = {
+                move = "Title",
+                resize = nil,
+            },
+            at_edge = {
+                horizontal = at_edge.Wrap,
+                vertical = false,
+            },
+            default_resize_count = 2,
+>>>>>>> 1c6907a (Revert "Remove resize mode for now (#16)")
             keymaps = {
                 help = "_",
                 help_close = "z",
                 quit = "i",
+<<<<<<< HEAD
                 toggle_mode = "<c-t>",
             },
             modes = {
+||||||| parent of 1c6907a (Revert "Remove resize mode for now (#16)")
+=======
+                toggle_mode = "<c-t>",
+>>>>>>> 1c6907a (Revert "Remove resize mode for now (#16)")
                 move = {
                     highlight = "Title",
                     at_edge = {
@@ -131,6 +186,16 @@ describe("config", function()
                         right = "<right>",
                     },
                 },
+                resize = {
+                    left = "<Left>",
+                    down = "<Down>",
+                    up = "<Up>",
+                    right = "<Right>",
+                    left_botright = "<s-h>",
+                    down_botright = "<s-j>",
+                    up_botright = "<s-k>",
+                    right_botright = "<s-l>",
+                },
             },
         })
 
@@ -138,7 +203,6 @@ describe("config", function()
     end)
 
     it("throws no errors for empty user config", function()
-        ---@diagnostic disable-next-line: missing-fields
         assert.is_true(config.configure({}))
     end)
 
