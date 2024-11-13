@@ -110,8 +110,7 @@ describe("custom highlights", function()
             assert.are.same(vim.wo[win_id].winhighlight, get_expected_winhighlight("WinmoveSwap"))
 
             for _, group in ipairs(highlight.groups()) do
-                local linked_group =
-                    vim.api.nvim_get_hl(0, { name = "WinmoveSwap" .. group }).link
+                local linked_group = vim.api.nvim_get_hl(0, { name = "WinmoveSwap" .. group }).link
 
                 assert.are.same(linked_group, "CustomWinmoveSwapMode")
             end
