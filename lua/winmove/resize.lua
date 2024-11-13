@@ -95,10 +95,6 @@ function resize.resize_window(win_id, dir, count, anchor)
     if horizontal then
         is_full_dimension = winutil.is_full_width
         resize_func = vim.fn.win_move_separator
-
-        if dir == "h" then
-            count = -count
-        end
         get_dimension = vim.api.nvim_win_get_width
         get_min_dimension = function()
             return math.max(vim.opt_local.winwidth:get(), vim.go.winminwidth)
@@ -107,10 +103,6 @@ function resize.resize_window(win_id, dir, count, anchor)
     else
         is_full_dimension = winutil.is_full_height
         resize_func = vim.fn.win_move_statusline
-
-        if dir == "k" then
-            count = -count
-        end
         get_dimension = vim.api.nvim_win_get_height
         get_min_dimension = function()
             return math.max(vim.opt_local.winheight:get(), vim.go.winminheight)
@@ -120,9 +112,7 @@ function resize.resize_window(win_id, dir, count, anchor)
 
     if is_full_dimension(win_id) then
         return
-    end
-
-    if not can_resize(dir, get_dimension, get_min_dimension) then
+    elseif not can_resize(dir, get_dimension, get_min_dimension) then
         return
     end
 
@@ -135,6 +125,10 @@ function resize.resize_window(win_id, dir, count, anchor)
     elseif is_at_edge(edges[1]) then
         local neighbor_dir = neighbor_dir_table[horizontal][not top_left]
         win_id = vim.fn.winnr(neighbor_dir)
+    end
+
+    if dir == edges[2] then
+        count = -count
     end
 
     resize_func(win_id, count)
