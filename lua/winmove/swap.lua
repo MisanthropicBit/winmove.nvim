@@ -34,6 +34,9 @@ function swap.swap_window(win_id)
     if not vim.api.nvim_win_is_valid(selected_window) then
         message.error("Previously selected window is not valid anymore")
         return
+    elseif win_id == selected_window then
+        message.error("Cannot swap selected window with itself")
+        return
     end
 
     highlight.unhighlight_window(selected_window)

@@ -109,7 +109,6 @@ describe("config", function()
                     down = "<down>",
                     up = "<up>",
                     right = "<right>",
-                    select = "-",
                 },
             },
         })

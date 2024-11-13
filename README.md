@@ -1,7 +1,7 @@
 <div align="center">
   <br />
   <h1>winmove.nvim</h1>
-  <p><i>Easily move windows around</i></p>
+  <p><i>Easily move and swap windows</i></p>
   <p>
     <img src="https://img.shields.io/badge/version-0.1.0-blue?style=flat-square" />
     <a href="https://luarocks.org/modules/misanthropicbit/winmove.nvim">
@@ -67,12 +67,14 @@ active during modes.
 require('winmove').configure({
     highlights = {
         move = "Search", -- Highlight group for move mode
+        swap = "Substitute", -- Highlight group for swap mode
     },
     wrap_around = true, -- Wrap around edges when moving windows
     keymaps = {
         help = "?", -- Open floating window with help for the current mode
         help_close = "q", -- Close the floating help window
         quit = "q", -- Quit current mode
+        toggle_mode = "<tab>", -- Toggle between modes when in a mode
         move = {
             left = "h", -- Move window left
             down = "j", -- Move window down
@@ -86,6 +88,12 @@ require('winmove').configure({
             split_down = "sj", -- Create a split with the window below
             split_up = "sk", -- Create a split with the window above
             split_right = "sl", -- Create a split with the window on the right
+        },
+        swap = {
+            left = "h", -- Swap left
+            down = "j", -- Swap down
+            up = "k", -- Swap up
+            right = "l", -- Swap right
         },
     },
 })
@@ -125,7 +133,7 @@ Get the current version of `winmove`.
 
 #### `winmove.current_mode`
 
-Check which mode is currently active. Returns `"move"` or `nil`.
+Check which mode is currently active. Returns `"move"`, `"swap"`, or `nil`.
 
 #### `winmove.start_mode`
 
@@ -137,6 +145,7 @@ winmove.start_mode(mode)
 
 -- Example:
 winmove.start_mode(winmove.Mode.Move)
+winmove.start_mode("swap")
 winmove.start_mode("move")
 ```
 
@@ -182,6 +191,36 @@ winmove.move_window_far(win_id, dir)
 
 -- Example:
 winmove.move_window_far(1000, "h")
+```
+
+#### `winmove.swap_window_in_direction`
+
+Swap a window in a given direction (does not need to be the current window).
+
+```lua
+---@param win_id integer
+---@param dir winmove.Direction
+winmove.swap_window_in_direction(win_id, dir)
+
+-- Example:
+winmove.swap_window_in_direction(1000, "j")
+winmove.swap_window_in_direction(1000, "l")
+```
+
+#### `winmove.swap_window`
+
+Swap a window (does not need to be the current window). When called the first
+time, highlights the selected window for swapping. When called the second time
+with another window will swap the two selected windows.
+
+```lua
+---@param win_id integer
+---@param dir winmove.Direction
+winmove.swap_window(win_id, dir)
+
+-- Example:
+winmove.swap_window(1000)
+winmove.swap_window(1000)
 ```
 
 ## Contributing
