@@ -11,6 +11,7 @@ local api = vim.api
 -- Window higlights per mode
 local win_highlights = {
     move = nil,
+    resize = nil,
 }
 
 ---@type string?
