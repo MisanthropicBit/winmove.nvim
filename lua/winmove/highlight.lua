@@ -3,6 +3,10 @@
 
 local highlight = {}
 
+---@class winmove.Highlights
+---@field move string?
+---@field swap string?
+
 local config = require("winmove.config")
 local str = require("winmove.util.str")
 
@@ -11,6 +15,7 @@ local api = vim.api
 -- Window higlights per mode
 local win_highlights = {
     move = nil,
+    swap = nil,
 }
 
 ---@type string?
@@ -85,7 +90,7 @@ end
 
 ---@param win_id integer
 ---@param mode winmove.Mode
-function highlight.has_winmove_highlight(win_id, mode)
+function highlight.has_highlight(win_id, mode)
     if not api.nvim_win_is_valid(win_id) then
         return
     end
