@@ -149,5 +149,4 @@ describe("swap mode", function()
             assert.are.same(vim.api.nvim_win_get_buf(target_win_id), bufnr1)
         end)
     end)
-
 end)

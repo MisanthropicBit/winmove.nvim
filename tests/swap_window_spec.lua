@@ -17,7 +17,7 @@ describe("swap window", function()
                     "target",
                     {
                         "row",
-                        { "leaf", "main" }
+                        { "leaf", "main" },
                     },
                 },
             })
@@ -73,7 +73,7 @@ describe("swap window", function()
                     "target",
                     {
                         "row",
-                        { "leaf", "main" }
+                        { "leaf", "main" },
                     },
                 },
             })
