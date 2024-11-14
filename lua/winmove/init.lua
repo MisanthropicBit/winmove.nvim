@@ -8,7 +8,7 @@ local highlight = require("winmove.highlight")
 local layout = require("winmove.layout")
 local message = require("winmove.message")
 local _mode = require("winmove.mode")
-local state = require("winmove.state")
+local State = require("winmove.state")
 local str = require("winmove.util.str")
 local swap = require("winmove.swap")
 local validators = require("winmove.validators")
@@ -21,7 +21,7 @@ local winmove_version = "0.1.0"
 
 local augroup = api.nvim_create_augroup("Winmove", { clear = true })
 local autocmds = {}
-local cur_state = state.new()
+local state = State.new()
 
 ---@type fun(mode: winmove.Mode)
 local start_mode
@@ -91,7 +91,7 @@ local function move_window_to_tab(win_id, target_win_id, dir, vertical)
 
     if winmove.current_mode() == winmove.Mode.Move then
         -- Update state with the new window
-        state.update(cur_state, { win_id = new_win_id })
+        state:update({ win_id = new_win_id })
     end
 end
 
@@ -293,22 +293,20 @@ end
 ---@param win_id integer
 ---@param dir winmove.Direction
 local function swap_window_in_direction(win_id, dir)
-    winutil.wincall_no_events(function()
-        local new_win_id = swap.swap_window_in_direction(win_id, dir)
+    local new_win_id = swap.swap_window_in_direction(win_id, dir)
 
-        if not new_win_id then
-            return
-        end
+    if not new_win_id then
+        return
+    end
 
-        -- Seems the winhighlight bug can also leak into other windows when
-        -- switching: https://github.com/neovim/neovim/issues/18283
-        highlight.unhighlight_window(new_win_id)
-        highlight.unhighlight_window(win_id)
-        highlight.highlight_window(new_win_id, winmove.Mode.Swap)
+    -- Seems the winhighlight bug can also leak into other windows when
+    -- switching: https://github.com/neovim/neovim/issues/18283
+    highlight.unhighlight_window(new_win_id)
+    highlight.unhighlight_window(win_id)
+    highlight.highlight_window(new_win_id, winmove.Mode.Swap)
 
-        -- Update state with the new window
-        state.update(cur_state, { win_id = new_win_id })
-    end)
+    -- Update state with the new window
+    state:update({ win_id = new_win_id })
 end
 
 ---@param win_id integer
@@ -320,6 +318,8 @@ function winmove.swap_window_in_direction(win_id, dir)
     })
 
     swap_window_in_direction(win_id, dir)
+    -- winutil.wincall_no_events(swap_window_in_direction, win_id, dir)
+    -- wincall(win_id, swap_window_in_direction, win_id, dir)
 end
 
 ---@param win_id integer
@@ -344,7 +344,7 @@ local function move_mode_key_handler(keys)
     local keymaps = config.keymaps.move
 
     ---@type integer
-    local win_id = cur_state.win_id
+    local win_id = state:get("win_id")
 
     if keys == keymaps.left then
         move_window(win_id, "h")
@@ -376,7 +376,7 @@ end
 ---@param keys string
 local function swap_mode_key_handler(keys)
     ---@type integer
-    local win_id = cur_state.win_id
+    local win_id = state:get("win_id")
     local keymaps = config.keymaps.swap
 
     if keys == keymaps.left then
@@ -441,6 +441,7 @@ local function handle_error_in_mode(mode, err)
     -- There was an error during a mode, restore keymaps and quit current mode
     local cur_mode = mode or winmove.current_mode()
 
+    vim.print("stop 1")
     winmove.stop_mode()
     message.error((("Got error in '%s' mode: %s"):format(cur_mode, err)))
 end
@@ -534,24 +535,26 @@ end
 --- Delete mode keymaps and restore previous buffer keymaps
 ---@param mode winmove.Mode
 local function restore_keymaps(mode)
-    if not api.nvim_buf_is_valid(cur_state.bufnr) then
+    local bufnr = state:get("bufnr")
+
+    if not api.nvim_buf_is_valid(bufnr) then
         return
     end
 
     -- Remove winmove keymaps in protected calls since the buffer might have
     -- been deleted but the buffer can still be marked as valid
     for _, map in pairs(config.keymaps[mode]) do
-        pcall(api.nvim_buf_del_keymap, cur_state.bufnr, "n", map)
+        pcall(api.nvim_buf_del_keymap, bufnr, "n", map)
     end
 
-    pcall(api.nvim_buf_del_keymap, cur_state.bufnr, "n", config.keymaps.help)
-    pcall(api.nvim_buf_del_keymap, cur_state.bufnr, "n", config.keymaps.quit)
-    pcall(api.nvim_buf_del_keymap, cur_state.bufnr, "n", config.keymaps.toggle_mode)
+    pcall(api.nvim_buf_del_keymap, bufnr, "n", config.keymaps.help)
+    pcall(api.nvim_buf_del_keymap, bufnr, "n", config.keymaps.quit)
+    pcall(api.nvim_buf_del_keymap, bufnr, "n", config.keymaps.toggle_mode)
 
     -- Restore old keymaps
-    for _, keymap in ipairs(cur_state.saved_keymaps) do
+    for _, keymap in ipairs(state:get("saved_keymaps")) do
         vim.keymap.set("n", keymap.lhs, keymap.rhs, {
-            buffer = cur_state.bufnr,
+            buffer = bufnr,
             expr = keymap.expr,
             callback = keymap.callback,
             noremap = keymap.noremap,
@@ -572,23 +575,28 @@ local function create_mode_autocmds(mode, win_id)
 
     autocmds = {}
 
-    table.insert(
-        autocmds,
-        api.nvim_create_autocmd("WinEnter", {
-            callback = function()
-                local cur_win_id = api.nvim_get_current_win()
+    -- TODO: Do these actually trigger when we ignore them?
 
-                -- Do not stop the current mode if we are entering the window
-                -- we are moving or if we are entering the help window
-                if cur_win_id ~= win_id and not float.is_help_window(cur_win_id) then
-                    stop_mode(mode)
-                    return true
-                end
-            end,
-            group = augroup,
-            desc = "Quits " .. mode .. " mode when leaving the window",
-        })
-    )
+    if mode ~= winmove.Mode.Swap then
+        table.insert(
+            autocmds,
+            api.nvim_create_autocmd("WinEnter", {
+                callback = function()
+                    local cur_win_id = api.nvim_get_current_win()
+
+                    -- Do not stop the current mode if we are entering the window
+                    -- we are moving or if we are entering the help window
+                    if cur_win_id ~= win_id and not float.is_help_window(cur_win_id) then
+                        vim.print("stop 2")
+                        stop_mode(mode)
+                        return true
+                    end
+                end,
+                group = augroup,
+                desc = "Quits " .. mode .. " mode when leaving the window",
+            })
+        )
+    end
 
     -- If we enter a new window, unhighlight the window since there is a bug
     -- where the winhighlight option can leak into other windows:
@@ -616,6 +624,7 @@ local function create_mode_autocmds(mode, win_id)
         autocmds,
         api.nvim_create_autocmd("InsertEnter", {
             callback = function()
+                vim.print("stop 3")
                 stop_mode(mode)
                 return true
             end,
@@ -642,7 +651,12 @@ start_mode = function(mode)
     local saved_buf_keymaps = set_keymaps(cur_win_id, bufnr, mode)
 
     highlight.highlight_window(cur_win_id, mode)
-    state.set(cur_state, mode, cur_win_id, bufnr, saved_buf_keymaps)
+    state:update({
+        mode = mode,
+        win_id = cur_win_id,
+        bufnr = bufnr,
+        saved_keymaps = saved_buf_keymaps,
+    })
 
     api.nvim_exec_autocmds("User", {
         pattern = "WinmoveModeStart",
@@ -665,7 +679,7 @@ stop_mode = function(mode)
         return
     end
 
-    local unhighlight_ok = pcall(highlight.unhighlight_window, cur_state.win_id)
+    local unhighlight_ok = pcall(highlight.unhighlight_window, state:get("win_id"))
 
     if not unhighlight_ok then
         message.error("Failed to unhighlight window when stopping mode")
@@ -677,7 +691,7 @@ stop_mode = function(mode)
         message.error("Failed to restore keymaps when stopping mode")
     end
 
-    state.reset(cur_state)
+    state:reset()
 
     for _, autocmd in ipairs(autocmds) do
         pcall(api.nvim_del_autocmd, autocmd)
@@ -709,7 +723,7 @@ function winmove.stop_mode()
 end
 
 function winmove.current_mode()
-    return cur_state.mode
+    return state:get("mode")
 end
 
 function winmove.configure(user_config)
