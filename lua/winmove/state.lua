@@ -1,47 +1,48 @@
-local state = {}
-
 ---@class winmove.State
 ---@field mode winmove.Mode?
 ---@field win_id integer?
 ---@field bufnr integer?
 ---@field saved_keymaps table?
+local State = {}
+
+State.__index = State
 
 ---@return winmove.State
-function state.new()
-    return {
+function State.new()
+    return setmetatable({
         mode = nil,
         win_id = nil,
         bufnr = nil,
         saved_keymaps = nil,
-    }
+    }, State)
 end
 
---- Set current state
----@param cur_state winmove.State
----@param mode winmove.Mode
----@param win_id integer
----@param bufnr integer
----@param saved_keymaps table
-function state.set(cur_state, mode, win_id, bufnr, saved_keymaps)
-    cur_state.mode = mode
-    cur_state.win_id = win_id
-    cur_state.bufnr = bufnr
-    cur_state.saved_keymaps = saved_keymaps
+function State:get(key)
+    return self[key]
 end
 
----@param cur_state winmove.State
 ---@param changes winmove.State
----@return winmove.State
-function state.update(cur_state, changes)
-    return vim.tbl_extend("force", cur_state, changes)
+function State:update(changes)
+    self.mode = changes.mode or self.mode
+    self.win_id = changes.win_id or self.win_id
+    self.bufnr = changes.bufnr or self.bufnr
+    self.saved_keymaps = changes.saved_keymaps or self.saved_keymaps
 end
 
----@param cur_state winmove.State
-function state.reset(cur_state)
-    cur_state.mode = nil
-    cur_state.win_id = nil
-    cur_state.bufnr = nil
-    cur_state.saved_keymaps = nil
+function State:reset()
+    self.mode = nil
+    self.win_id = nil
+    self.bufnr = nil
+    self.saved_keymaps = nil
 end
 
-return state
+function State:__tostring()
+    return ("State(%s)"):format(vim.inspect({
+        mode = self.mode,
+        win_id = self.win_id,
+        bufnr = self.bufnr,
+        saved_keymaps = self.saved_keymaps,
+    }))
+end
+
+return State
