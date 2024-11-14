@@ -32,9 +32,11 @@ function swap.swap_window(win_id)
     end
 
     if not vim.api.nvim_win_is_valid(selected_window) then
+        selected_window = nil
         message.error("Previously selected window is not valid anymore")
         return
     elseif win_id == selected_window then
+        selected_window = nil
         message.error("Cannot swap selected window with itself")
         return
     end
