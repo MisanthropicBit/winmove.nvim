@@ -3,6 +3,26 @@ local winutil = {}
 local compat = require("winmove.compat")
 local message = require("winmove.message")
 
+local events = {
+    "WinEnter",
+    "WinLeave",
+    "WinNew",
+    "WinScrolled",
+    "WinClosed",
+    "BufWinEnter",
+    "BufWinLeave",
+    "BufEnter",
+    "BufLeave",
+}
+
+if compat.has("nvim-0.8.2") then
+    table.insert(events, "WinResized")
+end
+
+function winutil.get_ignored_events()
+    return events
+end
+
 ---@return integer
 function winutil.window_count()
     return vim.fn.winnr("$")
@@ -23,23 +43,7 @@ end
 function winutil.wincall_no_events(func, ...)
     local saved_eventignore = vim.opt_global.eventignore:get()
 
-    local events = {
-        "WinEnter",
-        "WinLeave",
-        "WinNew",
-        "WinScrolled",
-        "WinClosed",
-        "BufWinEnter",
-        "BufWinLeave",
-        "BufEnter",
-        "BufLeave",
-    }
-
-    if compat.has("nvim-0.8.2") then
-        table.insert(events, "WinResized")
-    end
-
-    vim.opt_global.eventignore = events
+    vim.opt_global.eventignore = winutil.get_ignored_events()
 
     -- Do a protected call so that we restore 'eventignore' in case it fails
     local ok, error = pcall(func, ...)
