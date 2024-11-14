@@ -441,7 +441,6 @@ local function handle_error_in_mode(mode, err)
     -- There was an error during a mode, restore keymaps and quit current mode
     local cur_mode = mode or winmove.current_mode()
 
-    vim.print("stop 1")
     winmove.stop_mode()
     message.error((("Got error in '%s' mode: %s"):format(cur_mode, err)))
 end
@@ -587,7 +586,6 @@ local function create_mode_autocmds(mode, win_id)
                     -- Do not stop the current mode if we are entering the window
                     -- we are moving or if we are entering the help window
                     if cur_win_id ~= win_id and not float.is_help_window(cur_win_id) then
-                        vim.print("stop 2")
                         stop_mode(mode)
                         return true
                     end
@@ -624,7 +622,6 @@ local function create_mode_autocmds(mode, win_id)
         autocmds,
         api.nvim_create_autocmd("InsertEnter", {
             callback = function()
-                vim.print("stop 3")
                 stop_mode(mode)
                 return true
             end,
