@@ -272,11 +272,6 @@ function winmove.split_into(win_id, dir)
     wincall(win_id, split_into, win_id, dir)
 end
 
----@param dir winmove.Direction
-local function move_window_far(dir)
-    vim.cmd("wincmd " .. dir:upper())
-end
-
 ---@diagnostic disable-next-line:unused-local
 --- Move a window as far as possible in a direction
 ---@param win_id integer
@@ -287,12 +282,19 @@ function winmove.move_window_far(win_id, dir)
         dir = validators.dir_validator(dir),
     })
 
-    wincall(win_id, move_window_far, dir)
+    wincall(win_id, function()
+        vim.cmd("wincmd " .. dir:upper())
+    end, dir)
 end
 
 ---@param win_id integer
 ---@param dir winmove.Direction
-local function swap_window_in_direction(win_id, dir)
+function winmove.swap_window_in_direction(win_id, dir)
+    vim.validate({
+        win_id = validators.win_id_validator(win_id),
+        dir = validators.dir_validator(dir),
+    })
+
     local new_win_id = swap.swap_window_in_direction(win_id, dir)
 
     if not new_win_id then
@@ -307,19 +309,6 @@ local function swap_window_in_direction(win_id, dir)
 
     -- Update state with the new window
     state:update({ win_id = new_win_id })
-end
-
----@param win_id integer
----@param dir winmove.Direction
-function winmove.swap_window_in_direction(win_id, dir)
-    vim.validate({
-        win_id = validators.win_id_validator(win_id),
-        dir = validators.dir_validator(dir),
-    })
-
-    swap_window_in_direction(win_id, dir)
-    -- winutil.wincall_no_events(swap_window_in_direction, win_id, dir)
-    -- wincall(win_id, swap_window_in_direction, win_id, dir)
 end
 
 ---@param win_id integer
@@ -363,13 +352,13 @@ local function move_mode_key_handler(keys)
     elseif keys == keymaps.split_right then
         split_into(win_id, "l")
     elseif keys == keymaps.far_left then
-        move_window_far("h")
+        winmove.move_window_far(win_id, "h")
     elseif keys == keymaps.far_down then
-        move_window_far("j")
+        winmove.move_window_far(win_id, "j")
     elseif keys == keymaps.far_up then
-        move_window_far("k")
+        winmove.move_window_far(win_id, "k")
     elseif keys == keymaps.far_right then
-        move_window_far("l")
+        winmove.move_window_far(win_id, "l")
     end
 end
 
@@ -380,13 +369,13 @@ local function swap_mode_key_handler(keys)
     local keymaps = config.keymaps.swap
 
     if keys == keymaps.left then
-        swap_window_in_direction(win_id, "h")
+        winmove.swap_window_in_direction(win_id, "h")
     elseif keys == keymaps.down then
-        swap_window_in_direction(win_id, "j")
+        winmove.swap_window_in_direction(win_id, "j")
     elseif keys == keymaps.up then
-        swap_window_in_direction(win_id, "k")
+        winmove.swap_window_in_direction(win_id, "k")
     elseif keys == keymaps.right then
-        swap_window_in_direction(win_id, "l")
+        winmove.swap_window_in_direction(win_id, "l")
     end
 end
 
