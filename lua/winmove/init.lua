@@ -147,7 +147,7 @@ end
 ---@param mode winmove.Mode
 ---@return boolean
 local function can_move(win_id, mode)
-    local at_edge_horizontal = config.at_edge.horizontal
+    local at_edge_horizontal = config.modes.move.at_edge.horizontal
 
     if at_edge_horizontal == winmove.AtEdge.MoveToTab then
         if winutil.window_count() == 1 and vim.fn.tabpagenr("$") == 1 then
@@ -182,7 +182,7 @@ local function move_window(win_id, dir)
     -- No neighbor, handle configured behaviour at edges
     if target_win_id == nil then
         local edge_type = winutil.is_horizontal(dir) and "horizontal" or "vertical"
-        local behaviour = config.at_edge[edge_type]
+        local behaviour = config.modes.move.at_edge[edge_type]
         local proceed, new_target_win_id, new_dir = handle_edge(win_id, dir, behaviour, false)
 
         if not proceed then
@@ -232,7 +232,7 @@ local function split_into(win_id, dir)
     -- No neighbor, handle configured behaviour at edges
     if target_win_id == nil then
         local edge_type = winutil.is_horizontal(dir) and "horizontal" or "vertical"
-        local behaviour = config.at_edge[edge_type]
+        local behaviour = config.modes.move.at_edge[edge_type]
         local proceed, new_target_win_id, new_dir = handle_edge(win_id, dir, behaviour, true)
 
         if not proceed then
@@ -331,7 +331,7 @@ end
 
 ---@param keys string
 local function move_mode_key_handler(keys)
-    local keymaps = config.keymaps.move
+    local keymaps = config.modes.move.keymaps
 
     ---@type integer
     local win_id = state:get("win_id")
@@ -367,7 +367,7 @@ end
 local function swap_mode_key_handler(keys)
     ---@type integer
     local win_id = state:get("win_id")
-    local keymaps = config.keymaps.swap
+    local keymaps = config.modes.swap.keymaps
 
     if keys == keymaps.left then
         winmove.swap_window_in_direction(win_id, "h")
@@ -479,7 +479,7 @@ local function set_keymaps(win_id, bufnr, mode)
     local saved_buf_keymaps = {}
     local handler = create_mode_key_handler(mode)
 
-    for name, map in pairs(config.keymaps[mode]) do
+    for name, map in pairs(config.modes[mode].keymaps) do
         local description = config.get_keymap_description(name, mode)
         set_mode_keymap(win_id, bufnr, map, handler, description)
 
@@ -532,13 +532,13 @@ local function restore_keymaps(mode)
 
     -- Remove winmove keymaps in protected calls since the buffer might have
     -- been deleted but the buffer can still be marked as valid
-    for _, map in pairs(config.keymaps[mode]) do
+    for _, map in pairs(config.modes[mode].keymaps) do
         pcall(api.nvim_buf_del_keymap, bufnr, "n", map)
     end
 
-    pcall(api.nvim_buf_del_keymap, bufnr, "n", config.keymaps.help)
-    pcall(api.nvim_buf_del_keymap, bufnr, "n", config.keymaps.quit)
-    pcall(api.nvim_buf_del_keymap, bufnr, "n", config.keymaps.toggle_mode)
+    for _, map in pairs(config.keymaps) do
+        pcall(api.nvim_buf_del_keymap, bufnr, "n", map)
+    end
 
     -- Restore old keymaps
     for _, keymap in ipairs(state:get("saved_keymaps")) do

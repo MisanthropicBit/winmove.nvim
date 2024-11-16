@@ -27,7 +27,7 @@ describe("mode mappings", function()
 
             local keymaps = test_helpers.get_buf_mapped_keymaps(vim.api.nvim_get_current_buf())
 
-            for name, lhs in pairs(config.keymaps.move) do
+            for name, lhs in pairs(config.modes.move.keymaps) do
                 compare_keymap("move", name, keymaps[lhs] or keymaps[lhs:upper()])
             end
 
@@ -43,7 +43,7 @@ describe("mode mappings", function()
 
             local keymaps = test_helpers.get_buf_mapped_keymaps(vim.api.nvim_get_current_buf())
 
-            for name, lhs in pairs(config.keymaps.swap) do
+            for name, lhs in pairs(config.modes.swap.keymaps) do
                 compare_keymap("swap", name, keymaps[lhs] or keymaps[lhs:upper()])
             end
 

@@ -3,9 +3,7 @@
 
 local highlight = {}
 
----@class winmove.Highlights
----@field move string?
----@field swap string?
+---@alias winmove.Highlight string
 
 local config = require("winmove.config")
 local str = require("winmove.util.str")
@@ -45,7 +43,7 @@ local highlight_groups = {
 ---@param groups string[]
 local function generate_highlights(mode, groups)
     local highlights = {}
-    local color = config.highlights[mode]
+    local color = config.modes[mode].highlight
 
     for _, group in ipairs(groups) do
         local titlecase_mode = str.titlecase(mode)

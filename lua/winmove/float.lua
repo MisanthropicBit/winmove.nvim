@@ -108,7 +108,7 @@ end
 ---@param mode winmove.Mode
 function float.open(mode)
     local lines = {}
-    local keymaps = config.keymaps[mode]
+    local keymaps = config.modes[mode].keymaps
     local max_widths = {}
     local spacing = (" "):rep(4)
 

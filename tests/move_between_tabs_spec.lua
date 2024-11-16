@@ -10,10 +10,17 @@ local given = vader.given
 local make_layout = test_helpers.make_layout
 
 describe("moving between tabs", function()
-    -- Ensure default configuration
+    ---@diagnostic disable-next-line: missing-fields
     config.configure({
-        at_edge = {
-            horizontal = at_edge.MoveToTab,
+        ---@diagnostic disable-next-line: missing-fields
+        modes = {
+            ---@diagnostic disable-next-line: missing-fields
+            move = {
+                ---@diagnostic disable-next-line: missing-fields
+                at_edge = {
+                    horizontal = at_edge.AtEdge.MoveToTab,
+                },
+            },
         },
     })
 

@@ -7,22 +7,44 @@ describe("config", function()
     it("handles invalid configs", function()
         local invalid_configs = {
             {
-                highlights = {
-                    move = true,
+                modes = {
+                    move = {
+                        highlight = true,
+                    },
                 },
             },
             {
-                at_edge = 2,
-            },
-            {
-                at_edge = {
-                    horizontal = at_edge.MoveToTab,
-                    vertical = at_edge.MoveToTab,
+                modes = {
+                    swap = {
+                        at_edge = 2,
+                    },
                 },
             },
             {
-                at_edge = {
-                    vertical = true,
+                modes = {
+                    move = {
+                        at_edge = {
+                            vertical = at_edge.AtEdge.MoveToTab,
+                        },
+                    },
+                },
+            },
+            {
+                modes = {
+                    swap = {
+                        at_edge = {
+                            vertical = at_edge.AtEdge.MoveToTab,
+                        },
+                    },
+                },
+            },
+            {
+                modes = {
+                    move = {
+                        at_edge = {
+                            vertical = true,
+                        },
+                    },
                 },
             },
             {
@@ -31,30 +53,20 @@ describe("config", function()
                 },
             },
             {
-                keymaps = {
-                    move = {
-                        left = 12.5,
-                    },
-                },
-            },
-            {
-                keymaps = {
-                    move = {
-                        left = "",
-                    },
-                },
-            },
-            {
-                keymaps = {
+                modes = {
                     swap = {
-                        left = 12.5,
+                        keymaps = {
+                            left = 12.5,
+                        },
                     },
                 },
             },
             {
-                keymaps = {
+                modes = {
                     swap = {
-                        left = "",
+                        keymaps = {
+                            left = "",
+                        },
                     },
                 },
             },
@@ -78,37 +90,46 @@ describe("config", function()
 
     it("throws no errors for a valid config", function()
         local ok = config.configure({
-            highlights = {
-                move = "Title",
-            },
-            at_edge = {
-                horizontal = at_edge.Wrap,
-                vertical = false,
-            },
             keymaps = {
                 help = "_",
                 help_close = "z",
                 quit = "i",
                 toggle_mode = "<c-t>",
+            },
+            modes = {
                 move = {
-                    left = "<left>",
-                    down = "<down>",
-                    up = "<up>",
-                    right = "<right>",
-                    far_left = "U",
-                    far_down = "I",
-                    far_up = "O",
-                    far_right = "P",
-                    split_left = "ef",
-                    split_down = "nv",
-                    split_up = "qp",
-                    split_right = "vn",
+                    highlight = "Title",
+                    at_edge = {
+                        horizontal = at_edge.AtEdge.Wrap,
+                        vertical = false,
+                    },
+                    keymaps = {
+                        left = "<left>",
+                        down = "<down>",
+                        up = "<up>",
+                        right = "<right>",
+                        far_left = "U",
+                        far_down = "I",
+                        far_up = "O",
+                        far_right = "P",
+                        split_left = "ef",
+                        split_down = "nv",
+                        split_up = "qp",
+                        split_right = "vn",
+                    },
                 },
                 swap = {
-                    left = "<left>",
-                    down = "<down>",
-                    up = "<up>",
-                    right = "<right>",
+                    highlight = "Question",
+                    at_edge = {
+                        horizontal = at_edge.AtEdge.MoveToTab,
+                        vertical = false,
+                    },
+                    keymaps = {
+                        left = "<left>",
+                        down = "<down>",
+                        up = "<up>",
+                        right = "<right>",
+                    },
                 },
             },
         })

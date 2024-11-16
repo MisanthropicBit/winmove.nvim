@@ -11,9 +11,13 @@ local make_layout = test_helpers.make_layout
 
 describe("basic movements", function()
     config.configure({
-        at_edge = {
-            horizontal = at_edge.Wrap,
-            vertical = at_edge.Wrap,
+        modes = {
+            move = {
+                at_edge = {
+                    horizontal = at_edge.AtEdge.Wrap,
+                    vertical = at_edge.AtEdge.Wrap,
+                },
+            },
         },
     })
 

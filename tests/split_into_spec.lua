@@ -9,16 +9,18 @@ local make_layout = test_helpers.make_layout
 describe("split_into", function()
     -- Ensure default configuration
     config.configure({
-        at_edge = {
-            horizontal = false,
-            vertical = false,
-        },
-        keymaps = {
+        modes = {
             move = {
-                split_left = "sh",
-                split_down = "sj",
-                split_up = "sk",
-                split_right = "sl",
+                at_edge = {
+                    horizontal = false,
+                    vertical = false,
+                },
+                keymaps = {
+                    split_left = "sh",
+                    split_down = "sj",
+                    split_up = "sk",
+                    split_right = "sl",
+                },
             },
         },
     })

@@ -12,16 +12,18 @@ describe("wrap-around when moving windows", function()
 
     it("wraps around when enabled in the config", function()
         config.configure({
-            at_edge = {
-                horizontal = at_edge.Wrap,
-                vertical = at_edge.Wrap,
-            },
-            keymaps = {
+            modes = {
                 move = {
-                    split_left = "sh",
-                    split_down = "sj",
-                    split_up = "sk",
-                    split_right = "sl",
+                    at_edge = {
+                        horizontal = at_edge.AtEdge.Wrap,
+                        vertical = at_edge.AtEdge.Wrap,
+                    },
+                    keymaps = {
+                        split_left = "sh",
+                        split_down = "sj",
+                        split_up = "sk",
+                        split_right = "sl",
+                    },
                 },
             },
         })
@@ -57,16 +59,18 @@ describe("wrap-around when moving windows", function()
 
     it("does not wrap around when disabled in the config", function()
         config.configure({
-            at_edge = {
-                horizontal = false,
-                vertical = false,
-            },
-            keymaps = {
+            modes = {
                 move = {
-                    split_left = "sh",
-                    split_down = "sj",
-                    split_up = "sk",
-                    split_right = "sl",
+                    at_edge = {
+                        horizontal = false,
+                        vertical = false,
+                    },
+                    keymaps = {
+                        split_left = "sh",
+                        split_down = "sj",
+                        split_up = "sk",
+                        split_right = "sl",
+                    },
                 },
             },
         })
@@ -100,16 +104,18 @@ describe("wrap-around when moving windows", function()
 
     it("does not wrap full width window", function()
         config.configure({
-            at_edge = {
-                horizontal = at_edge.Wrap,
-                vertical = at_edge.Wrap,
-            },
-            keymaps = {
+            modes = {
                 move = {
-                    split_left = "sh",
-                    split_down = "sj",
-                    split_up = "sk",
-                    split_right = "sl",
+                    at_edge = {
+                        horizontal = at_edge.AtEdge.Wrap,
+                        vertical = at_edge.AtEdge.Wrap,
+                    },
+                    keymaps = {
+                        split_left = "sh",
+                        split_down = "sj",
+                        split_up = "sk",
+                        split_right = "sl",
+                    },
                 },
             },
         })
@@ -162,16 +168,18 @@ describe("wrap-around when moving windows", function()
 
     it("does not wrap full height window", function()
         config.configure({
-            at_edge = {
-                horizontal = at_edge.Wrap,
-                vertical = at_edge.Wrap,
-            },
-            keymaps = {
+            modes = {
                 move = {
-                    split_left = "sh",
-                    split_down = "sj",
-                    split_up = "sk",
-                    split_right = "sl",
+                    at_edge = {
+                        horizontal = at_edge.AtEdge.Wrap,
+                        vertical = at_edge.AtEdge.Wrap,
+                    },
+                    keymaps = {
+                        split_left = "sh",
+                        split_down = "sj",
+                        split_up = "sk",
+                        split_right = "sl",
+                    },
                 },
             },
         })

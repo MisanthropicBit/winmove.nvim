@@ -44,8 +44,10 @@ describe("custom highlights", function()
 
         ---@diagnostic disable-next-line: missing-fields
         config.configure({
-            highlights = {
-                move = "CustomWinmoveMoveMode",
+            modes = {
+                move = {
+                    highlight = "CustomWinmoveMoveMode",
+                },
             },
         })
 
@@ -84,8 +86,10 @@ describe("custom highlights", function()
 
         ---@diagnostic disable-next-line: missing-fields
         config.configure({
-            highlights = {
-                swap = "CustomWinmoveSwapMode",
+            modes = {
+                swap = {
+                    highlight = "CustomWinmoveSwapMode",
+                },
             },
         })
 
