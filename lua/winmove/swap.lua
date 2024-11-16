@@ -14,8 +14,20 @@ local function swap_windows(win_id1, win_id2)
     local buf1 = vim.api.nvim_win_get_buf(win_id1)
     local buf2 = vim.api.nvim_win_get_buf(win_id2)
 
-    vim.api.nvim_win_set_buf(win_id1, buf2)
+    -- Save views before switching buffers
+    vim.api.nvim_set_current_win(win_id1)
+    local view1 = vim.fn.winsaveview()
+
+    vim.api.nvim_set_current_win(win_id2)
+    local view2 = vim.fn.winsaveview()
+
+    -- Set buffers and restore views
     vim.api.nvim_win_set_buf(win_id2, buf1)
+    vim.fn.winrestview(view1)
+
+    vim.api.nvim_set_current_win(win_id1)
+    vim.api.nvim_win_set_buf(win_id1, buf2)
+    vim.fn.winrestview(view2)
 end
 
 --- Selects a window for swapping. If no window has been selected already, selects
