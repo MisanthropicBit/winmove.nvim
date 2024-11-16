@@ -15,6 +15,7 @@ local validators = require("winmove.validators")
 local winutil = require("winmove.winutil")
 
 winmove.Mode = _mode.Mode
+winmove.AtEdge = at_edge.AtEdge
 
 local api = vim.api
 local winmove_version = "0.1.0"
@@ -105,7 +106,7 @@ end
 local function handle_edge(win_id, dir, behaviour, split_into)
     if behaviour == false then
         return false, nil, dir
-    elseif behaviour == at_edge.Wrap then
+    elseif behaviour == winmove.AtEdge.Wrap then
         local new_target_win_id = layout.get_wraparound_neighbor(dir)
 
         if new_target_win_id == win_id then
@@ -118,7 +119,7 @@ local function handle_edge(win_id, dir, behaviour, split_into)
         dir = winutil.reverse_direction(dir)
 
         return true, target_win_id, dir
-    elseif behaviour == at_edge.MoveToTab then
+    elseif behaviour == winmove.AtEdge.MoveToTab then
         if winutil.window_count() == 1 and vim.fn.tabpagenr("$") == 1 then
             -- Only one window and one tab, do not proceed
             return false, nil, dir
@@ -148,12 +149,12 @@ end
 local function can_move(win_id, mode)
     local at_edge_horizontal = config.at_edge.horizontal
 
-    if at_edge_horizontal == at_edge.MoveToTab then
+    if at_edge_horizontal == winmove.AtEdge.MoveToTab then
         if winutil.window_count() == 1 and vim.fn.tabpagenr("$") == 1 then
             message.error("Only one window and tab")
             return false
         end
-    elseif at_edge_horizontal == at_edge.Wrap then
+    elseif at_edge_horizontal == winmove.AtEdge.Wrap then
         if winutil.window_count() == 1 then
             message.error("Only one window")
             return false

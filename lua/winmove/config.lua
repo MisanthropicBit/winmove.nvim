@@ -1,6 +1,6 @@
 local config = {}
 
-local at_edge = require("winmove.at_edge")
+local AtEdge = require("winmove.at_edge").AtEdge
 local message = require("winmove.message")
 
 local config_loaded = false
