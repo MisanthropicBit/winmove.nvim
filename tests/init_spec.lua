@@ -27,6 +27,8 @@ describe("init", function()
         winmove.stop_mode()
 
         assert.stub(message.error).was.called_with("No mode is currently active")
+
+        ---@diagnostic disable-next-line: undefined-field
         message.error:revert()
     end)
 
