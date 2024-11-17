@@ -2,7 +2,7 @@
 ---@field mode winmove.Mode?
 ---@field win_id integer?
 ---@field bufnr integer?
----@field saved_keymaps table?
+---@field saved_keymaps table<string, unknown>?
 local State = {}
 
 State.__index = State
@@ -17,6 +17,8 @@ function State.new()
     }, State)
 end
 
+---@param key string
+---@return unknown
 function State:get(key)
     return self[key]
 end
@@ -36,6 +38,7 @@ function State:reset()
     self.saved_keymaps = nil
 end
 
+---@return string
 function State:__tostring()
     return ("State(%s)"):format(vim.inspect({
         mode = self.mode,
