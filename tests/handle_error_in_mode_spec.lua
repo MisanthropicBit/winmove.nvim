@@ -49,10 +49,9 @@ describe("error handling in modes", function()
 
             assert.is_nil(winmove.current_mode())
 
-            assert.stub(vim.notify).was.called_with(
-                "[winmove.nvim]: Got error in 'move' mode: Oh noes",
-                vim.log.levels.ERROR
-            )
+            assert
+                .stub(vim.notify).was
+                .called_with("[winmove.nvim]: Got error in 'move' mode: Oh noes", vim.log.levels.ERROR)
 
             local keymaps = test_helpers.get_buf_mapped_keymaps(buffer)
             local keymap = keymaps["sj"]

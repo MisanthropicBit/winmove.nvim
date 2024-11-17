@@ -136,10 +136,9 @@ describe("basic movements", function()
             given(function(context)
                 winmove.move_window(context.win_id, "l")
 
-                assert.stub(vim.notify).was.called_with(
-                    "[winmove.nvim]: Only one window",
-                    vim.log.levels.ERROR
-                )
+                assert
+                    .stub(vim.notify).was
+                    .called_with("[winmove.nvim]: Only one window", vim.log.levels.ERROR)
             end)
 
             ---@diagnostic disable-next-line: undefined-field
@@ -160,10 +159,9 @@ describe("basic movements", function()
 
                 winmove.move_window(float_win_id, "l")
 
-                assert.stub(vim.notify).was.called_with(
-                    "[winmove.nvim]: Cannot move floating window",
-                    vim.log.levels.ERROR
-                )
+                assert
+                    .stub(vim.notify).was
+                    .called_with("[winmove.nvim]: Cannot move floating window", vim.log.levels.ERROR)
             end)
 
             ---@diagnostic disable-next-line: undefined-field
