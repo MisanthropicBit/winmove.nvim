@@ -39,29 +39,6 @@ end
 ---@alias winmove.Direction winmove.HorizontalDirection | winmove.VerticalDirection
 
 ---@param win_id integer
----@param func function
----@param ... any
-local function wincall(win_id, func, ...)
-    -- NOTE: Using vim.api.nvim_win_call seems to trigger 'textlock' or leaves
-    -- nvim in a weird state where the process exists with either code 134 or
-    -- 139 so we are instead using 'wincall_no_events'. This might also happen
-    -- because we would close the window inside the vim.api.nvim_win_call call
-    -- when moving the window to another tab
-    local cur_win_id = api.nvim_get_current_win()
-    local is_same_window_id = cur_win_id == win_id
-
-    if not is_same_window_id then
-        winutil.wincall_no_events(api.nvim_set_current_win, win_id)
-    end
-
-    winutil.wincall_no_events(func, ...)
-
-    if not is_same_window_id then
-        winutil.wincall_no_events(api.nvim_set_current_win, cur_win_id)
-    end
-end
-
----@param win_id integer
 ---@param target_win_id integer
 ---@param dir winmove.Direction
 ---@param vertical boolean
@@ -216,7 +193,7 @@ function winmove.move_window(win_id, dir)
         dir = validators.dir_validator(dir),
     })
 
-    wincall(win_id, move_window, win_id, dir)
+    winutil.wincall(win_id, move_window, win_id, dir)
 end
 
 --- Split a window into another window in a given direction
@@ -270,7 +247,7 @@ function winmove.split_into(win_id, dir)
         dir = validators.dir_validator(dir),
     })
 
-    wincall(win_id, split_into, win_id, dir)
+    winutil.wincall(win_id, split_into, win_id, dir)
 end
 
 ---@diagnostic disable-next-line:unused-local
@@ -283,7 +260,7 @@ function winmove.move_window_far(win_id, dir)
         dir = validators.dir_validator(dir),
     })
 
-    wincall(win_id, function()
+    winutil.wincall(win_id, function()
         vim.cmd("wincmd " .. dir:upper())
     end, dir)
 end
