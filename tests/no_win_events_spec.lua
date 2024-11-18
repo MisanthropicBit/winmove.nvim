@@ -11,6 +11,7 @@ describe("no window events", function()
 
     before_each(function()
         triggers = {}
+        autocmd_ids = {}
     end)
 
     after_each(function()
@@ -46,11 +47,13 @@ describe("no window events", function()
 
             -- Set up autocmds *after* splitting
             for _, event in ipairs(events) do
-                vim.api.nvim_create_autocmd(event, {
+                local autocmd_id = vim.api.nvim_create_autocmd(event, {
                     callback = function()
                         triggers[event] = true
                     end,
                 })
+
+                table.insert(autocmd_ids, autocmd_id)
             end
 
             winmove.swap_window_in_direction(vim.api.nvim_get_current_win(), "h")
