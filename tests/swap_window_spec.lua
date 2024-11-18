@@ -63,6 +63,71 @@ describe("swap window", function()
         end)
     end)
 
+    it("swaps a window with another across tabs", function()
+        given(function()
+            local main_win_id = make_layout({
+                "col",
+                {
+                    "leaf",
+                    {
+                        "row",
+                        { "leaf", "main" },
+                    },
+                },
+            })["main"]
+
+            assert.matches_winlayout(vim.fn.winlayout(), {
+                "col",
+                {
+                    { "leaf" },
+                    {
+                        "row",
+                        {
+                            { "leaf" },
+                            { "leaf", main_win_id },
+                        },
+                    },
+                },
+            })
+
+            vim.cmd.tabnew()
+
+            local target_win_id = make_layout({
+                "row",
+                {
+                    "target",
+                    {
+                        "col",
+                        { "leaf", "leaf" },
+                    },
+                },
+            })["target"]
+
+            assert.matches_winlayout(vim.fn.winlayout(), {
+                "row",
+                {
+                    { "leaf", target_win_id },
+                    {
+                        "col",
+                        {
+                            { "leaf" },
+                            { "leaf" },
+                        },
+                    },
+                },
+            })
+
+            local bufnr1 = vim.api.nvim_win_get_buf(main_win_id)
+            local bufnr2 = vim.api.nvim_win_get_buf(target_win_id)
+
+            winmove.swap_window(main_win_id)
+            winmove.swap_window(target_win_id)
+
+            assert.are.same(vim.api.nvim_win_get_buf(main_win_id), bufnr2)
+            assert.are.same(vim.api.nvim_win_get_buf(target_win_id), bufnr1)
+        end)
+    end)
+
     it("fails if previously selected window is not valid anymore", function()
         given(function()
             stub(vim.api, "nvim_echo")

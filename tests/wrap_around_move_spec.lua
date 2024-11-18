@@ -18,12 +18,6 @@ describe("wrap-around when moving windows", function()
                         horizontal = at_edge.AtEdge.Wrap,
                         vertical = at_edge.AtEdge.Wrap,
                     },
-                    keymaps = {
-                        split_left = "sh",
-                        split_down = "sj",
-                        split_up = "sk",
-                        split_right = "sl",
-                    },
                 },
             },
         })
@@ -44,7 +38,6 @@ describe("wrap-around when moving windows", function()
                 },
             })
 
-            vim.api.nvim_set_current_win(main_win_id)
             winmove.move_window(main_win_id, "h")
 
             assert.matches_winlayout(vim.fn.winlayout(), {
@@ -62,14 +55,8 @@ describe("wrap-around when moving windows", function()
             modes = {
                 move = {
                     at_edge = {
-                        horizontal = false,
-                        vertical = false,
-                    },
-                    keymaps = {
-                        split_left = "sh",
-                        split_down = "sj",
-                        split_up = "sk",
-                        split_right = "sl",
+                        horizontal = at_edge.AtEdge.None,
+                        vertical = at_edge.AtEdge.None,
                     },
                 },
             },
@@ -109,12 +96,6 @@ describe("wrap-around when moving windows", function()
                     at_edge = {
                         horizontal = at_edge.AtEdge.Wrap,
                         vertical = at_edge.AtEdge.Wrap,
-                    },
-                    keymaps = {
-                        split_left = "sh",
-                        split_down = "sj",
-                        split_up = "sk",
-                        split_right = "sl",
                     },
                 },
             },
@@ -173,12 +154,6 @@ describe("wrap-around when moving windows", function()
                     at_edge = {
                         horizontal = at_edge.AtEdge.Wrap,
                         vertical = at_edge.AtEdge.Wrap,
-                    },
-                    keymaps = {
-                        split_left = "sh",
-                        split_down = "sj",
-                        split_up = "sk",
-                        split_right = "sl",
                     },
                 },
             },

@@ -14,7 +14,9 @@ function at_edge.is_valid_behaviour(value)
         return false
     end
 
-    return value == at_edge.AtEdge.None or value == at_edge.AtEdge.Wrap or value == at_edge.AtEdge.MoveToTab
+    return value == at_edge.AtEdge.None
+        or value == at_edge.AtEdge.Wrap
+        or value == at_edge.AtEdge.MoveToTab
 end
 
 return at_edge

@@ -3,7 +3,6 @@ local swap = {}
 local highlight = require("winmove.highlight")
 local message = require("winmove.message")
 local mode = require("winmove.mode")
-local layout = require("winmove.layout")
 
 ---@type integer?
 local selected_window
@@ -59,19 +58,10 @@ function swap.swap_window(win_id)
 end
 
 ---@param win_id integer
----@param dir winmove.Direction
----@return integer?
-function swap.swap_window_in_direction(win_id, dir)
-    local neighbor_win_id = layout.get_neighbor(dir)
-
-    if not neighbor_win_id or win_id == neighbor_win_id then
-        return nil
-    end
-
-    swap_windows(win_id, neighbor_win_id)
-    vim.api.nvim_set_current_win(neighbor_win_id)
-
-    return neighbor_win_id
+---@param target_win_id integer
+function swap.swap_window_in_direction(win_id, target_win_id)
+    swap_windows(win_id, target_win_id)
+    vim.api.nvim_set_current_win(target_win_id)
 end
 
 return swap

@@ -65,9 +65,9 @@ local function move_window_to_tab(win_id, target_win_id, dir, vertical)
     local new_win_id = api.nvim_get_current_win()
     local mode = winmove.Mode.Move
 
-    highlight.highlight_window(new_win_id, mode)
-
     if winmove.current_mode() == winmove.Mode.Move then
+        highlight.highlight_window(new_win_id, mode)
+
         -- Update state with the new window
         state:update({ win_id = new_win_id })
     end
@@ -80,15 +80,15 @@ end
 ---@return boolean
 ---@return integer?
 ---@return winmove.Direction
-local function handle_edge(win_id, dir, behaviour, split_into)
-    if behaviour == false then
+local function handle_edge(win_id, dir, mode, behaviour, split_into)
+    if behaviour == winmove.AtEdge.None then
         return false, nil, dir
     elseif behaviour == winmove.AtEdge.Wrap then
-        local new_target_win_id = layout.get_wraparound_neighbor(dir)
+        local new_target_win_id = layout.get_wraparound_neighbor(win_id, dir)
 
         if new_target_win_id == win_id then
             -- If we get the same window it is full width/height because we
-            -- wrap around to the same window
+            -- wrapped around to the same window
             return false, nil, dir
         end
 
@@ -102,6 +102,12 @@ local function handle_edge(win_id, dir, behaviour, split_into)
             return false, nil, dir
         end
 
+        if not winutil.is_horizontal(dir) then
+            -- Do not try to move to a tab vertically even if the user selected
+            -- that behaviour by mistake
+            return false, nil, dir
+        end
+
         ---@cast dir winmove.HorizontalDirection
         local target_win_id, reldir = layout.get_target_window_in_tab(win_id, dir)
         local final_dir = reldir ---@type winmove.Direction
@@ -112,7 +118,11 @@ local function handle_edge(win_id, dir, behaviour, split_into)
             vertical = true
         end
 
-        move_window_to_tab(win_id, target_win_id, final_dir, vertical)
+        if mode == winmove.Mode.Move then
+            move_window_to_tab(win_id, target_win_id, final_dir, vertical)
+        elseif mode == winmove.Mode.Swap then
+            return true, target_win_id, dir
+        end
 
         return false, target_win_id, dir
     else
@@ -123,17 +133,19 @@ end
 ---@param win_id integer
 ---@param mode winmove.Mode
 ---@return boolean
-local function can_move(win_id, mode)
+local function can_move_or_swap(win_id, mode)
     local at_edge_horizontal = config.modes.move.at_edge.horizontal
 
     if at_edge_horizontal == winmove.AtEdge.MoveToTab then
         if winutil.window_count() == 1 and vim.fn.tabpagenr("$") == 1 then
-            message.error("Only one window and tab")
+            ---@cast mode string
+            message.error(("Cannot %s window, only one window and tab"):format(mode:lower()))
             return false
         end
     elseif at_edge_horizontal == winmove.AtEdge.Wrap then
         if winutil.window_count() == 1 then
-            message.error("Only one window")
+            ---@cast mode string
+            message.error(("Cannot %s window, only one window"):format(mode:lower()))
             return false
         end
     end
@@ -146,30 +158,42 @@ local function can_move(win_id, mode)
     return true
 end
 
---- Move a window in a given direction
 ---@param win_id integer
 ---@param dir winmove.Direction
-local function move_window(win_id, dir)
-    if not can_move(win_id, winmove.Mode.Move) then
-        return
-    end
-
-    local target_win_id = layout.get_neighbor(dir)
+---@param mode winmove.Mode
+---@return boolean
+---@return integer
+---@return winmove.Direction
+local function find_target_win_id(win_id, dir, mode)
+    local target_win_id = layout.get_neighbor(win_id, dir)
 
     -- No neighbor, handle configured behaviour at edges
     if target_win_id == nil then
         local edge_type = winutil.is_horizontal(dir) and "horizontal" or "vertical"
-        local behaviour = config.modes.move.at_edge[edge_type]
-        local proceed, new_target_win_id, new_dir = handle_edge(win_id, dir, behaviour, false)
+        local behaviour = config.modes[mode].at_edge[edge_type]
+        local proceed, new_target_win_id, new_dir = handle_edge(win_id, dir, mode, behaviour, false)
 
-        if not proceed then
-            return
-        end
-
-        target_win_id = new_target_win_id
-        dir = new_dir
+        return proceed, new_target_win_id, new_dir
     end
 
+    return true, target_win_id, dir
+end
+
+--- Move a window in a given direction
+---@param win_id integer
+---@param dir winmove.Direction
+local function move_window(win_id, dir)
+    if not can_move_or_swap(win_id, winmove.Mode.Move) then
+        return
+    end
+
+    local proceed, target_win_id, new_dir = find_target_win_id(win_id, dir, winmove.Mode.Move)
+
+    if not proceed then
+        return
+    end
+
+    dir = new_dir
     ---@cast target_win_id -nil
 
     if not layout.are_siblings(win_id, target_win_id) then
@@ -204,13 +228,14 @@ local function split_into(win_id, dir)
         return
     end
 
-    local target_win_id = layout.get_neighbor(dir)
+    local target_win_id = layout.get_neighbor(win_id, dir)
 
     -- No neighbor, handle configured behaviour at edges
     if target_win_id == nil then
         local edge_type = winutil.is_horizontal(dir) and "horizontal" or "vertical"
         local behaviour = config.modes.move.at_edge[edge_type]
-        local proceed, new_target_win_id, new_dir = handle_edge(win_id, dir, behaviour, true)
+        local proceed, new_target_win_id, new_dir =
+            handle_edge(win_id, dir, winmove.Mode.Move, behaviour, true)
 
         if not proceed then
             return
@@ -267,26 +292,44 @@ end
 
 ---@param win_id integer
 ---@param dir winmove.Direction
+local function swap_window_in_direction(win_id, dir)
+    local mode = winmove.Mode.Swap
+
+    if not can_move_or_swap(win_id, mode) then
+        return
+    end
+
+    local proceed, target_win_id, _ = find_target_win_id(win_id, dir, mode)
+
+    if not proceed then
+        return
+    end
+
+    swap.swap_window_in_direction(win_id, target_win_id)
+
+    if winmove.current_mode() == winmove.Mode.Swap then
+        -- Seems the winhighlight bug can also leak into other windows when
+        -- switching: https://github.com/neovim/neovim/issues/18283
+        highlight.unhighlight_window(target_win_id)
+        highlight.unhighlight_window(win_id)
+        highlight.highlight_window(target_win_id, mode)
+
+        -- Update state with the new window
+        state:update({ win_id = target_win_id })
+    end
+end
+
+---@param win_id integer
+---@param dir winmove.Direction
 function winmove.swap_window_in_direction(win_id, dir)
     vim.validate({
         win_id = validators.win_id_validator(win_id),
         dir = validators.dir_validator(dir),
     })
 
-    local new_win_id = swap.swap_window_in_direction(win_id, dir)
-
-    if not new_win_id then
-        return
-    end
-
-    -- Seems the winhighlight bug can also leak into other windows when
-    -- switching: https://github.com/neovim/neovim/issues/18283
-    highlight.unhighlight_window(new_win_id)
-    highlight.unhighlight_window(win_id)
-    highlight.highlight_window(new_win_id, winmove.Mode.Swap)
-
-    -- Update state with the new window
-    state:update({ win_id = new_win_id })
+    winutil.wincall_no_events(function()
+        swap_window_in_direction(win_id, dir)
+    end)
 end
 
 ---@param win_id integer
@@ -602,7 +645,7 @@ end
 start_mode = function(mode)
     local cur_win_id = api.nvim_get_current_win()
 
-    if not can_move(cur_win_id, mode) then
+    if not can_move_or_swap(cur_win_id, mode) then
         return
     end
 
