@@ -12,14 +12,14 @@ local config_loaded = false
 ---@field toggle_mode string
 
 ---@class winmove.ConfigMoveModeKeymaps
----@field left         string
----@field down         string
----@field up           string
----@field right        string
----@field far_left     string
----@field far_down     string
----@field far_up       string
----@field far_right    string
+---@field left        string
+---@field down        string
+---@field up          string
+---@field right       string
+---@field far_left    string
+---@field far_down    string
+---@field far_up      string
+---@field far_right   string
 ---@field split_left  string
 ---@field split_down  string
 ---@field split_up    string
@@ -191,31 +191,6 @@ local function validate_schema(object, schema)
     end
 
     return errors
-end
-
---- Validate keys in a table
----@param specs table<any>
----@return fun(tbl: table): boolean, any?
-local function validate_keys(specs)
-    return function(tbl)
-        if not tbl then
-            return true
-        end
-
-        for _, spec in ipairs(specs) do
-            local key = spec[1]
-
-            local validated, error = pcall(vim.validate, {
-                [key] = { tbl[key], spec[2], spec[3] },
-            })
-
-            if not validated then
-                return validated, error
-            end
-        end
-
-        return true
-    end
 end
 
 local expected_non_empty_string = "Expected a non-empty string"
