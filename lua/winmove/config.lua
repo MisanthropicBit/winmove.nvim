@@ -1,6 +1,6 @@
 local config = {}
 
-local AtEdge = require("winmove.at_edge").AtEdge
+local at_edge = require("winmove.at_edge")
 local message = require("winmove.message")
 
 local config_loaded = false
@@ -46,8 +46,8 @@ local config_loaded = false
 ---@field swap winmove.ConfigSwapMode
 
 ---@class winmove.AtEdgeConfig
----@field horizontal false | winmove.AtEdge
----@field vertical   false | winmove.AtEdge
+---@field horizontal winmove.AtEdge
+---@field vertical   winmove.AtEdge
 
 ---@class winmove.Config
 ---@field keymaps winmove.ConfigCommonKeymaps
@@ -65,8 +65,8 @@ local default_config = {
         move = {
             highlight = "Visual",
             at_edge = {
-                horizontal = AtEdge.MoveToTab,
-                vertical = AtEdge.Wrap,
+                horizontal = at_edge.AtEdge.None,
+                vertical = at_edge.AtEdge.None,
             },
             keymaps = {
                 left = "h",
@@ -86,8 +86,8 @@ local default_config = {
         swap = {
             highlight = "Substitute",
             at_edge = {
-                horizontal = AtEdge.MoveToTab,
-                vertical = AtEdge.Wrap,
+                horizontal = at_edge.AtEdge.None,
+                vertical = at_edge.AtEdge.None,
             },
             keymaps = {
                 left = "h",
@@ -221,14 +221,13 @@ end
 local expected_non_empty_string = "Expected a non-empty string"
 
 local horizontal_validator = {
-    function(value)
-        return value == false or value == AtEdge.Wrap or value == AtEdge.MoveToTab
-    end,
+    at_edge.is_valid_behaviour,
     "valid behaviour at horizontal edge",
 }
+
 local vertical_validator = {
     function(value)
-        return value == false or value == AtEdge.Wrap
+        return value == at_edge.AtEdge.None or value == at_edge.AtEdge.Wrap
     end,
     "valid behaviour at vertical edge",
 }

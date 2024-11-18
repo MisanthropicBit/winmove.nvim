@@ -101,7 +101,7 @@ describe("config", function()
                     highlight = "Title",
                     at_edge = {
                         horizontal = at_edge.AtEdge.Wrap,
-                        vertical = false,
+                        vertical = at_edge.AtEdge.None,
                     },
                     keymaps = {
                         left = "<left>",
@@ -122,7 +122,7 @@ describe("config", function()
                     highlight = "Question",
                     at_edge = {
                         horizontal = at_edge.AtEdge.MoveToTab,
-                        vertical = false,
+                        vertical = at_edge.AtEdge.None,
                     },
                     keymaps = {
                         left = "<left>",

@@ -1,4 +1,5 @@
 local winmove = require("winmove")
+local at_edge = require("winmove.at_edge")
 local config = require("winmove.config")
 local vader = require("winmove.util.vader")
 local test_helpers = require("winmove.util.test_helpers")
@@ -12,8 +13,8 @@ describe("split_into", function()
         modes = {
             move = {
                 at_edge = {
-                    horizontal = false,
-                    vertical = false,
+                    horizontal = at_edge.AtEdge.None,
+                    vertical = at_edge.AtEdge.None,
                 },
                 keymaps = {
                     split_left = "sh",
