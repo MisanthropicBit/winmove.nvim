@@ -161,17 +161,19 @@ end
 ---@param win_id integer
 ---@param dir winmove.Direction
 ---@param mode winmove.Mode
+---@param split_into boolean
 ---@return boolean
----@return integer
+---@return integer?
 ---@return winmove.Direction
-local function find_target_win_id(win_id, dir, mode)
+local function find_target_win_id(win_id, dir, mode, split_into)
     local target_win_id = layout.get_neighbor(win_id, dir)
 
     -- No neighbor, handle configured behaviour at edges
     if target_win_id == nil then
         local edge_type = winutil.is_horizontal(dir) and "horizontal" or "vertical"
         local behaviour = config.modes[mode].at_edge[edge_type]
-        local proceed, new_target_win_id, new_dir = handle_edge(win_id, dir, mode, behaviour, false)
+        local proceed, new_target_win_id, new_dir =
+            handle_edge(win_id, dir, mode, behaviour, split_into)
 
         return proceed, new_target_win_id, new_dir
     end
@@ -187,7 +189,8 @@ local function move_window(win_id, dir)
         return
     end
 
-    local proceed, target_win_id, new_dir = find_target_win_id(win_id, dir, winmove.Mode.Move)
+    local proceed, target_win_id, new_dir =
+        find_target_win_id(win_id, dir, winmove.Mode.Move, false)
 
     if not proceed then
         return
@@ -228,31 +231,21 @@ local function split_into(win_id, dir)
         return
     end
 
-    local target_win_id = layout.get_neighbor(win_id, dir)
+    local proceed, target_win_id, new_dir = find_target_win_id(win_id, dir, winmove.Mode.Move, true)
 
-    -- No neighbor, handle configured behaviour at edges
-    if target_win_id == nil then
-        local edge_type = winutil.is_horizontal(dir) and "horizontal" or "vertical"
-        local behaviour = config.modes.move.at_edge[edge_type]
-        local proceed, new_target_win_id, new_dir =
-            handle_edge(win_id, dir, winmove.Mode.Move, behaviour, true)
-
-        if not proceed then
-            return
-        end
-
-        target_win_id = new_target_win_id
-        dir = new_dir
+    if not proceed then
+        return
     end
+
+    dir = new_dir
+    ---@cast target_win_id -nil
 
     local split_options = {
         vertical = winutil.is_horizontal(dir),
         rightbelow = dir == "h" or dir == "k",
     }
 
-    ---@diagnostic disable-next-line:param-type-mismatch
     if layout.are_siblings(win_id, target_win_id) then
-        ---@diagnostic disable-next-line:param-type-mismatch
         local reldir =
             layout.get_sibling_relative_dir(win_id, target_win_id, dir, winmove.current_mode())
 
@@ -299,12 +292,13 @@ local function swap_window_in_direction(win_id, dir)
         return
     end
 
-    local proceed, target_win_id, _ = find_target_win_id(win_id, dir, mode)
+    local proceed, target_win_id, _ = find_target_win_id(win_id, dir, mode, false)
 
     if not proceed then
         return
     end
 
+    ---@cast target_win_id -nil
     swap.swap_window_in_direction(win_id, target_win_id)
 
     if winmove.current_mode() == winmove.Mode.Swap then
