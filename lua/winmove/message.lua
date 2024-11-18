@@ -1,40 +1,19 @@
 local message = {}
 
-local function color_level(level)
-    return ({
-        [vim.log.levels.ERROR] = "ErrorMsg",
-        [vim.log.levels.WARN] = "WarningMsg",
-    })[level]
-end
-
----@param msg string | string[][]
+---@param msg string
 ---@param level integer
----@param history boolean
-local function _message(msg, level, history)
-    local chunks = {}
-
-    if type(msg) == "string" then
-        table.insert(chunks, { " " .. msg })
-    elseif type(msg) == "table" then
-        table.insert(chunks, { " " })
-        vim.list_extend(chunks, msg)
-    end
-
-    table.insert(chunks, 1, { "[winmove.nvim]:", color_level(level) })
-
-    vim.api.nvim_echo(chunks, history or false, {})
+local function _message(msg, level)
+    vim.notify("[winmove.nvim]: " .. msg, level)
 end
 
----@param chunks string | string[][]
----@param history boolean?
-function message.error(chunks, history)
-    _message(chunks, vim.log.levels.ERROR, history or true)
+---@param msg string
+function message.error(msg)
+    _message(msg, vim.log.levels.ERROR)
 end
 
----@param chunks string | string[][]
----@param history boolean?
-function message.warn(chunks, history)
-    _message(chunks, vim.log.levels.WARN, history or true)
+---@param msg string
+function message.warn(msg)
+    _message(msg, vim.log.levels.WARN)
 end
 
 return message

@@ -1,6 +1,7 @@
 local winmove = require("winmove")
 local at_edge = require("winmove.at_edge")
 local config = require("winmove.config")
+local message = require("winmove.message")
 local vader = require("winmove.util.vader")
 local stub = require("luassert.stub")
 local test_helpers = require("winmove.util.test_helpers")
@@ -130,22 +131,22 @@ describe("basic movements", function()
         end)
 
         it("moves nothing if only one window", function()
-            stub(vim.api, "nvim_echo")
+            stub(vim, "notify")
 
             given(function(context)
                 winmove.move_window(context.win_id, "l")
 
-                assert.stub(vim.api.nvim_echo).was.called_with({
-                    { "[winmove.nvim]:", "ErrorMsg" },
-                    { " Only one window" },
-                }, true, {})
+                assert
+                    .stub(vim.notify).was
+                    .called_with("[winmove.nvim]: Only one window", vim.log.levels.ERROR)
             end)
 
-            vim.api.nvim_echo:revert()
+            ---@diagnostic disable-next-line: undefined-field
+            vim.notify:revert()
         end)
 
         it("does not move floating windows", function()
-            stub(vim.api, "nvim_echo")
+            stub(vim, "notify")
 
             given(function(context)
                 local float_win_id = vim.api.nvim_open_win(context.bufnr, true, {
@@ -158,13 +159,13 @@ describe("basic movements", function()
 
                 winmove.move_window(float_win_id, "l")
 
-                assert.stub(vim.api.nvim_echo).was.called_with({
-                    { "[winmove.nvim]:", "ErrorMsg" },
-                    { " Cannot move floating window" },
-                }, true, {})
+                assert
+                    .stub(vim.notify).was
+                    .called_with("[winmove.nvim]: Cannot move floating window", vim.log.levels.ERROR)
             end)
 
-            vim.api.nvim_echo:revert()
+            ---@diagnostic disable-next-line: undefined-field
+            vim.notify:revert()
         end)
     end)
 

@@ -1,7 +1,6 @@
 local winutil = {}
 
 local compat = require("winmove.compat")
-
 local message = require("winmove.message")
 
 ---@return integer

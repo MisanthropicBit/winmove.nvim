@@ -1,4 +1,5 @@
 local float = require("winmove.float")
+local message = require("winmove.message")
 local stub = require("luassert.stub")
 local test_helpers = require("winmove.util.test_helpers")
 local vader = require("winmove.util.vader")
@@ -41,17 +42,16 @@ describe("error handling in modes", function()
                 script = false,
             })
 
-            stub(vim.api, "nvim_echo")
+            stub(vim, "notify")
 
             winmove.start_mode(winmove.Mode.Move)
             vim.cmd.normal("?")
 
             assert.is_nil(winmove.current_mode())
 
-            assert.stub(vim.api.nvim_echo).was.called_with({
-                { "[winmove.nvim]:", "ErrorMsg" },
-                { " Got error in 'move' mode: Oh noes" },
-            }, true, {})
+            assert
+                .stub(vim.notify).was
+                .called_with("[winmove.nvim]: Got error in 'move' mode: Oh noes", vim.log.levels.ERROR)
 
             local keymaps = test_helpers.get_buf_mapped_keymaps(buffer)
             local keymap = keymaps["sj"]
@@ -65,7 +65,9 @@ describe("error handling in modes", function()
             assert.are.same(keymap.silent, 1)
             assert.are.same(keymap.nowait, 0)
 
-            vim.api.nvim_echo:revert()
+            ---@diagnostic disable-next-line: undefined-field
+            vim.notify:revert()
+            ---@diagnostic disable-next-line: undefined-field
             float.open:revert()
         end)
     end)

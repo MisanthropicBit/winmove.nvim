@@ -706,6 +706,8 @@ describe("moving between tabs", function()
             assert.matches_winlayout(vim.fn.winlayout(), { "leaf", win_id })
 
             assert.stub(message.error).was.called_with("Only one window and tab")
+
+            ---@diagnostic disable-next-line: undefined-field
             message.error:revert()
         end)
     end)
@@ -717,6 +719,7 @@ describe("moving between tabs", function()
             winmove.start_mode(winmove.Mode.Move)
             assert.stub(message.error).was.called_with("Only one window and tab")
 
+            ---@diagnostic disable-next-line: undefined-field
             message.error:revert()
         end)
     end)
