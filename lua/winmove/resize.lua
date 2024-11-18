@@ -122,11 +122,7 @@ function resize.resize_window(win_id, dir, count, anchor)
         win_id = vim.fn.winnr(neighbor_dir)
     end
 
-    if dir == edges[2] then
-        count = -count
-    end
-
-    resize_func(win_id, count)
+    resize_func(win_id, (dir == edges[2] and -1 or 1) * count)
     adjust_neighbors_in_direction(dir, get_dimension, min_dimension, count, _anchor)
 end
 
