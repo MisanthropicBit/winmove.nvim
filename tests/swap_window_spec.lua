@@ -130,7 +130,7 @@ describe("swap window", function()
 
     it("fails if previously selected window is not valid anymore", function()
         given(function()
-            stub(vim.api, "nvim_echo")
+            stub(vim, "notify")
 
             local windows = make_layout({
                 "col",
@@ -165,10 +165,10 @@ describe("swap window", function()
             vim.api.nvim_win_close(main_win_id, true)
             winmove.swap_window(target_win_id)
 
-            assert.stub(vim.api.nvim_echo).was.called_with({
-                { "[winmove.nvim]:", "ErrorMsg" },
-                { " Previously selected window is not valid anymore" },
-            }, true, {})
+            assert.stub(vim.notify).was.called_with(
+                "[winmove.nvim]: Previously selected window is not valid anymore",
+                vim.log.levels.ERROR
+            )
 
             assert.matches_winlayout(vim.fn.winlayout(), {
                 "col",
@@ -181,13 +181,13 @@ describe("swap window", function()
             assert.are.same(vim.api.nvim_win_get_buf(target_win_id), bufnr1)
 
             ---@diagnostic disable-next-line: undefined-field
-            vim.api.nvim_echo:revert()
+            vim.notify:revert()
         end)
     end)
 
     it("fails if swapping selected window with itself", function()
         given(function()
-            stub(vim.api, "nvim_echo")
+            stub(vim, "notify")
 
             local main_win_id = make_layout("main")["main"]
 
@@ -196,15 +196,14 @@ describe("swap window", function()
             winmove.swap_window(main_win_id)
             winmove.swap_window(main_win_id)
 
-            assert.stub(vim.api.nvim_echo).was.called_with({
-                { "[winmove.nvim]:", "ErrorMsg" },
-                { " Cannot swap selected window with itself" },
-            }, true, {})
+            assert
+                .stub(vim.notify).was
+                .called_with("[winmove.nvim]: Cannot swap selected window with itself", vim.log.levels.ERROR)
 
             assert.matches_winlayout(vim.fn.winlayout(), { "leaf", main_win_id })
 
             ---@diagnostic disable-next-line: undefined-field
-            vim.api.nvim_echo:revert()
+            vim.notify:revert()
         end)
     end)
 end)

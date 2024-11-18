@@ -142,7 +142,7 @@ describe("basic movements", function()
 
                 assert
                     .stub(vim.notify).was
-                    .called_with("[winmove.nvim]: Only one window", vim.log.levels.ERROR)
+                    .called_with("[winmove.nvim]: Cannot move window, only one window", vim.log.levels.ERROR)
             end)
 
             ---@diagnostic disable-next-line: undefined-field
