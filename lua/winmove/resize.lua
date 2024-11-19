@@ -62,7 +62,7 @@ local function adjust_neighbors_in_direction(dir, get_dimension, min_dimension, 
                 resize.resize_window,
                 neighbor_win_id,
                 dir,
-                count,
+                min_dimension - dimension,
                 anchor
             )
 
