@@ -119,6 +119,7 @@ local function handle_edge(win_id, dir, mode, behaviour, split_into)
         end
 
         if mode == winmove.Mode.Move then
+            -- TODO: Refactor so we do not need to call this here
             move_window_to_tab(win_id, target_win_id, final_dir, vertical)
         elseif mode == winmove.Mode.Swap then
             return true, target_win_id, dir
