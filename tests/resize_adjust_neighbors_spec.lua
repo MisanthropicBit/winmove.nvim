@@ -67,11 +67,7 @@ describe("resize", function()
                     },
                 })
 
-                for _, _win_id in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
-                    vim.api.nvim_set_current_win(_win_id)
-                    vim.opt_local.winwidth = 10
-                end
-
+                vim.go.winwidth = 10
                 vim.api.nvim_set_current_win(win_id)
 
                 local _, main_col_before, main_width_before, _ = get_win_pos_and_dimensions(win_id)
@@ -164,12 +160,7 @@ describe("resize", function()
                     },
                 })
 
-                for _, _win_id in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
-                    vim.api.nvim_win_call(_win_id, function()
-                        vim.opt_local.winwidth = 10
-                    end)
-                end
-
+                vim.go.winwidth = 10
                 vim.api.nvim_set_current_win(win_id)
 
                 local _, main_col_before, main_width_before, _ = get_win_pos_and_dimensions(win_id)
