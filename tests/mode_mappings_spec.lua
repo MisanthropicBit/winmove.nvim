@@ -27,8 +27,24 @@ describe("mode mappings", function()
 
             local keymaps = test_helpers.get_buf_mapped_keymaps(vim.api.nvim_get_current_buf())
 
-            for name, lhs in pairs(config.keymaps.move) do
+            for name, lhs in pairs(config.modes.move.keymaps) do
                 compare_keymap("move", name, keymaps[lhs] or keymaps[lhs:upper()])
+            end
+
+            winmove.stop_mode()
+        end)
+    end)
+
+    it("sets buffer-only mode mappings when entering swap mode", function()
+        given(function()
+            vim.cmd("new") -- Create another buffer to activate swap mode
+
+            winmove.start_mode(winmove.Mode.Swap)
+
+            local keymaps = test_helpers.get_buf_mapped_keymaps(vim.api.nvim_get_current_buf())
+
+            for name, lhs in pairs(config.modes.swap.keymaps) do
+                compare_keymap("swap", name, keymaps[lhs] or keymaps[lhs:upper()])
             end
 
             winmove.stop_mode()

@@ -3,6 +3,26 @@ local winutil = {}
 local compat = require("winmove.compat")
 local message = require("winmove.message")
 
+local events = {
+    "WinEnter",
+    "WinLeave",
+    "WinNew",
+    "WinScrolled",
+    "WinClosed",
+    "BufWinEnter",
+    "BufWinLeave",
+    "BufEnter",
+    "BufLeave",
+}
+
+if compat.has("nvim-0.8.2") then
+    table.insert(events, "WinResized")
+end
+
+function winutil.get_ignored_events()
+    return events
+end
+
 ---@return integer
 function winutil.window_count()
     return vim.fn.winnr("$")
@@ -23,23 +43,7 @@ end
 function winutil.wincall_no_events(func, ...)
     local saved_eventignore = vim.opt_global.eventignore:get()
 
-    local events = {
-        "WinEnter",
-        "WinLeave",
-        "WinNew",
-        "WinScrolled",
-        "WinClosed",
-        "BufWinEnter",
-        "BufWinLeave",
-        "BufEnter",
-        "BufLeave",
-    }
-
-    if compat.has("nvim-0.8.2") then
-        table.insert(events, "WinResized")
-    end
-
-    vim.opt_global.eventignore = events
+    vim.opt_global.eventignore = winutil.get_ignored_events()
 
     -- Do a protected call so that we restore 'eventignore' in case it fails
     local ok, error = pcall(func, ...)
@@ -53,20 +57,27 @@ function winutil.wincall_no_events(func, ...)
     return ok
 end
 
---- Call a function in the context of a window without triggering any window/buffer events
 ---@param win_id integer
 ---@param func function
 ---@param ... any
----@return boolean
-function winutil.win_id_context_call(win_id, func, ...)
-    local args = { ... }
-    local ok
+function winutil.wincall(win_id, func, ...)
+    -- NOTE: Using vim.api.nvim_win_call seems to trigger 'textlock' or leaves
+    -- nvim in a weird state where the process exists with either code 134 or
+    -- 139 so we are instead using 'wincall_no_events'. This might also happen
+    -- because we would close the window inside the vim.api.nvim_win_call call
+    -- when moving the window to another tab
+    local cur_win_id = vim.api.nvim_get_current_win()
+    local is_same_window_id = cur_win_id == win_id
 
-    vim.api.nvim_win_call(win_id, function()
-        ok = winutil.wincall_no_events(func, unpack(args))
-    end)
+    if not is_same_window_id then
+        winutil.wincall_no_events(vim.api.nvim_set_current_win, win_id)
+    end
 
-    return ok
+    winutil.wincall_no_events(func, ...)
+
+    if not is_same_window_id then
+        winutil.wincall_no_events(vim.api.nvim_set_current_win, cur_win_id)
+    end
 end
 
 ---@param dir winmove.Direction

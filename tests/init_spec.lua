@@ -18,7 +18,7 @@ describe("init", function()
         assert.has_error(function()
             ---@diagnostic disable-next-line: param-type-mismatch
             winmove.start_mode("hello")
-        end, "mode: expected a valid mode (move), got hello")
+        end, "mode: expected a valid mode (move, swap), got hello")
     end)
 
     it("fails to stop mode if no mode is currently active", function()
@@ -66,5 +66,24 @@ describe("init", function()
             ---@diagnostic disable-next-line: param-type-mismatch
             winmove.move_window_far(1000, 1)
         end, "dir: expected a valid direction, got 1")
+    end)
+
+    it("validates arguments of swap_window_in_direction", function()
+        assert.has_error(function()
+            ---@diagnostic disable-next-line: param-type-mismatch
+            winmove.swap_window_in_direction(true, "j")
+        end, "win_id: expected a non-negative number, got true")
+
+        assert.has_error(function()
+            ---@diagnostic disable-next-line: param-type-mismatch
+            winmove.swap_window_in_direction(1000, 1)
+        end, "dir: expected a valid direction, got 1")
+    end)
+
+    it("validates arguments of swap_window", function()
+        assert.has_error(function()
+            ---@diagnostic disable-next-line: param-type-mismatch
+            winmove.swap_window(true)
+        end, "win_id: expected a non-negative number, got true")
     end)
 end)

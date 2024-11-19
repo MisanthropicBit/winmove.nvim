@@ -11,9 +11,13 @@ local make_layout = test_helpers.make_layout
 
 describe("basic movements", function()
     config.configure({
-        at_edge = {
-            horizontal = at_edge.Wrap,
-            vertical = at_edge.Wrap,
+        modes = {
+            move = {
+                at_edge = {
+                    horizontal = at_edge.AtEdge.Wrap,
+                    vertical = at_edge.AtEdge.Wrap,
+                },
+            },
         },
     })
 
@@ -138,7 +142,7 @@ describe("basic movements", function()
 
                 assert
                     .stub(vim.notify).was
-                    .called_with("[winmove.nvim]: Only one window", vim.log.levels.ERROR)
+                    .called_with("[winmove.nvim]: Cannot move window, only one window", vim.log.levels.ERROR)
             end)
 
             ---@diagnostic disable-next-line: undefined-field

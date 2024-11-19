@@ -38,41 +38,55 @@ local function window_bounding_box(win_id)
 end
 
 --- Returns the possible window handle of a neighbor
+---@param win_id integer
 ---@param dir winmove.Direction
 ---@return integer?
-function layout.get_neighbor(dir)
-    local neighbor = vim.fn.winnr(dir)
-    local cur_win_nr = vim.fn.winnr()
+function layout.get_neighbor(win_id, dir)
+    local result = nil
 
-    return cur_win_nr ~= neighbor and vim.fn.win_getid(neighbor) or nil
+    winutil.wincall(win_id, function()
+        local neighbor = vim.fn.winnr(dir)
+        local cur_win_nr = vim.fn.winnr()
+
+        result = cur_win_nr ~= neighbor and vim.fn.win_getid(neighbor) or nil
+    end)
+
+    return result
 end
 
 --- Get the neighbor on the opposite side of the screen if the current window
 --- was to wrap around
+---@param win_id integer
 ---@param dir winmove.Direction
 ---@return integer?
-function layout.get_wraparound_neighbor(dir)
+function layout.get_wraparound_neighbor(win_id, dir)
     if winutil.window_count() == 1 then
         return nil
     end
 
-    local count = 1
-    local opposite_dir = winutil.reverse_direction(dir)
-    local prev_win_nr = vim.fn.winnr()
-    local neighbor = nil
+    local result = nil
 
-    while count <= winutil.window_count() do
-        neighbor = vim.fn.winnr(("%d%s"):format(count, opposite_dir))
+    winutil.wincall(win_id, function()
+        local count = 1
+        local opposite_dir = winutil.reverse_direction(dir)
+        local prev_win_nr = vim.fn.winnr()
+        local neighbor = nil
 
-        if neighbor == prev_win_nr then
-            break
+        while count <= winutil.window_count() do
+            neighbor = vim.fn.winnr(("%d%s"):format(count, opposite_dir))
+
+            if neighbor == prev_win_nr then
+                break
+            end
+
+            count = count + 1
+            prev_win_nr = neighbor
         end
 
-        count = count + 1
-        prev_win_nr = neighbor
-    end
+        result = vim.fn.win_getid(neighbor)
+    end)
 
-    return vim.fn.win_getid(neighbor)
+    return result
 end
 
 --- Determine if two windows are siblings in the same row or column

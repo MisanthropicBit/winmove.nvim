@@ -3,6 +3,8 @@
 
 local highlight = {}
 
+---@alias winmove.Highlight string
+
 local config = require("winmove.config")
 local str = require("winmove.util.str")
 
@@ -11,6 +13,7 @@ local api = vim.api
 -- Window higlights per mode
 local win_highlights = {
     move = nil,
+    swap = nil,
 }
 
 ---@type string?
@@ -40,7 +43,7 @@ local highlight_groups = {
 ---@param groups string[]
 local function generate_highlights(mode, groups)
     local highlights = {}
-    local color = config.highlights[mode]
+    local color = config.modes[mode].highlight
 
     for _, group in ipairs(groups) do
         local titlecase_mode = str.titlecase(mode)
@@ -85,7 +88,7 @@ end
 
 ---@param win_id integer
 ---@param mode winmove.Mode
-function highlight.has_winmove_highlight(win_id, mode)
+function highlight.has_highlight(win_id, mode)
     if not api.nvim_win_is_valid(win_id) then
         return
     end

@@ -42,9 +42,12 @@ describe("custom highlights", function()
     it("uses a custom highlight for move mode", function()
         vim.cmd(("hi link %s %s"):format("CustomWinmoveMoveMode", "Title"))
 
+        ---@diagnostic disable-next-line: missing-fields
         config.configure({
-            highlights = {
-                move = "CustomWinmoveMoveMode",
+            modes = {
+                move = {
+                    highlight = "CustomWinmoveMoveMode",
+                },
             },
         })
 
@@ -72,6 +75,48 @@ describe("custom highlights", function()
                 local linked_group = vim.api.nvim_get_hl(0, { name = "WinmoveMove" .. group }).link
 
                 assert.are.same(linked_group, "CustomWinmoveMoveMode")
+            end
+
+            winmove.stop_mode()
+        end)
+    end)
+
+    it("uses a custom highlight for swap mode", function()
+        vim.cmd(("hi link %s %s"):format("CustomWinmoveSwapMode", "Repeat"))
+
+        ---@diagnostic disable-next-line: missing-fields
+        config.configure({
+            modes = {
+                swap = {
+                    highlight = "CustomWinmoveSwapMode",
+                },
+            },
+        })
+
+        given(function()
+            make_layout({
+                "row",
+                { "leaf", "leaf" },
+            })
+
+            assert.matches_winlayout(vim.fn.winlayout(), {
+                "row",
+                {
+                    { "leaf" },
+                    { "leaf" },
+                },
+            })
+
+            winmove.start_mode(winmove.Mode.Swap)
+
+            local win_id = vim.api.nvim_get_current_win()
+
+            assert.are.same(vim.wo[win_id].winhighlight, get_expected_winhighlight("WinmoveSwap"))
+
+            for _, group in ipairs(highlight.groups()) do
+                local linked_group = vim.api.nvim_get_hl(0, { name = "WinmoveSwap" .. group }).link
+
+                assert.are.same(linked_group, "CustomWinmoveSwapMode")
             end
 
             winmove.stop_mode()
