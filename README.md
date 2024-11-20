@@ -107,10 +107,10 @@ require('winmove').configure({
             },
         },
         resize = {
-            -- When resizing, the anchor is in the top-left corner of the window by default
             highlight = "Todo", -- Highlight group for resize mode
             default_resize_count = 3, -- Default amount to resize windows
             keymaps = {
+                -- When resizing, the anchor is in the top-left corner of the window by default
                 left = "h", -- Resize to the left
                 down = "j", -- Resize down
                 up = "k", -- Resize up
@@ -159,7 +159,8 @@ Get the current version of `winmove`.
 
 #### `winmove.current_mode`
 
-Check which mode is currently active. Returns `"move"`, `"swap"`, `"resize"`, or `nil`.
+Check which mode is currently active. Returns `"move"` (`winmove.Mode.Move`),
+`"swap"` (`winmove.Mode.Swap`), `"resize"` (`winmove.Mode.Resize`), or `nil`.
 
 #### `winmove.start_mode`
 
@@ -256,11 +257,11 @@ Resize a window (does not need to be the current window). The window can be
 resized relative to an anchor in the top-left or bottom-right corner of the
 window.
 
-Resizing respects the `winwidth`/`winminwidth` and `winheight`/`winminheight`
-options respectively, with the largest value taking priority. If a window being
-resized would shrink another window's size beyond the values of those options,
-the whole row/column of windows are adjusted except if all windows in the
-direction of resizing are as small as they can get.
+Resizing respects the global `winwidth`/`winminwidth` and
+`winheight`/`winminheight` options respectively, with the largest value taking
+priority. If a window being resized would shrink another window's size beyond
+the values of those options, the whole row/column of windows are adjusted except
+if all windows in the direction of resizing are as small as they can get.
 
 See [this showcase](#moving-and-resizing-windows).
 
@@ -317,12 +318,6 @@ https://github.com/user-attachments/assets/4bf49e27-d08b-4926-9f17-57bf2e702c64
 ### Resizing windows
 
 https://github.com/user-attachments/assets/8f77c9c4-dca1-4647-9049-8695e5351431
-
-Resizing respects the `winwidth`/`winminwidth` and `winheight`/`winminheight`
-options respectively, with the largest value taking priority. If a window being
-resized would shrink another window's size beyond the values of those options,
-the whole row/column of windows are adjusted except if all windows in the
-direction of resizing are as small as they can get.
 
 https://github.com/user-attachments/assets/8f1fff43-2830-48f5-a29b-0b1aa7d865b2
 
