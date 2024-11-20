@@ -201,6 +201,7 @@ describe("swap window", function()
                 .called_with("[winmove.nvim]: Cannot swap selected window with itself", vim.log.levels.ERROR)
 
             assert.matches_winlayout(vim.fn.winlayout(), { "leaf", main_win_id })
+            assert.are.same(vim.wo[main_win_id].winhighlight, "")
 
             ---@diagnostic disable-next-line: undefined-field
             vim.notify:revert()
