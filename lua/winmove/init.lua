@@ -405,16 +405,16 @@ end
 
 ---@param keys string
 local function resize_mode_key_handler(keys)
-    ---@type integer
-    local win_id = state.win_id
     local count = vim.v.count
 
-    -- If no count is provided use the default count otherwise use the provided count
+    -- If no count is provided use the default count
     if count == 0 then
-        count = config.default_resize_count
+        count = config.modes.resize.default_resize_count
     end
 
-    local keymaps = config.keymaps.resize
+    ---@type integer
+    local win_id = state.win_id
+    local keymaps = config.modes.resize.keymaps
 
     if keys == keymaps.left then
         resize.resize_window(win_id, "h", count, resize.anchor.TopLeft)
