@@ -18,7 +18,7 @@ describe("init", function()
         assert.has_error(function()
             ---@diagnostic disable-next-line: param-type-mismatch
             winmove.start_mode("hello")
-        end, "mode: expected a valid mode (move, swap), got hello")
+        end, "mode: expected a valid mode (move, resize, swap), got hello")
     end)
 
     it("fails to stop mode if no mode is currently active", function()
@@ -85,5 +85,27 @@ describe("init", function()
             ---@diagnostic disable-next-line: param-type-mismatch
             winmove.swap_window(true)
         end, "win_id: expected a non-negative number, got true")
+    end)
+
+    it("validates arguments of resize_window", function()
+        assert.has_error(function()
+            ---@diagnostic disable-next-line: param-type-mismatch
+            winmove.resize_window(true, "j", 1, winmove.ResizeAnchor.TopLeft)
+        end, "win_id: expected a non-negative number, got true")
+
+        assert.has_error(function()
+            ---@diagnostic disable-next-line: param-type-mismatch
+            winmove.resize_window(1000, "x", 1, winmove.ResizeAnchor.TopLeft)
+        end, "dir: expected a valid direction, got x")
+
+        assert.has_error(function()
+            ---@diagnostic disable-next-line: param-type-mismatch
+            winmove.resize_window(1000, "h", -1, winmove.ResizeAnchor.BottomRight)
+        end, "count: expected a non-negative number, got -1")
+
+        assert.has_error(function()
+            ---@diagnostic disable-next-line: param-type-mismatch
+            winmove.resize_window(1000, "h", 1, "top_right")
+        end, "anchor: expected a valid anchor, got top_right")
     end)
 end)

@@ -34,6 +34,9 @@ describe("toggle mode", function()
             assert.are.same(winmove.current_mode(), winmove.Mode.Swap)
 
             vim.cmd([[execute "normal t"]])
+            assert.are.same(winmove.current_mode(), winmove.Mode.Resize)
+
+            vim.cmd([[execute "normal t"]])
             assert.are.same(winmove.current_mode(), winmove.Mode.Move)
 
             winmove.stop_mode()

@@ -48,6 +48,27 @@ describe("config", function()
                 },
             },
             {
+                modes = {
+                    resize = {
+                        default_resize_count = false,
+                    },
+                },
+            },
+            {
+                modes = {
+                    resize = {
+                        default_resize_count = 0,
+                    },
+                },
+            },
+            {
+                modes = {
+                    resize = {
+                        default_resize_count = -3,
+                    },
+                },
+            },
+            {
                 keymaps = {
                     help = function() end,
                 },
@@ -63,9 +84,18 @@ describe("config", function()
             },
             {
                 modes = {
-                    swap = {
+                    move = {
                         keymaps = {
                             left = "",
+                        },
+                    },
+                },
+            },
+            {
+                modes = {
+                    resize = {
+                        keymaps = {
+                            left_botright = true,
                         },
                     },
                 },
@@ -129,6 +159,20 @@ describe("config", function()
                         down = "<down>",
                         up = "<up>",
                         right = "<right>",
+                    },
+                },
+                resize = {
+                    highlight = "Todo",
+                    default_resize_count = 3,
+                    keymaps = {
+                        left = "<Left>",
+                        down = "<Down>",
+                        up = "<Up>",
+                        right = "<Right>",
+                        left_botright = "<s-h>",
+                        down_botright = "<s-j>",
+                        up_botright = "<s-k>",
+                        right_botright = "<s-l>",
                     },
                 },
             },

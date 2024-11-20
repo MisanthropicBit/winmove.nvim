@@ -4,6 +4,7 @@ local mode = {}
 mode.Mode = {
     Move = "move",
     Swap = "swap",
+    Resize = "resize",
 }
 
 ---@param value any
@@ -13,7 +14,7 @@ function mode.is_valid_mode(value)
         return false
     end
 
-    return value == mode.Mode.Move or value == mode.Mode.Swap
+    return value == mode.Mode.Move or value == mode.Mode.Swap or value == mode.Mode.Resize
 end
 
 return mode

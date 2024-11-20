@@ -122,4 +122,46 @@ describe("custom highlights", function()
             winmove.stop_mode()
         end)
     end)
+
+    it("uses a custom highlight for resize mode", function()
+        vim.cmd(("hi link %s %s"):format("CustomWinmoveResizeMode", "Repeat"))
+
+        config.configure({
+            modes = {
+                resize = {
+                    highlight = "CustomWinmoveResizeMode",
+                },
+            },
+        })
+
+        given(function()
+            make_layout({
+                "row",
+                { "leaf", "leaf" },
+            })
+
+            assert.matches_winlayout(vim.fn.winlayout(), {
+                "row",
+                {
+                    { "leaf" },
+                    { "leaf" },
+                },
+            })
+
+            winmove.start_mode(winmove.Mode.Resize)
+
+            local win_id = vim.api.nvim_get_current_win()
+
+            assert.are.same(vim.wo[win_id].winhighlight, get_expected_winhighlight("WinmoveResize"))
+
+            for _, group in ipairs(highlight.groups()) do
+                local linked_group =
+                    vim.api.nvim_get_hl(0, { name = "WinmoveResize" .. group }).link
+
+                assert.are.same(linked_group, "CustomWinmoveResizeMode")
+            end
+
+            winmove.stop_mode()
+        end)
+    end)
 end)

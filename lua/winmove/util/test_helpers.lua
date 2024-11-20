@@ -8,6 +8,19 @@ if not has_luassert then
     error("Luassert library not found")
 end
 
+---@param win_id integer
+---@return integer
+---@return integer
+---@return integer
+---@return integer
+function test_helpers.get_win_pos_and_dimensions(win_id)
+    local pos = vim.api.nvim_win_get_position(win_id)
+    local width = vim.api.nvim_win_get_width(win_id)
+    local height = vim.api.nvim_win_get_height(win_id)
+
+    return pos[1], pos[2], width, height
+end
+
 ---@param buffer integer
 ---@return table
 function test_helpers.get_buf_mapped_keymaps(buffer)

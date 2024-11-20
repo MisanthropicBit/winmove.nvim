@@ -28,7 +28,7 @@ describe("moving between tabs", function()
 
     it("moves window to the tab to the right and ignores switchbuf option", function()
         given(function()
-            vim.opt_local.switchbuf = "newtab"
+            vim.go.switchbuf = "newtab"
 
             local win_id = make_layout({
                 "row",

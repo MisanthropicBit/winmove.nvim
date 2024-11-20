@@ -14,6 +14,7 @@ local api = vim.api
 local win_highlights = {
     move = nil,
     swap = nil,
+    resize = nil,
 }
 
 ---@type string?

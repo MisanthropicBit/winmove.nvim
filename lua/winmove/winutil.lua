@@ -105,7 +105,6 @@ end
 ---@return integer
 function winutil.editor_height()
     local height = vim.o.lines - vim.o.cmdheight
-
     local showtabline = vim.o.showtabline
 
     -- Subtract 1 if the tabline is visible
@@ -121,6 +120,14 @@ function winutil.editor_height()
     end
 
     return height
+end
+
+function winutil.is_full_width(win_id)
+    return vim.api.nvim_win_get_width(win_id) == winutil.editor_width()
+end
+
+function winutil.is_full_height(win_id)
+    return vim.api.nvim_win_get_height(win_id) == winutil.editor_height()
 end
 
 return winutil
