@@ -59,7 +59,7 @@ describe("mode mappings", function()
 
             local keymaps = test_helpers.get_buf_mapped_keymaps(vim.api.nvim_get_current_buf())
 
-            for name, lhs in pairs(config.keymaps.resize) do
+            for name, lhs in pairs(config.modes.resize.keymaps) do
                 compare_keymap("resize", name, keymaps[lhs] or keymaps[lhs:upper()])
             end
 

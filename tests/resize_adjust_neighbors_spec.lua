@@ -4,24 +4,12 @@ local test_helpers = require("winmove.util.test_helpers")
 
 local given = vader.given
 local make_layout = test_helpers.make_layout
+local get_win_pos_and_dimensions = test_helpers.get_win_pos_and_dimensions
 
 describe("resize", function()
     describe("adjusts neighbors", function()
         local count = 3
         assert:set_parameter("TableFormatLevel", 10)
-
-        ---@param win_id integer
-        ---@return integer
-        ---@return integer
-        ---@return integer
-        ---@return integer
-        local function get_win_pos_and_dimensions(win_id)
-            local pos = vim.api.nvim_win_get_position(win_id)
-            local width = vim.api.nvim_win_get_width(win_id)
-            local height = vim.api.nvim_win_get_height(win_id)
-
-            return pos[1], pos[2], width, height
-        end
 
         it("resizes towards non-sibling window", function()
             given(function()

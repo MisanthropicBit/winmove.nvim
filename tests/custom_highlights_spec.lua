@@ -127,8 +127,10 @@ describe("custom highlights", function()
         vim.cmd(("hi link %s %s"):format("CustomWinmoveResizeMode", "Repeat"))
 
         config.configure({
-            highlights = {
-                resize = "CustomWinmoveResizeMode",
+            modes = {
+                resize = {
+                    highlight = "CustomWinmoveResizeMode",
+                },
             },
         })
 

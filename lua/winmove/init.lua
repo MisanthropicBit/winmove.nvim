@@ -283,7 +283,7 @@ function winmove.move_window_far(win_id, dir)
 
     winutil.wincall(win_id, function()
         vim.cmd("wincmd " .. dir:upper())
-    end, dir)
+    end)
 end
 
 ---@param win_id integer
@@ -338,17 +338,15 @@ function winmove.swap_window(win_id)
     end)
 end
 
-local function toggle_mode()
-    local mode = winmove.current_mode()
-    local new_mode = mode == winmove.Mode.Move and winmove.Mode.Swap or winmove.Mode.Move
-
-    stop_mode(mode)
-    start_mode(new_mode)
-end
+local next_mode = {
+    [winmove.Mode.Move] = winmove.Mode.Swap,
+    [winmove.Mode.Swap] = winmove.Mode.Resize,
+    [winmove.Mode.Resize] = winmove.Mode.Move,
+}
 
 local function toggle_mode()
     local mode = winmove.current_mode()
-    local new_mode = mode == winmove.Mode.Move and winmove.Mode.Resize or winmove.Mode.Move
+    local new_mode = next_mode[mode]
 
     stop_mode(mode)
     start_mode(new_mode)
@@ -773,13 +771,13 @@ end
 ---@param anchor winmove.ResizeAnchor?
 function winmove.resize_window(win_id, dir, count, anchor)
     vim.validate({
-        win_id = win_id_validator(win_id),
-        dir = dir_validator(dir),
-        count = { count, is_nonnegative_number, "a non-negative number" },
+        win_id = validators.win_id_validator(win_id),
+        dir = validators.dir_validator(dir),
+        count = { count, validators.is_nonnegative_number, "a non-negative number" },
         anchor = { anchor, resize.is_valid_anchor, "a valid anchor" },
     })
 
-    winutil.win_id_context_call(win_id, function()
+    winutil.wincall(win_id, function()
         resize.resize_window(win_id, dir, count, anchor)
     end)
 end

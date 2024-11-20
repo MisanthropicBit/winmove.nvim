@@ -90,10 +90,11 @@ function layout.get_wraparound_neighbor(win_id, dir)
 end
 
 --- Apply a function to each neighbor in a direction
+---@param win_id integer
 ---@param dir winmove.Direction
 ---@param func fun(win_id: integer): boolean, boolean
-function layout.apply_to_neighbors(dir, func)
-    local neighbor_win_id = layout.get_neighbor(dir)
+function layout.apply_to_neighbors(win_id, dir, func)
+    local neighbor_win_id = layout.get_neighbor(win_id, dir)
     local count, applied = 0, 0
 
     while neighbor_win_id do

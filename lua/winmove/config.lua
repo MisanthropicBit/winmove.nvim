@@ -162,8 +162,6 @@ local mapping_descriptions = {
             },
         },
         resize = {
-            highlight = "Todo",
-            default_resize_count = 3,
             keymaps = {
                 left = "Resize window left",
                 down = "Resize window down",
@@ -257,6 +255,9 @@ local vertical_validator = {
 
 local non_empty_string_validator = { is_non_empty_string, expected_non_empty_string }
 
+local is_positive_non_zero_number_validator =
+    { is_positive_non_zero_number, "a positive, non-zero number" }
+
 --- Validate a config
 ---@param _config winmove.Config
 ---@return boolean
@@ -277,7 +278,7 @@ function config.validate(_config)
                 highlight = "string",
                 at_edge = {
                     horizontal = horizontal_validator,
-                    vertical = vertical_validator,
+                    vertical   = vertical_validator,
                 },
                 keymaps = {
                     left        = non_empty_string_validator,
@@ -298,28 +299,26 @@ function config.validate(_config)
                 highlight = "string",
                 at_edge = {
                     horizontal = horizontal_validator,
-                    vertical = vertical_validator,
+                    vertical   = vertical_validator,
                 },
                 keymaps = {
-                    left        = non_empty_string_validator,
-                    down        = non_empty_string_validator,
-                    up          = non_empty_string_validator,
-                    right       = non_empty_string_validator,
+                    left  = non_empty_string_validator,
+                    down  = non_empty_string_validator,
+                    up    = non_empty_string_validator,
+                    right = non_empty_string_validator,
                 },
             },
             resize = {
                 highlight = "string",
-                default_resize_count = {
-                    is_positive_non_zero_number,
-                },
+                default_resize_count = is_positive_non_zero_number_validator,
                 keymaps = {
-                    left = non_empty_string_validator,
-                    down = non_empty_string_validator,
-                    up =   non_empty_string_validator,
-                    right = non_empty_string_validator,
-                    left_botright = non_empty_string_validator,
-                    down_botright = non_empty_string_validator,
-                    up_botright = non_empty_string_validator,
+                    left           = non_empty_string_validator,
+                    down           = non_empty_string_validator,
+                    up             = non_empty_string_validator,
+                    right          = non_empty_string_validator,
+                    left_botright  = non_empty_string_validator,
+                    down_botright  = non_empty_string_validator,
+                    up_botright    = non_empty_string_validator,
                     right_botright = non_empty_string_validator,
                 },
             },

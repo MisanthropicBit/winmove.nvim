@@ -18,7 +18,7 @@ describe("init", function()
         assert.has_error(function()
             ---@diagnostic disable-next-line: param-type-mismatch
             winmove.start_mode("hello")
-        end, "mode: expected a valid mode (move, swap, resize), got hello")
+        end, "mode: expected a valid mode (move, resize, swap), got hello")
     end)
 
     it("fails to stop mode if no mode is currently active", function()

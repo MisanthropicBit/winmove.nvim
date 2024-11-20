@@ -26,12 +26,13 @@ local neighbor_dir_table = {
     },
 }
 
+---@param win_id integer
 ---@param dir winmove.Direction
 ---@param get_dimension_func fun(win_id: integer): integer
 ---@param min_dimension integer
 ---@return boolean
-local function can_resize(dir, get_dimension_func, min_dimension)
-    local neighbor_count, applied = layout.apply_to_neighbors(dir, function(neighbor_win_id)
+local function can_resize(win_id, dir, get_dimension_func, min_dimension)
+    local neighbor_count, applied = layout.apply_to_neighbors(win_id, dir, function(neighbor_win_id)
         local dimension = get_dimension_func(neighbor_win_id)
 
         return true, dimension <= min_dimension
@@ -47,17 +48,17 @@ local function can_resize(dir, get_dimension_func, min_dimension)
 end
 
 --- Adjust neighbors in the direction the current window is being resized
+---@param win_id integer
 ---@param dir winmove.Direction
 ---@param get_dimension fun(win_id: integer): integer
 ---@param min_dimension integer
----@param count integer
 ---@param anchor winmove.ResizeAnchor
-local function adjust_neighbors_in_direction(dir, get_dimension, min_dimension, count, anchor)
-    layout.apply_to_neighbors(dir, function(neighbor_win_id)
+local function adjust_neighbors_in_direction(win_id, dir, get_dimension, min_dimension, anchor)
+    layout.apply_to_neighbors(win_id, dir, function(neighbor_win_id)
         local dimension = get_dimension(neighbor_win_id)
 
         if dimension <= min_dimension then
-            winutil.win_id_context_call(
+            winutil.wincall(
                 neighbor_win_id,
                 resize.resize_window,
                 neighbor_win_id,
@@ -107,12 +108,13 @@ function resize.resize_window(win_id, dir, count, anchor)
 
     if is_full_dimension(win_id) then
         return
-    elseif not can_resize(dir, get_dimension, min_dimension) then
+    elseif not can_resize(win_id, dir, get_dimension, min_dimension) then
         return
     end
 
     local _anchor = anchor or resize.anchor.TopLeft
     local top_left = _anchor == resize.anchor.TopLeft
+    local orig_win_id = win_id
 
     if not top_left then
         local neighbor_dir = neighbor_dir_table[horizontal][top_left]
@@ -123,7 +125,7 @@ function resize.resize_window(win_id, dir, count, anchor)
     end
 
     resize_func(win_id, (dir == edges[2] and -1 or 1) * count)
-    adjust_neighbors_in_direction(dir, get_dimension, min_dimension, count, _anchor)
+    adjust_neighbors_in_direction(orig_win_id, dir, get_dimension, min_dimension, _anchor)
 end
 
 return resize
