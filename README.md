@@ -125,6 +125,12 @@ require('winmove').configure({
 })
 ```
 
+There are three behaviour when moving or swapping towards an edge of the editor:
+
+* `winmove.AtEdge.None`: Do nothing.
+* `winmove.AtEdge.Wrap`: Wrap around to the opposite edge.
+* `winmove.AtEdge.MoveToTab`: Move to the previous/next tab if possible.
+
 ## Autocommands
 
 You can define autocommands that trigger when a mode starts and ends.
