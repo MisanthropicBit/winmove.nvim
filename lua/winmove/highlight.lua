@@ -47,7 +47,7 @@ local highlight_groups = {
 ---@return boolean
 ---@return table<string, unknown>
 local function ensure_background_color(group)
-    local colors = vim.api.nvim_get_hl(0, { name = group, link = false, create = false })
+    local colors = vim.api.nvim_get_hl(global_ns_id, { name = group, link = false, create = false })
 
     if colors.bg then
         return true, colors
@@ -76,8 +76,8 @@ local function generate_highlights(mode, groups)
         -- Create a new highlight group we can link to
         hl_group = ("Winmove%sInternal%s"):format(titlecase_mode, hl_group)
 
-        if #vim.api.nvim_get_hl(0, { name = hl_group, create = false }) == 0 then
-            vim.api.nvim_set_hl(0, hl_group, colors)
+        if #vim.api.nvim_get_hl(global_ns_id, { name = hl_group, create = false }) == 0 then
+            vim.api.nvim_set_hl(global_ns_id, hl_group, colors)
         end
     end
 
