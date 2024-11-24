@@ -63,6 +63,11 @@ If you are content with the defaults that are shown below, you don't need to
 call the `configure` function. No default keymaps are set other than those
 active during modes.
 
+> [!NOTE]  
+> For mode highlight groups that only have a foreground color, `winmove` will
+> automatically use the foreground color as a background color for the given
+> mode so you do not have to create a custom highlight group yourself.
+
 ```lua
 require('winmove').configure({
     keymaps = {
