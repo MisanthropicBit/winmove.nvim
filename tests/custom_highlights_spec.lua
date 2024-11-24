@@ -40,7 +40,8 @@ describe("custom highlights", function()
     end
 
     it("uses a custom highlight for move mode", function()
-        vim.cmd(("hi link %s %s"):format("CustomWinmoveMoveMode", "Title"))
+        vim.cmd.colorscheme("vim")
+        vim.cmd(("hi link %s %s"):format("CustomWinmoveMoveMode", "Todo"))
 
         ---@diagnostic disable-next-line: missing-fields
         config.configure({
@@ -82,7 +83,8 @@ describe("custom highlights", function()
     end)
 
     it("uses a custom highlight for swap mode", function()
-        vim.cmd(("hi link %s %s"):format("CustomWinmoveSwapMode", "Repeat"))
+        vim.cmd.colorscheme("vim")
+        vim.cmd(("hi link %s %s"):format("CustomWinmoveSwapMode", "Todo"))
 
         ---@diagnostic disable-next-line: missing-fields
         config.configure({
@@ -124,7 +126,8 @@ describe("custom highlights", function()
     end)
 
     it("uses a custom highlight for resize mode", function()
-        vim.cmd(("hi link %s %s"):format("CustomWinmoveResizeMode", "Repeat"))
+        vim.cmd.colorscheme("vim")
+        vim.cmd(("hi link %s %s"):format("CustomWinmoveResizeMode", "Todo"))
 
         config.configure({
             modes = {
