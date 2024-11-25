@@ -3,6 +3,7 @@
 
 local highlight = {}
 
+local compat = require("winmove.compat")
 local config = require("winmove.config")
 local str = require("winmove.util.str")
 
@@ -47,7 +48,7 @@ local highlight_groups = {
 ---@return boolean
 ---@return table<string, unknown>
 local function ensure_background_color(group)
-    local colors = vim.api.nvim_get_hl(global_ns_id, { name = group, link = false, create = false })
+    local colors = compat.get_hl(global_ns_id, { name = group, link = false, create = false })
 
     if colors.bg then
         return true, colors
@@ -71,13 +72,14 @@ local function generate_highlights(mode, groups)
     local titlecase_mode = str.titlecase(mode)
     local has_bg, colors = ensure_background_color(hl_group)
 
-    vim.print(vim.inspect(colors))
     if not has_bg then
         -- Create a new highlight group we can link to
         hl_group = ("Winmove%sInternal%s"):format(titlecase_mode, hl_group)
 
-        if #vim.api.nvim_get_hl(global_ns_id, { name = hl_group, create = false }) == 0 then
-            vim.api.nvim_set_hl(global_ns_id, hl_group, colors)
+        -- TODO: vim.api.nvim_get_hl does not exist in 0.8.0 (move to compat)
+        -- TODO: 'create' key does not exist in 0.9.0 (move to compat)
+        if #compat.get_hl(global_ns_id, { name = hl_group, create = false }) == 0 then
+            compat.set_hl(global_ns_id, hl_group, colors)
         end
     end
 
