@@ -3,7 +3,7 @@ local config = require("winmove.config")
 
 describe("highlight", function()
     it("generates internal highlight groups for foreground-only highlights", function()
-        vim.cmd.colorscheme("vim")
+        vim.cmd.colorscheme("desert")
 
         ---@diagnostic disable-next-line: missing-fields
         config.configure({
@@ -24,10 +24,10 @@ describe("highlight", function()
 
         assert.are.same(vim.api.nvim_get_hl(0, { name = hl_group, create = false }), {
             bold = true,
-            bg = 6356832,
             cterm = {
                 bold = true,
             },
+            bg = 12433259,
         })
     end)
 end)
