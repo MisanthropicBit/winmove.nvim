@@ -35,6 +35,7 @@ describe("highlight", function()
                 bold = true,
             },
             bg = 12433259,
+            ctermbg = 143,
         })
     end)
 end)

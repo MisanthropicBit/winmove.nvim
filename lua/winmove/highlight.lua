@@ -58,6 +58,8 @@ local function ensure_background_color(group)
     colors.fg = nil
 
     ---@diagnostic disable-next-line: inject-field
+    colors.ctermbg = colors.ctermfg
+    ---@diagnostic disable-next-line: inject-field
     colors.ctermfg = nil
 
     return false, colors
