@@ -5,18 +5,20 @@ local config = require("winmove.config")
 
 local min_neovim_version = "0.8.0"
 
----@diagnostic disable-next-line: deprecated
-local report_start = vim.health.report_start
----@diagnostic disable-next-line: deprecated
-local report_ok = vim.health.report_ok
----@diagnostic disable-next-line: deprecated
-local report_error = vim.health.report_error
----@diagnostic disable-next-line: deprecated
+local report_start, report_ok, report_error
 
 if compat.has("nvim-0.10") then
     report_start = vim.health.start
     report_ok = vim.health.ok
     report_error = vim.health.error
+else
+    ---@diagnostic disable-next-line: deprecated
+    report_start = vim.health.report_start
+    ---@diagnostic disable-next-line: deprecated
+    report_ok = vim.health.report_ok
+    ---@diagnostic disable-next-line: deprecated
+    report_error = vim.health.report_error
+    ---@diagnostic disable-next-line: deprecated
 end
 
 function health.check()
