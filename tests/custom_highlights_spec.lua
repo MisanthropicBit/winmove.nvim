@@ -1,5 +1,4 @@
 local winmove = require("winmove")
-local compat = require("winmove.compat")
 local config = require("winmove.config")
 local highlight = require("winmove.highlight")
 local vader = require("winmove.util.vader")
@@ -9,11 +8,6 @@ local given = vader.given
 local make_layout = test_helpers.make_layout
 
 describe("custom highlights", function()
-    if not compat.has("nvim-0.9.0") then
-        pending("Skipped for versions below 0.9.0")
-        return
-    end
-
     local function get_expected_winhighlight(prefix)
         local template = {
             "CursorLine:%sCursorLine",

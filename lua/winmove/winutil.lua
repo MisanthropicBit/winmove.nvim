@@ -1,6 +1,5 @@
 local winutil = {}
 
-local compat = require("winmove.compat")
 local message = require("winmove.message")
 
 local events = {
@@ -9,15 +8,12 @@ local events = {
     "WinNew",
     "WinScrolled",
     "WinClosed",
+    "WinResized",
     "BufWinEnter",
     "BufWinLeave",
     "BufEnter",
     "BufLeave",
 }
-
-if compat.has("nvim-0.8.2") then
-    table.insert(events, "WinResized")
-end
 
 function winutil.get_ignored_events()
     return events
