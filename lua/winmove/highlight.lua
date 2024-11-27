@@ -50,7 +50,7 @@ local highlight_groups = {
 local function ensure_background_color(group)
     local colors = compat.get_hl(global_ns_id, { name = group, link = false, create = false })
 
-    if colors.bg then
+    if colors.bg or colors.ctermbg then
         return true, colors
     end
 
