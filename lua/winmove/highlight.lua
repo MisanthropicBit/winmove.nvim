@@ -44,7 +44,7 @@ local highlight_groups = {
 
 --- If the highlight group only contains a foreground color, return it as
 --- the color to use for the background, otherwise use the background color
----@param group any
+---@param group string
 ---@return boolean
 ---@return table<string, unknown>
 local function ensure_background_color(group)
