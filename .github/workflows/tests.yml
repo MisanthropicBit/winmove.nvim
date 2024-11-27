@@ -12,11 +12,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        neovim_version: ['v0.9.0', 'v0.9.5', 'v0.10.0', 'nightly']
         os: ['ubuntu-latest', 'mac-latest', 'windows-latest']
+        neovim_version: ['v0.9.0', 'v0.9.5', 'v0.10.0', 'nightly']
+    runs-on: ${{ matrix.os }}
 
     steps:
-      - runs-on: ${{ matrix.os }}
       - uses: actions/checkout@v3
       - run: date +%F > todays-date
       - name: Restore cache for today's nightly.
