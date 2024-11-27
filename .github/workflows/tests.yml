@@ -25,7 +25,7 @@ jobs:
           path: _neovim
           key: ${{ runner.os }}-x64-${{ hashFiles('todays-date') }}
       - name: Handle symlinks on windows
-        if: startsWith(matrix.os, "windows")
+        if: startsWith(matrix.os, 'windows')
         run: git config core.symlinks false
       - name: Prepare test dependencies
         run: |
