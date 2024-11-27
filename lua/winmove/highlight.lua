@@ -78,7 +78,7 @@ local function generate_highlights(mode, groups)
         -- Create a new highlight group we can link to
         hl_group = ("Winmove%sInternal%s"):format(titlecase_mode, hl_group)
 
-        if #compat.get_hl(global_ns_id, { name = hl_group, create = false }) == 0 then
+        if vim.fn.hlexists(hl_group) == 0 then
             vim.api.nvim_set_hl(global_ns_id, hl_group, colors)
         end
     end
