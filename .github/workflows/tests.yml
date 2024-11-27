@@ -9,11 +9,12 @@ on:
 jobs:
   tests:
     name: Tests
-    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        neovim_version: ['v0.8.0', 'v0.9.0', 'v0.10.0', 'nightly']
+        os: ['ubuntu-latest', 'mac-latest', 'windows-latest']
+        neovim_version: ['v0.9.0', 'v0.9.5', 'v0.10.0', 'nightly']
+    runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v3
@@ -23,7 +24,10 @@ jobs:
         with:
           path: _neovim
           key: ${{ runner.os }}-x64-${{ hashFiles('todays-date') }}
-      - name: Prepare plenary
+      - name: Handle symlinks on windows
+        if: startsWith(matrix.os, 'windows')
+        run: git config core.symlinks false
+      - name: Prepare test dependencies
         run: |
           git clone --depth 1 https://github.com/nvim-lua/plenary.nvim ~/.local/share/nvim/site/pack/vendor/start/plenary.nvim
           ln -s "$(pwd)" ~/.local/share/nvim/site/pack/vendor/start

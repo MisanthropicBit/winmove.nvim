@@ -2,7 +2,7 @@ local health = {}
 
 local config = require("winmove.config")
 
-local min_neovim_version = "0.8.0"
+local min_neovim_version = "0.9.0"
 
 function health.check()
     vim.health.report_start("winmove")

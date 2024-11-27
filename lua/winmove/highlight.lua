@@ -3,12 +3,15 @@
 
 local highlight = {}
 
----@alias winmove.Highlight string
-
+local compat = require("winmove.compat")
 local config = require("winmove.config")
 local str = require("winmove.util.str")
 
 local api = vim.api
+
+---@alias winmove.Highlight string
+
+local global_ns_id = 0
 
 -- Window higlights per mode
 local win_highlights = {
@@ -39,18 +42,51 @@ local highlight_groups = {
     "SignColumn",
 }
 
+--- If the highlight group only contains a foreground color, return it as
+--- the color to use for the background, otherwise use the background color
+---@param group any
+---@return boolean
+---@return table<string, unknown>
+local function ensure_background_color(group)
+    local colors = compat.get_hl(global_ns_id, { name = group, link = false, create = false })
+
+    if colors.bg or colors.ctermbg then
+        return true, colors
+    end
+
+    colors.bg = colors.fg
+    colors.fg = nil
+
+    ---@diagnostic disable-next-line: inject-field
+    colors.ctermbg = colors.ctermfg
+    ---@diagnostic disable-next-line: inject-field
+    colors.ctermfg = nil
+
+    return false, colors
+end
+
 --- Generate group highlights for a mode
 ---@param mode winmove.Mode
 ---@param groups string[]
 local function generate_highlights(mode, groups)
     local highlights = {}
-    local color = config.modes[mode].highlight
+    local hl_group = config.modes[mode].highlight
+    local titlecase_mode = str.titlecase(mode)
+    local has_bg, colors = ensure_background_color(hl_group)
+
+    if not has_bg then
+        -- Create a new highlight group we can link to
+        hl_group = ("Winmove%sInternal%s"):format(titlecase_mode, hl_group)
+
+        if #compat.get_hl(global_ns_id, { name = hl_group, create = false }) == 0 then
+            vim.api.nvim_set_hl(global_ns_id, hl_group, colors)
+        end
+    end
 
     for _, group in ipairs(groups) do
-        local titlecase_mode = str.titlecase(mode)
         local winmove_group = "Winmove" .. titlecase_mode .. group
 
-        vim.cmd(("hi default link %s %s"):format(winmove_group, color))
+        vim.cmd(("hi default link %s %s"):format(winmove_group, hl_group))
         table.insert(highlights, ("%s:%s"):format(group, winmove_group))
     end
 
