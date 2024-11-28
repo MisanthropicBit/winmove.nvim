@@ -326,6 +326,12 @@ windows, splitting into a window will move it next to a target window.
 
 https://github.com/user-attachments/assets/4bf49e27-d08b-4926-9f17-57bf2e702c64
 
+### Swapping windows
+
+https://github.com/user-attachments/assets/6d9986cb-0e18-4dc4-9b02-70ff5683a579
+
+https://github.com/user-attachments/assets/195cde61-5382-4eea-9dcb-2eb012771d16
+
 ### Resizing windows
 
 https://github.com/user-attachments/assets/8f77c9c4-dca1-4647-9049-8695e5351431
