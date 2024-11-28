@@ -1,17 +1,22 @@
 local message = require("winmove.message")
 local stub = require("luassert.stub")
 local winmove = require("winmove")
+local vader = require("winmove.util.vader")
+
+local given = vader.given
 
 describe("init", function()
     it("starts and stops a mode", function()
-        -- Split a window so we can start move mode
-        vim.cmd.split()
+        given(function()
+            -- Split a window so we can start move mode
+            vim.cmd.split()
 
-        winmove.start_mode(winmove.Mode.Move)
-        assert.are.same(winmove.current_mode(), winmove.Mode.Move)
+            winmove.start_mode(winmove.Mode.Move)
+            assert.are.same(winmove.current_mode(), winmove.Mode.Move)
 
-        winmove.stop_mode()
-        assert.is_nil(winmove.current_mode())
+            winmove.stop_mode()
+            assert.is_nil(winmove.current_mode())
+        end)
     end)
 
     it("validates arguments of start_mode", function()
@@ -107,5 +112,29 @@ describe("init", function()
             ---@diagnostic disable-next-line: param-type-mismatch
             winmove.resize_window(1000, "h", 1, "top_right")
         end, "anchor: expected a valid anchor, got top_right")
+    end)
+
+    it("does not start resize mode if only one window", function()
+        stub(message, "error")
+
+        winmove.start_mode(winmove.Mode.Resize)
+        assert.are.same(winmove.current_mode(), nil)
+
+        assert.stub(message.error).was.called_with("Cannot resize window, only one window")
+
+        ---@diagnostic disable-next-line: undefined-field
+        message.error:revert()
+    end)
+
+    it("does not start resize mode if only one window", function()
+        stub(message, "error")
+
+        winmove.start_mode(winmove.Mode.Resize)
+        assert.are.same(winmove.current_mode(), nil)
+
+        assert.stub(message.error).was.called_with("Cannot resize window, only one window")
+
+        ---@diagnostic disable-next-line: undefined-field
+        message.error:revert()
     end)
 end)

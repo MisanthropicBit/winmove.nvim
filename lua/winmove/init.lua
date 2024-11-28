@@ -137,7 +137,7 @@ end
 ---@param mode winmove.Mode
 ---@return boolean
 local function can_move_or_swap(win_id, mode)
-    local at_edge_horizontal = config.modes.move.at_edge.horizontal
+    local at_edge_horizontal = config.modes[mode].at_edge.horizontal
 
     if at_edge_horizontal == winmove.AtEdge.MoveToTab then
         if winutil.window_count() == 1 and vim.fn.tabpagenr("$") == 1 then
@@ -145,7 +145,7 @@ local function can_move_or_swap(win_id, mode)
             message.error(("Cannot %s window, only one window and tab"):format(mode:lower()))
             return false
         end
-    elseif at_edge_horizontal == winmove.AtEdge.Wrap then
+    else
         if winutil.window_count() == 1 then
             ---@cast mode string
             message.error(("Cannot %s window, only one window"):format(mode:lower()))
@@ -681,8 +681,15 @@ end
 start_mode = function(mode)
     local cur_win_id = api.nvim_get_current_win()
 
-    if not can_move_or_swap(cur_win_id, mode) then
-        return
+    if mode == winmove.Mode.Resize then
+        if winutil.window_count() == 1 then
+            message.error("Cannot resize window, only one window")
+            return
+        end
+    else
+        if not can_move_or_swap(cur_win_id, mode) then
+            return
+        end
     end
 
     if winmove.current_mode() == mode then
@@ -776,6 +783,10 @@ function winmove.resize_window(win_id, dir, count, anchor)
         count = { count, validators.is_nonnegative_number, "a non-negative number" },
         anchor = { anchor, resize.is_valid_anchor, "a valid anchor" },
     })
+
+    if winutil.window_count() == 1 then
+        return
+    end
 
     winutil.wincall(win_id, function()
         resize.resize_window(win_id, dir, count, anchor)
