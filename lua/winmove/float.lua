@@ -1,11 +1,12 @@
 local float = {}
 
+local compat = require("winmove.compat")
 local config = require("winmove.config")
 local message = require("winmove.message")
 local winutil = require("winmove.winutil")
 
 local api = vim.api
-local has_title = vim.fn.has("nvim-0.9.0") == 1
+local has_title = compat.has("nvim-0.9.0")
 
 local float_win_id = nil ---@type integer?
 
