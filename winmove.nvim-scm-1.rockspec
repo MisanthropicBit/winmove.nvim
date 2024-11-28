@@ -3,12 +3,14 @@ package = "winmove.nvim"
 version = "scm-1"
 
 description = {
-  summary = "Easily move and resize windows",
+  summary = "Easily move, swap, and resize windows",
   detailed = [[]],
   labels = {
     "neovim",
     "plugin",
     "window",
+    "move",
+    "swap",
     "resize",
   },
   homepage = "https://github.com/MisanthropicBit/winmove.nvim",
