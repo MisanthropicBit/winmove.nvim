@@ -300,14 +300,15 @@ needs then by all means use them.
 SHOWCASE                                                    *winmove-showcase*
 
 
-MOVING AROUND WINDOWS ~
-
-
-  [!IMPORTANT] Moving windows takes into account the cursor position of the
-  current window relative to the target window in the direction you are moving.
+  [!IMPORTANT] Moving and swapping windows takes into account the cursor position
+  of the current window relative to the target window in the direction you are
+  moving or swapping.
   For example, if your cursor position is closest to the bottom of one window in
   the target direction, the window will be moved below that window. See
   |winmove-this-example| for a visual explanation.
+
+MOVING AROUND WINDOWS ~
+
 
 https://github.com/user-attachments/assets/417023dd-9d5d-4ae9-891d-514e0f3038d5
 
@@ -325,6 +326,15 @@ windows, splitting into a window will move it next to a target window.
 
 
 https://github.com/user-attachments/assets/4bf49e27-d08b-4926-9f17-57bf2e702c64
+
+
+SWAPPING WINDOWS ~
+
+
+https://github.com/user-attachments/assets/6d9986cb-0e18-4dc4-9b02-70ff5683a579
+
+
+https://github.com/user-attachments/assets/195cde61-5382-4eea-9dcb-2eb012771d16
 
 
 RESIZING WINDOWS ~
