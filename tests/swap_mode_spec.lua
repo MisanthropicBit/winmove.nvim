@@ -1,3 +1,6 @@
+local config = require("winmove.config")
+local message = require("winmove.message")
+local stub = require("luassert.stub")
 local winmove = require("winmove")
 local vader = require("winmove.util.vader")
 local test_helpers = require("winmove.util.test_helpers")
@@ -149,4 +152,53 @@ describe("swap mode", function()
             assert.are.same(vim.api.nvim_win_get_buf(target_win_id), bufnr1)
         end)
     end)
+
+    it("does not start swap mode if only one window", function()
+        config.configure({
+            modes = {
+                swap = {
+                    at_edge = {
+                        horizontal = "none",
+                    },
+                },
+            },
+        })
+
+        stub(message, "error")
+
+        winmove.start_mode(winmove.Mode.Swap)
+        assert.are.same(winmove.current_mode(), nil)
+
+        assert.stub(message.error).was.called_with("Cannot swap window, only one window")
+
+        ---@diagnostic disable-next-line: undefined-field
+        message.error:revert()
+    end)
+
+    it(
+        "does not start swap mode if only one window and tab and at-edge behaviour is MoveToTab",
+        function()
+            config.configure({
+                modes = {
+                    swap = {
+                        at_edge = {
+                            horizontal = "move_to_tab",
+                        },
+                    },
+                },
+            })
+
+            stub(message, "error")
+
+            winmove.start_mode(winmove.Mode.Swap)
+            assert.are.same(winmove.current_mode(), nil)
+
+            assert
+                .stub(message.error).was
+                .called_with("Cannot swap window, only one window and tab")
+
+            ---@diagnostic disable-next-line: undefined-field
+            message.error:revert()
+        end
+    )
 end)
