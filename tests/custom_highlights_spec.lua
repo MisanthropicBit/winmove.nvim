@@ -1,5 +1,4 @@
 local winmove = require("winmove")
-local compat = require("winmove.compat")
 local config = require("winmove.config")
 local highlight = require("winmove.highlight")
 local vader = require("winmove.util.vader")
@@ -9,11 +8,6 @@ local given = vader.given
 local make_layout = test_helpers.make_layout
 
 describe("custom highlights", function()
-    if not compat.has("nvim-0.9.0") then
-        pending("Skipped for versions below 0.9.0")
-        return
-    end
-
     local function get_expected_winhighlight(prefix)
         local template = {
             "CursorLine:%sCursorLine",
@@ -40,7 +34,8 @@ describe("custom highlights", function()
     end
 
     it("uses a custom highlight for move mode", function()
-        vim.cmd(("hi link %s %s"):format("CustomWinmoveMoveMode", "Title"))
+        vim.cmd.colorscheme("desert")
+        vim.cmd(("hi link %s %s"):format("CustomWinmoveMoveMode", "Todo"))
 
         ---@diagnostic disable-next-line: missing-fields
         config.configure({
@@ -82,7 +77,8 @@ describe("custom highlights", function()
     end)
 
     it("uses a custom highlight for swap mode", function()
-        vim.cmd(("hi link %s %s"):format("CustomWinmoveSwapMode", "Repeat"))
+        vim.cmd.colorscheme("desert")
+        vim.cmd(("hi link %s %s"):format("CustomWinmoveSwapMode", "Todo"))
 
         ---@diagnostic disable-next-line: missing-fields
         config.configure({
@@ -124,7 +120,8 @@ describe("custom highlights", function()
     end)
 
     it("uses a custom highlight for resize mode", function()
-        vim.cmd(("hi link %s %s"):format("CustomWinmoveResizeMode", "Repeat"))
+        vim.cmd.colorscheme("desert")
+        vim.cmd(("hi link %s %s"):format("CustomWinmoveResizeMode", "Todo"))
 
         config.configure({
             modes = {

@@ -3,7 +3,7 @@ local health = {}
 local compat = require("winmove.compat")
 local config = require("winmove.config")
 
-local min_neovim_version = "0.8.0"
+local min_neovim_version = "0.9.0"
 
 local report_start, report_ok, report_error
 
