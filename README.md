@@ -21,8 +21,6 @@
 
 <div align="center">
 
-🚧 **This plugin is under development** 🚧
-
 https://github.com/user-attachments/assets/417023dd-9d5d-4ae9-891d-514e0f3038d5
 
 </div>
