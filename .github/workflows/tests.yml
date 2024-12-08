@@ -23,14 +23,14 @@ jobs:
         with:
           path: _neovim
           key: ${{ runner.os }}-x64-${{ hashFiles('todays-date') }}
-      - name: Prepare plenary
-        run: |
-          git clone --depth 1 https://github.com/nvim-lua/plenary.nvim ~/.local/share/nvim/site/pack/vendor/start/plenary.nvim
-          ln -s "$(pwd)" ~/.local/share/nvim/site/pack/vendor/start
       - name: Setup neovim
         uses: rhysd/action-setup-vim@v1
         with:
           neovim: true
           version: ${{ matrix.neovim_version }}
       - name: Run tests
-        run: ./tests/run_tests.sh
+      - uses: leafo/gh-actions-luarocks@v4.0.0
+        run: |
+          luarocks init
+          luarocks config --scope project lua_version 5.1
+          luarocks test

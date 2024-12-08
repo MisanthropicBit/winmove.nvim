@@ -34,7 +34,11 @@ build = {
    },
 }
 
+test_dependencies = {
+    "busted >= 2.2.0",
+    "neotest-busted >= 0.3.0",
+}
+
 test = {
-    type = "command",
-    command = "./tests/run_tests.sh",
+    type = "busted",
 }
