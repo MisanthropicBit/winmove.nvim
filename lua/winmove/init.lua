@@ -203,7 +203,7 @@ local function move_window(win_id, dir)
     ---@cast target_win_id -nil
 
     if not layout.are_siblings(win_id, target_win_id) then
-        dir = layout.get_sibling_relative_dir(win_id, target_win_id, dir, winmove.current_mode())
+        dir = layout.get_sibling_relative_dir(win_id, target_win_id, dir)
     end
 
     winutil.wincall_no_events(
