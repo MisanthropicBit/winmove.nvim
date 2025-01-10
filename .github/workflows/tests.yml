@@ -28,8 +28,8 @@ jobs:
         with:
           neovim: true
           version: ${{ matrix.neovim_version }}
+      - uses: leafo/gh-actions-luarocks@v4.0.0
       - name: Run tests
-        uses: leafo/gh-actions-luarocks@v4.0.0
         run: |
           luarocks init
           luarocks config --scope project lua_version 5.1
