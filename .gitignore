@@ -1,2 +1,5 @@
 doc/tags
 .test_output.tmp
+lua_modules/
+luarocks
+.luarocks/

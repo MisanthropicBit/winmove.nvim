@@ -36,9 +36,9 @@ build = {
 
 test_dependencies = {
     "busted >= 2.2.0",
-    "neotest-busted >= 0.3.0",
 }
 
 test = {
-    type = "busted",
+    type = "command",
+    command = "nvim -l ./run-tests.lua",
 }
