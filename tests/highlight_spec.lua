@@ -1,41 +1,46 @@
 local winmove = require("winmove")
 local compat = require("winmove.compat")
 local config = require("winmove.config")
+local vader = require("winmove.util.vader")
+
+local given = vader.given
 
 describe("highlight", function()
     it("generates internal highlight groups for foreground-only highlights", function()
-        vim.cmd.colorscheme("desert")
+        given(function()
+            vim.cmd.colorscheme("desert")
 
-        ---@diagnostic disable-next-line: missing-fields
-        config.configure({
-            modes = {
-                move = {
-                    highlight = "Type",
+            ---@diagnostic disable-next-line: missing-fields
+            config.configure({
+                modes = {
+                    move = {
+                        highlight = "Type",
+                    },
                 },
-            },
-        })
+            })
 
-        vim.cmd.vnew()
+            vim.cmd.vnew()
 
-        local hl_group = "WinmoveMoveInternalType"
-        local opts = { name = hl_group }
+            local hl_group = "WinmoveMoveInternalType"
+            local opts = { name = hl_group }
 
-        if compat.has("nvim-0.10.0") then
-            opts.create = false
-        end
+            if compat.has("nvim-0.10.0") then
+                opts.create = false
+            end
 
-        assert.are.same(#vim.api.nvim_get_hl(0, opts), 0)
+            assert.are.same(#vim.api.nvim_get_hl(0, opts), 0)
 
-        winmove.start_mode(winmove.Mode.Move)
-        winmove.stop_mode()
+            winmove.start_mode(winmove.Mode.Move)
+            winmove.stop_mode()
 
-        assert.are.same(vim.api.nvim_get_hl(0, opts), {
-            bold = true,
-            cterm = {
+            assert.are.same(vim.api.nvim_get_hl(0, opts), {
                 bold = true,
-            },
-            bg = 12433259,
-            ctermbg = 143,
-        })
+                cterm = {
+                    bold = true,
+                },
+                bg = 12433259,
+                ctermbg = 143,
+            })
+        end)
     end)
 end)
