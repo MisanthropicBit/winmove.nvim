@@ -1,5 +1,4 @@
 local float = require("winmove.float")
-local message = require("winmove.message")
 local stub = require("luassert.stub")
 local test_helpers = require("winmove.util.test_helpers")
 local vader = require("winmove.util.vader")

@@ -1,7 +1,6 @@
 local winmove = require("winmove")
 local at_edge = require("winmove.at_edge")
 local config = require("winmove.config")
-local message = require("winmove.message")
 local vader = require("winmove.util.vader")
 local stub = require("luassert.stub")
 local test_helpers = require("winmove.util.test_helpers")
