@@ -179,7 +179,8 @@ Stop the current mode. Fails if no mode is currently active.
 WINMOVE.MOVE_WINDOW
 
 Move a window (does not need to be the current window). See
-|winmove-this-showcase|.
+|winmove-this-showcase|. This takes the cursor position in the window
+|winmove-into-account| when moving.
 
 >lua
     ---@param win_id integer
@@ -194,7 +195,8 @@ Move a window (does not need to be the current window). See
 WINMOVE.SPLIT_INTO
 
 Split into a window (does not need to be the current window). See
-|winmove-this-showcase|.
+|winmove-this-showcase|. This takes the cursor position in the window
+|winmove-into-account| when splitting into.
 
 >lua
     ---@param win_id integer
@@ -224,6 +226,8 @@ current window). See |winmove-this-showcase|.
 WINMOVE.SWAP_WINDOW_IN_DIRECTION
 
 Swap a window in a given direction (does not need to be the current window).
+This takes the cursor position in the window |winmove-into-account| when
+swapping.
 
 >lua
     ---@param win_id integer
