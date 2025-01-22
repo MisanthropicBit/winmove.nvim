@@ -9,6 +9,10 @@ local given = vader.given
 local make_layout = test_helpers.make_layout
 
 describe("swap mode", function()
+    after_each(function()
+        pcall(winmove.stop_mode)
+    end)
+
     it("swaps window to the left", function()
         given(function()
             local windows = make_layout({

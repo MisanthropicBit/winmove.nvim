@@ -1,11 +1,12 @@
----@param command string
+---@param command_name string
 ---@param args string[]
 ---@return string
-local function run_command(command, args)
-    local result = vim.fn.system(vim.list_extend({ command }, args))
+local function run_command(command_name, args)
+    local command = vim.list_extend({ command_name }, args)
+    local result = vim.fn.system(command)
 
     if vim.v.shell_error ~= 0 then
-        error("Failed to run command")
+        error(("Failed to run command: '%s'"):format(command))
     end
 
     return result

@@ -1,6 +1,8 @@
 local winmove = require("winmove")
 local at_edge = require("winmove.at_edge")
 local config = require("winmove.config")
+local message = require("winmove.message")
+local stub = require("luassert.stub")
 local vader = require("winmove.util.vader")
 local test_helpers = require("winmove.util.test_helpers")
 
@@ -8,25 +10,36 @@ local given = vader.given
 local make_layout = test_helpers.make_layout
 
 describe("split_into", function()
-    -- Ensure default configuration
-    config.configure({
-        modes = {
-            move = {
-                at_edge = {
-                    horizontal = at_edge.AtEdge.None,
-                    vertical = at_edge.AtEdge.None,
-                },
-                keymaps = {
-                    split_left = "sh",
-                    split_down = "sj",
-                    split_up = "sk",
-                    split_right = "sl",
+    assert:set_parameter("TableFormatLevel", 10)
+
+    before_each(function()
+        -- Ensure default configuration
+        config.configure({
+            modes = {
+                move = {
+                    at_edge = {
+                        horizontal = at_edge.AtEdge.None,
+                        vertical = at_edge.AtEdge.None,
+                    },
+                    keymaps = {
+                        split_left = "sh",
+                        split_down = "sj",
+                        split_up = "sk",
+                        split_right = "sl",
+                    },
                 },
             },
-        },
-    })
+        })
 
-    assert:set_parameter("TableFormatLevel", 10)
+        stub(message, "error")
+    end)
+
+    after_each(function()
+        pcall(winmove.stop_mode)
+
+        ---@diagnostic disable-next-line: undefined-field
+        message.error:revert()
+    end)
 
     it("splits left", function()
         given(function()
@@ -170,7 +183,6 @@ describe("split_into", function()
             })
 
             vim.api.nvim_set_current_win(win_id)
-
             winmove.start_mode(winmove.Mode.Move)
             vim.cmd.normal("sk")
 

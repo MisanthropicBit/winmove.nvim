@@ -4,6 +4,10 @@ local vader = require("winmove.util.vader")
 local given = vader.given
 
 describe("auto-quit mode", function()
+    after_each(function()
+        pcall(winmove.stop_mode)
+    end)
+
     it("quits current mode when entering a new window", function()
         given(function()
             vim.cmd.vnew()

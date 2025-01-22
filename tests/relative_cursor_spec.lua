@@ -8,6 +8,10 @@ local make_layout = test_helpers.make_layout
 describe("relative cursor", function()
     assert:set_parameter("TableFormatLevel", 10)
 
+    after_each(function()
+        pcall(winmove.stop_mode)
+    end)
+
     it("moves window above target", function()
         given(function()
             local win_ids = make_layout({

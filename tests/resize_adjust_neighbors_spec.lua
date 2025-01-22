@@ -7,6 +7,18 @@ local make_layout = test_helpers.make_layout
 local get_win_pos_and_dimensions = test_helpers.get_win_pos_and_dimensions
 
 describe("resize", function()
+    local winwidth = nil
+
+    before_each(function()
+        winwidth = vim.go.winwidth
+    end)
+
+    after_each(function()
+        if winwidth ~= nil then
+            vim.go.winwidth = winwidth
+        end
+    end)
+
     describe("adjusts neighbors", function()
         local count = 3
         assert:set_parameter("TableFormatLevel", 10)
@@ -163,6 +175,7 @@ describe("resize", function()
                 local _, col_before4, width_before4, _ =
                     get_win_pos_and_dimensions(layout["neighbor4"])
 
+                vim.cmd("wincmd =")
                 winmove.resize_window(win_id, "h", count, winmove.ResizeAnchor.BottomRight)
 
                 local _, main_col_after, main_width_after, _ = get_win_pos_and_dimensions(win_id)
@@ -177,6 +190,8 @@ describe("resize", function()
                 local _, col_after4, width_after4, _ =
                     get_win_pos_and_dimensions(layout["neighbor4"])
 
+                vim.print(vim.inspect({ main_col_before, count, main_col_after }))
+                vim.print(vim.inspect({ main_width_before, count, main_width_after }))
                 assert.are.same(main_col_before - count, main_col_after)
                 assert.are.same(main_width_before + count, main_width_after)
 

@@ -10,21 +10,23 @@ local given = vader.given
 local make_layout = test_helpers.make_layout
 
 describe("moving between tabs", function()
-    ---@diagnostic disable-next-line: missing-fields
-    config.configure({
+    before_each(function()
         ---@diagnostic disable-next-line: missing-fields
-        modes = {
+        config.configure({
             ---@diagnostic disable-next-line: missing-fields
-            move = {
+            modes = {
                 ---@diagnostic disable-next-line: missing-fields
-                at_edge = {
-                    horizontal = at_edge.AtEdge.MoveToTab,
+                move = {
+                    ---@diagnostic disable-next-line: missing-fields
+                    at_edge = {
+                        horizontal = at_edge.AtEdge.MoveToTab,
+                    },
                 },
             },
-        },
-    })
+        })
 
-    assert:set_parameter("TableFormatLevel", 10)
+        assert:set_parameter("TableFormatLevel", 10)
+    end)
 
     it("moves window to the tab to the right and ignores switchbuf option", function()
         given(function()
@@ -286,8 +288,8 @@ describe("moving between tabs", function()
                     {
                         "col",
                         {
+                            "old_top",
                             "main",
-                            "old_bottom",
                         },
                     },
                     "leaf",
@@ -297,20 +299,6 @@ describe("moving between tabs", function()
             local win_id = source_win_ids["main"]
             vim.api.nvim_set_current_win(win_id)
             local before_buffer = vim.api.nvim_get_current_buf()
-            local line_end = math.floor(0.85 * vim.api.nvim_win_get_height(win_id))
-
-            -- Fill the main window's buffer with lines so it splits into the middle
-            -- window in the other tab
-            vim.api.nvim_buf_set_lines(
-                before_buffer,
-                0,
-                1,
-                true,
-                vim.fn.split((",_"):rep(line_end), ",")
-            )
-
-            -- Move down to the last line
-            vim.cmd.normal("G")
 
             winmove.split_into(win_id, "h")
             local after_buffer = vim.api.nvim_get_current_buf()
@@ -345,7 +333,7 @@ describe("moving between tabs", function()
                 "row",
                 {
 
-                    { "leaf", source_win_ids["old_bottom"] },
+                    { "leaf", source_win_ids["old_top"] },
                     { "leaf" },
                 },
             })

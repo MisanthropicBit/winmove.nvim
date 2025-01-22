@@ -8,6 +8,10 @@ local given = vader.given
 local make_layout = test_helpers.make_layout
 
 describe("error handling in modes", function()
+    after_each(function()
+        pcall(winmove.stop_mode)
+    end)
+
     it("handles errors in move mode and restores mappings", function()
         given(function()
             make_layout({

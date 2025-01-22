@@ -16,6 +16,10 @@ describe("shows floating window help", function()
         },
     })
 
+    after_each(function()
+        pcall(winmove.stop_mode)
+    end)
+
     it("shows help in resize mode", function()
         given(function()
             make_layout({

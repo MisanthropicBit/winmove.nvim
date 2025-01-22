@@ -20,6 +20,10 @@ describe("basic movements", function()
         },
     })
 
+    after_each(function()
+        pcall(winmove.stop_mode)
+    end)
+
     describe("direct function invocation", function()
         it("moves window to the left", function()
             given(function()
