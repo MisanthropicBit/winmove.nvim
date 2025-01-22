@@ -250,7 +250,7 @@ local function split_into(win_id, dir)
 
     if layout.are_siblings(win_id, target_win_id) then
         local reldir =
-            layout.get_sibling_relative_dir(win_id, target_win_id, dir, winmove.current_mode())
+            layout.get_sibling_relative_dir(win_id, target_win_id, dir)
 
         split_options.vertical = not split_options.vertical
         split_options.rightbelow = reldir == "l" or reldir == "j"
