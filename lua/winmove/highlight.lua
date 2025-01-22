@@ -1,11 +1,7 @@
--- TODO: Convert to use nvim_win_set_hl_ns when we have nvim_win_get_hl_ns:
--- https://github.com/neovim/neovim/issues/24309
-
 local highlight = {}
 
 local compat = require("winmove.compat")
 local config = require("winmove.config")
-local str = require("winmove.util.str")
 
 local api = vim.api
 
@@ -14,16 +10,13 @@ local api = vim.api
 local global_ns_id = 0
 
 -- Window higlights per mode
-local win_highlights = {
+local win_hl_ns_per_mode = {
     move = nil,
     swap = nil,
     resize = nil,
 }
 
----@type string?
-local saved_win_highlights = nil
-
--- Highlight groups to create winmove versions of
+-- Highlight groups to override in mode highlight namespaces
 ---@type string[]
 local highlight_groups = {
     "CursorLine",
@@ -65,33 +58,19 @@ local function ensure_background_color(group)
     return false, colors
 end
 
---- Generate group highlights for a mode
+--- Generate a highlight namespace for a mode
 ---@param mode winmove.Mode
 ---@param groups string[]
-local function generate_highlights(mode, groups)
-    local highlights = {}
+local function generate_hl_ns(mode, groups)
     local hl_group = config.modes[mode].highlight
-    local titlecase_mode = str.titlecase(mode)
-    local has_bg, colors = ensure_background_color(hl_group)
-
-    if not has_bg then
-        -- Create a new highlight group we can link to
-        hl_group = ("Winmove%sInternal%s"):format(titlecase_mode, hl_group)
-
-        -- nvim_get_hl creates the highlight group if it does not exist on <= v0.9.0
-        if not compat.has("nvim-0.10.0") or vim.fn.hlexists(hl_group) == 0 then
-            vim.api.nvim_set_hl(global_ns_id, hl_group, colors)
-        end
-    end
+    local _, colors = ensure_background_color(hl_group)
+    local ns_id = api.nvim_create_namespace(("winmove-%s-mode-hl"):format(mode))
 
     for _, group in ipairs(groups) do
-        local winmove_group = "Winmove" .. titlecase_mode .. group
-
-        vim.cmd(("hi default link %s %s"):format(winmove_group, hl_group))
-        table.insert(highlights, ("%s:%s"):format(group, winmove_group))
+        api.nvim_set_hl(ns_id, group, colors)
     end
 
-    return table.concat(highlights, ",")
+    return ns_id
 end
 
 ---@return string[]
@@ -106,12 +85,11 @@ function highlight.highlight_window(win_id, mode)
         return
     end
 
-    if not win_highlights[mode] then
-        win_highlights[mode] = generate_highlights(mode, highlight_groups)
+    if not win_hl_ns_per_mode[mode] then
+        win_hl_ns_per_mode[mode] = generate_hl_ns(mode, highlight_groups)
     end
 
-    saved_win_highlights = vim.wo[win_id].winhighlight
-    vim.wo[win_id].winhighlight = win_highlights[mode]
+    api.nvim_win_set_hl_ns(win_id, win_hl_ns_per_mode[mode])
 end
 
 ---@param win_id integer
@@ -120,8 +98,7 @@ function highlight.unhighlight_window(win_id)
         return
     end
 
-    vim.wo[win_id].winhighlight = saved_win_highlights or ""
-    saved_win_highlights = nil
+    api.nvim_win_set_hl_ns(win_id, global_ns_id)
 end
 
 ---@param win_id integer
@@ -131,7 +108,7 @@ function highlight.has_highlight(win_id, mode)
         return
     end
 
-    return vim.wo[win_id].winhighlight == win_highlights[mode]
+    return api.nvim_get_hl_ns({ winid = win_id }) == win_hl_ns_per_mode[mode]
 end
 
 return highlight
