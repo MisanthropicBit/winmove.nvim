@@ -192,7 +192,9 @@ Stop the current mode. Fails if no mode is currently active.
 
 #### `winmove.move_window`
 
-Move a window (does not need to be the current window). See [this showcase](#moving-around-windows).
+Move a window (does not need to be the current window). See [this
+showcase](#moving-around-windows). This takes the cursor position in the window
+[into account](#moving-using-relative-cursor-position) when moving.
 
 ```lua
 ---@param win_id integer
@@ -205,7 +207,8 @@ winmove.move_window(1000, "k")
 
 #### `winmove.split_into`
 
-Split into a window (does not need to be the current window). See [this showcase](#split-into-other-windows).
+Split into a window (does not need to be the current window). See [this showcase](#split-into-other-windows). This takes the cursor position in the window
+[into account](#moving-using-relative-cursor-position) when splitting into.
 
 ```lua
 ---@param win_id integer
@@ -232,7 +235,7 @@ winmove.move_window_far(1000, "h")
 
 #### `winmove.swap_window_in_direction`
 
-Swap a window in a given direction (does not need to be the current window).
+Swap a window in a given direction (does not need to be the current window). This takes the cursor position in the window [into account](#moving-using-relative-cursor-position) when swapping.
 
 ```lua
 ---@param win_id integer
