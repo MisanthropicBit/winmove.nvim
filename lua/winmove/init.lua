@@ -203,7 +203,7 @@ local function move_window(win_id, dir)
     ---@cast target_win_id -nil
 
     if not layout.are_siblings(win_id, target_win_id) then
-        dir = layout.get_sibling_relative_dir(win_id, target_win_id, dir, winmove.current_mode())
+        dir = layout.get_sibling_relative_dir(win_id, target_win_id, dir)
     end
 
     winutil.wincall_no_events(
@@ -249,8 +249,7 @@ local function split_into(win_id, dir)
     }
 
     if layout.are_siblings(win_id, target_win_id) then
-        local reldir =
-            layout.get_sibling_relative_dir(win_id, target_win_id, dir, winmove.current_mode())
+        local reldir = layout.get_sibling_relative_dir(win_id, target_win_id, dir)
 
         split_options.vertical = not split_options.vertical
         split_options.rightbelow = reldir == "l" or reldir == "j"

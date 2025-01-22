@@ -17,7 +17,11 @@ local function get_cursor_screen_position(win_id)
     local win_row, win_col = unpack(vim.api.nvim_win_get_position(win_id))
 
     -- Get cursor position in local window space
-    local row, col = vim.fn.winline(), vim.fn.wincol()
+    local row, col
+
+    vim.api.nvim_win_call(win_id, function()
+        row, col = vim.fn.winline(), vim.fn.wincol()
+    end)
 
     return win_row + row, win_col + col
 end
@@ -167,24 +171,10 @@ end
 ---@param source_win_id integer
 ---@param target_win_id integer
 ---@param dir winmove.Direction
----@param mode winmove.Mode?
 ---@return winmove.Direction
-function layout.get_sibling_relative_dir(source_win_id, target_win_id, dir, mode)
-    local grow, gcol
+function layout.get_sibling_relative_dir(source_win_id, target_win_id, dir)
     local bbox = window_bounding_box(target_win_id)
-
-    if mode == Mode.Move then
-        grow, gcol = get_cursor_screen_position(source_win_id)
-    else
-        -- Not in move mode, move relative to the middle of the window in global
-        -- coordinates
-        local win_row, win_col = unpack(vim.api.nvim_win_get_position(source_win_id))
-        local height = bbox.bottom - bbox.top
-        local width = bbox.right - bbox.left
-
-        grow, gcol = win_row + height / 2, win_col + width / 2
-    end
-
+    local grow, gcol = get_cursor_screen_position(source_win_id)
     local vertical = winutil.is_horizontal(dir)
     local pos = 0
     local extents = {} ---@type integer[]
