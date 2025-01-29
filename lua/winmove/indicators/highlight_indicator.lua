@@ -1,28 +1,21 @@
--- TODO: Convert to use nvim_win_set_hl_ns when we have nvim_win_get_hl_ns:
--- https://github.com/neovim/neovim/issues/24309
+--- Base class for all indicators
+---@class winmove.HighlightIndicator
+local HighlightIndicator = {}
 
-local highlight = {}
-
+local Indicator = require("winmove.indicators.indicator")
 local compat = require("winmove.compat")
 local config = require("winmove.config")
 local str = require("winmove.util.str")
+
+setmetatable(HighlightIndicator, Indicator)
+
+HighlightIndicator.__index = HighlightIndicator
 
 local api = vim.api
 
 ---@alias winmove.Highlight string
 
 local global_ns_id = 0
-
---- Window higlights per mode
----@type table<winmove.Mode, string?>
-local win_highlights = {
-    move = nil,
-    swap = nil,
-    resize = nil,
-}
-
----@type string?
-local saved_win_highlights = nil
 
 -- Highlight groups to create winmove versions of
 ---@type string[]
@@ -41,6 +34,14 @@ local highlight_groups = {
     "LineNrBelow",
     "Normal",
     "SignColumn",
+}
+
+--- Window higlights per mode
+---@type table<winmove.Mode, string?>
+local win_highlights = {
+    move = nil,
+    swap = nil,
+    resize = nil,
 }
 
 --- If the highlight group only contains a foreground color, return it as
@@ -95,40 +96,47 @@ local function generate_highlights(mode, groups)
     return table.concat(highlights, ",")
 end
 
----@return string[]
-function highlight.groups()
-    return highlight_groups
+function HighlightIndicator.new()
+    return setmetatable({
+        _saved_winhighlights = nil
+    }, HighlightIndicator)
+end
+
+function HighlightIndicator:init()
+    generate_highlights("move", highlight_groups)
+    generate_highlights("swap", highlight_groups)
+    generate_highlights("resize", highlight_groups)
+end
+
+function HighlightIndicator:supported()
+    return vim.fn.has("nvim-0.10.0") == 1
 end
 
 ---@param win_id integer
 ---@param mode winmove.Mode
-function highlight.highlight_window(win_id, mode)
+function HighlightIndicator:set(win_id, mode)
     if not api.nvim_win_is_valid(win_id) or mode == nil then
         return
     end
 
-    if not win_highlights[mode] then
-        win_highlights[mode] = generate_highlights(mode, highlight_groups)
-    end
-
-    saved_win_highlights = vim.wo[win_id].winhighlight
+    self._saved_win_highlights = vim.wo[win_id].winhighlight
     vim.wo[win_id].winhighlight = win_highlights[mode]
 end
 
 ---@param win_id integer
-function highlight.unhighlight_window(win_id)
+function HighlightIndicator:unset(win_id)
     if not api.nvim_win_is_valid(win_id) then
         return
     end
 
-    vim.wo[win_id].winhighlight = saved_win_highlights or ""
-    saved_win_highlights = nil
+    vim.wo[win_id].winhighlight = self._saved_win_highlights or ""
+    self._saved_win_highlights = nil
 end
 
 ---@param win_id integer
 ---@param mode winmove.Mode
 ---@return boolean
-function highlight.has_highlight(win_id, mode)
+function HighlightIndicator:is_set(win_id, mode)
     if not api.nvim_win_is_valid(win_id) then
         return false
     end
@@ -136,4 +144,4 @@ function highlight.has_highlight(win_id, mode)
     return vim.wo[win_id].winhighlight == win_highlights[mode]
 end
 
-return highlight
+return HighlightIndicator
