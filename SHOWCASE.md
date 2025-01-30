@@ -42,14 +42,14 @@ https://github.com/user-attachments/assets/4bf49e27-d08b-4926-9f17-57bf2e702c64
 ## Swapping windows
 
 <details>
-<summary>Expand for video</summary>
+<summary>Swapping windows</summary>
 
 https://github.com/user-attachments/assets/6d9986cb-0e18-4dc4-9b02-70ff5683a579
 
 </details>
 
 <details>
-<summary>Expand for video</summary>
+<summary>Swap two target windows</summary>
 
 https://github.com/user-attachments/assets/195cde61-5382-4eea-9dcb-2eb012771d16
 
@@ -58,14 +58,14 @@ https://github.com/user-attachments/assets/195cde61-5382-4eea-9dcb-2eb012771d16
 ## Resizing windows
 
 <details>
-<summary>Expand for video</summary>
+<summary>Resizing windows</summary>
 
 https://github.com/user-attachments/assets/8f77c9c4-dca1-4647-9049-8695e5351431
 
 </details>
 
 <details>
-<summary>Expand for video</summary>
+<summary>Resizing and pusing neighboring windows</summary>
 
 https://github.com/user-attachments/assets/8f1fff43-2830-48f5-a29b-0b1aa7d865b2
 
