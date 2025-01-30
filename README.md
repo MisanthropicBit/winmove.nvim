@@ -208,7 +208,7 @@ winmove.move_window(1000, "k")
 
 #### `winmove.split_into`
 
-Split into a window (does not need to be the current window). See [this showcase](./SHOWCASE.md/#split-into-other-windows). This takes the cursor position in the window
+Split into a window (does not need to be the current window). See [this showcase](./SHOWCASE.md/#splitting-into-windows). This takes the cursor position in the window
 [into account](./SHOWCASE.md/#moving-using-relative-cursor-position) when splitting into.
 
 ```lua
