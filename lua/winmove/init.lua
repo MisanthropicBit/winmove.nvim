@@ -800,4 +800,24 @@ function winmove.configure(user_config)
     config.configure(user_config)
 end
 
+local function fix_lingering_winhighlight()
+    -- See https://github.com/neovim/neovim/discussions/32163 for details
+    api.nvim_create_autocmd("BufWinEnter", {
+        callback = function()
+            local win_id = api.nvim_get_current_win()
+            local has_winmove_hl = highlight.has_highlight(win_id, winmove.Mode.Move)
+                or highlight.has_highlight(win_id, winmove.Mode.Swap)
+                or highlight.has_highlight(win_id, winmove.Mode.Resize)
+
+            if has_winmove_hl then
+                vim.wo[win_id].winhighlight = ""
+            end
+        end,
+        group = augroup,
+        desc = "Fixes lingering winhighlight for winmove modes",
+    })
+end
+
+fix_lingering_winhighlight()
+
 return winmove

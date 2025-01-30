@@ -1,6 +1,3 @@
--- TODO: Convert to use nvim_win_set_hl_ns when we have nvim_win_get_hl_ns:
--- https://github.com/neovim/neovim/issues/24309
-
 local highlight = {}
 
 local compat = require("winmove.compat")
@@ -14,6 +11,7 @@ local api = vim.api
 local global_ns_id = 0
 
 -- Window higlights per mode
+---@type table<winmove.Mode, string?>
 local win_highlights = {
     move = nil,
     swap = nil,
@@ -126,9 +124,10 @@ end
 
 ---@param win_id integer
 ---@param mode winmove.Mode
+---@return boolean
 function highlight.has_highlight(win_id, mode)
     if not api.nvim_win_is_valid(win_id) then
-        return
+        return false
     end
 
     return vim.wo[win_id].winhighlight == win_highlights[mode]
