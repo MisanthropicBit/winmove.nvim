@@ -161,7 +161,7 @@ vim.api.nvim_create_autocmd("WinmoveModeEnd", {
 >
 > For example, if your cursor position is closest to the bottom of one window in
 > the target direction, the window will be moved below that window. See 
-> [this example](#moving-using-relative-cursor-position) for a visual explanation.
+> [this example](./SHOWCASE.md/#moving-using-relative-cursor-position) for a visual explanation.
 
 > [!WARNING]  
 > Consider only the functions below part of the public API. All other functions
