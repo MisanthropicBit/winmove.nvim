@@ -12,7 +12,10 @@
 ## Moving around windows
 
 <details>
+<summary>Expand for video</summary>
+
 https://github.com/user-attachments/assets/417023dd-9d5d-4ae9-891d-514e0f3038d5
+
 </details>
 
 ## Moving using relative cursor position
