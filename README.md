@@ -32,7 +32,7 @@ https://github.com/user-attachments/assets/417023dd-9d5d-4ae9-891d-514e0f3038d5
 - [Public API](#public-api)
 - [Contributing](#contributing)
 - [FAQ](#faq)
-- [Showcase](#showcase)
+- [Showcase](./SHOWCASE.md)
 - [Similar projects](#similar-projects)
 
 <!-- panvimdoc-ignore-end -->
@@ -193,8 +193,9 @@ Stop the current mode. Fails if no mode is currently active.
 #### `winmove.move_window`
 
 Move a window (does not need to be the current window). See [this
-showcase](#moving-around-windows). This takes the cursor position in the window
-[into account](#moving-using-relative-cursor-position) when moving.
+showcase](./SHOWCASE.md/#moving-around-windows). This takes the cursor position
+in the window [into account](./SHOWCASE.md/#moving-using-relative-cursor-position) when
+moving.
 
 ```lua
 ---@param win_id integer
@@ -207,8 +208,8 @@ winmove.move_window(1000, "k")
 
 #### `winmove.split_into`
 
-Split into a window (does not need to be the current window). See [this showcase](#split-into-other-windows). This takes the cursor position in the window
-[into account](#moving-using-relative-cursor-position) when splitting into.
+Split into a window (does not need to be the current window). See [this showcase](./SHOWCASE.md/#split-into-other-windows). This takes the cursor position in the window
+[into account](./SHOWCASE.md/#moving-using-relative-cursor-position) when splitting into.
 
 ```lua
 ---@param win_id integer
@@ -222,7 +223,7 @@ winmove.split_into(1000, "l")
 #### `winmove.move_window_far`
 
 Move a window as far as possible in a direction (does not need to be the current
-window). See [this showcase](#moving-as-far-as-possible-in-a-direction).
+window). See [this showcase](./SHOWCASE.md/#moving-as-far-as-possible-in-a-direction).
 
 ```lua
 ---@param win_id integer
@@ -275,7 +276,7 @@ priority. If a window being resized would shrink another window's size beyond
 the values of those options, the whole row/column of windows are adjusted except
 if all windows in the direction of resizing are as small as they can get.
 
-See [this showcase](#moving-and-resizing-windows).
+See [this showcase](./SHOWCASE.md/#moving-and-resizing-windows).
 
 ```lua
 ---@param win_id integer
@@ -301,56 +302,6 @@ See [here](/CONTRIBUTING.md).
 but none of them felt intuitive to me so I did the only rational thing a
 developer would do in this situation and created my own plugin. If any of the
 others suit your needs then by all means use them.
-
-## Showcase
-
-> [!IMPORTANT]  
-> Moving and swapping windows takes into account the cursor position of the
-> current window relative to the target window in the direction you are moving
-> or swapping.
->
-> For example, if your cursor position is closest to the bottom of one window in
-> the target direction, the window will be moved below that window. See 
-> [this example](#moving-using-relative-cursor-position) for a visual explanation.
-
-### Moving around windows
-
-https://github.com/user-attachments/assets/417023dd-9d5d-4ae9-891d-514e0f3038d5
-
-### Moving using relative cursor position
-
-https://github.com/user-attachments/assets/7fce8ab8-4ba4-4869-8ab8-220f653541d8
-
-### Splitting into windows
-
-As opposed to moving windows, which will squeeze a window in between other
-windows, splitting into a window will move it next to a target window.
-
-https://github.com/user-attachments/assets/4bf49e27-d08b-4926-9f17-57bf2e702c64
-
-### Swapping windows
-
-https://github.com/user-attachments/assets/6d9986cb-0e18-4dc4-9b02-70ff5683a579
-
-https://github.com/user-attachments/assets/195cde61-5382-4eea-9dcb-2eb012771d16
-
-### Resizing windows
-
-https://github.com/user-attachments/assets/8f77c9c4-dca1-4647-9049-8695e5351431
-
-https://github.com/user-attachments/assets/8f1fff43-2830-48f5-a29b-0b1aa7d865b2
-
-### Moving as far as possible in a direction
-
-https://github.com/user-attachments/assets/b3550d2d-287b-4b5d-9ea9-3466ac47c0d1
-
-### Move between tabs
-
-https://github.com/user-attachments/assets/6d5bf9ca-3b8b-4a72-978a-520eb2db779b
-
-### Works with asynchronous output
-
-https://github.com/user-attachments/assets/88abfe11-55bb-4096-979e-7a5754feaa6a
 
 ## Similar projects
 
