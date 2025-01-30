@@ -276,7 +276,7 @@ priority. If a window being resized would shrink another window's size beyond
 the values of those options, the whole row/column of windows are adjusted except
 if all windows in the direction of resizing are as small as they can get.
 
-See [this showcase](./SHOWCASE.md/#moving-and-resizing-windows).
+See [this showcase](./SHOWCASE.md/#resizing-windows).
 
 ```lua
 ---@param win_id integer
