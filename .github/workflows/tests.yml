@@ -26,7 +26,7 @@ jobs:
           key: ${{ runner.os }}-x64-${{ hashFiles('todays-date') }}
       - name: Handle symlinks on windows
         if: startsWith(matrix.os, 'windows')
-        run: git config core.symlinks false
+        run: git config core.longpaths true
       - name: Prepare test dependencies
         run: |
           git clone --depth 1 https://github.com/nvim-lua/plenary.nvim ~/.local/share/nvim/site/pack/vendor/start/plenary.nvim
