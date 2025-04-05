@@ -414,6 +414,7 @@ local function resize_mode_key_handler(keys)
     ---@type integer
     local win_id = state.win_id
     local keymaps = config.modes.resize.keymaps
+    local large_count = config.modes.resize.default_large_resize_count
 
     if keys == keymaps.left then
         resize.resize_window(win_id, "h", count, resize.anchor.TopLeft)
@@ -423,6 +424,14 @@ local function resize_mode_key_handler(keys)
         resize.resize_window(win_id, "k", count, resize.anchor.TopLeft)
     elseif keys == keymaps.right then
         resize.resize_window(win_id, "l", count, resize.anchor.TopLeft)
+    elseif keys == keymaps.large_left then
+        resize.resize_window(win_id, "h", large_count, resize.anchor.TopLeft)
+    elseif keys == keymaps.large_down then
+        resize.resize_window(win_id, "j", large_count, resize.anchor.TopLeft)
+    elseif keys == keymaps.large_up then
+        resize.resize_window(win_id, "k", large_count, resize.anchor.TopLeft)
+    elseif keys == keymaps.large_right then
+        resize.resize_window(win_id, "l", large_count, resize.anchor.TopLeft)
     elseif keys == keymaps.left_botright then
         resize.resize_window(win_id, "h", count, resize.anchor.BottomRight)
     elseif keys == keymaps.down_botright then
@@ -431,6 +440,14 @@ local function resize_mode_key_handler(keys)
         resize.resize_window(win_id, "k", count, resize.anchor.BottomRight)
     elseif keys == keymaps.right_botright then
         resize.resize_window(win_id, "l", count, resize.anchor.BottomRight)
+    elseif keys == keymaps.large_left_botright then
+        resize.resize_window(win_id, "h", large_count, resize.anchor.BottomRight)
+    elseif keys == keymaps.large_down_botright then
+        resize.resize_window(win_id, "j", large_count, resize.anchor.BottomRight)
+    elseif keys == keymaps.large_up_botright then
+        resize.resize_window(win_id, "k", large_count, resize.anchor.BottomRight)
+    elseif keys == keymaps.large_right_botright then
+        resize.resize_window(win_id, "l", large_count, resize.anchor.BottomRight)
     end
 end
 
