@@ -274,7 +274,7 @@ local vertical_validator = {
 local non_empty_string_validator = { is_non_empty_string, expected_non_empty_string }
 
 local is_positive_non_zero_number_validator =
-{ is_positive_non_zero_number, "a positive, non-zero number" }
+    { is_positive_non_zero_number, "a positive, non-zero number" }
 
 --- Validate a config
 ---@param _config winmove.Config
