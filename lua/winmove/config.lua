@@ -52,10 +52,10 @@ local config_loaded = false
 ---@field right_botright string
 
 ---@class winmove.ConfigResizeMode
----@field highlight            winmove.Highlight
----@field default_resize_count integer
+---@field highlight                  winmove.Highlight
+---@field default_resize_count       integer
 ---@field default_large_resize_count integer
----@field keymaps              winmove.ConfigResizeModeKeymaps
+---@field keymaps                    winmove.ConfigResizeModeKeymaps
 
 ---@class winmove.ConfigModes
 ---@field move   winmove.ConfigMoveMode
