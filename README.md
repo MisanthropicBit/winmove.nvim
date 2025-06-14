@@ -118,10 +118,18 @@ require('winmove').configure({
                 down = "j", -- Resize down
                 up = "k", -- Resize up
                 right = "l", -- Resize to the right
+                large_left = "H", -- Resize window a large amount left
+                large_down = "J", -- Resize window a large amount down
+                large_up = "K", -- Resize window a large amount up
+                large_right = "L", -- Resize window a large amount right
                 left_botright = "<c-h>", -- Resize left with bottom-right anchor
                 down_botright = "<c-j>", -- Resize down with bottom-right anchor
                 up_botright = "<c-k>", -- Resize up with bottom-right anchor
                 right_botright = "<c-l>", -- Resize right with bottom-right anchor
+                large_left_botright = "<c-s-h>", -- Resize a large amount left with bottom-right anchor
+                large_down_botright = "<c-s-j>", -- Resize a large amount down with bottom-right anchor
+                large_up_botright = "<c-s-k>", -- Resize a large amount up with bottom-right anchor
+                large_right_botright = "<c-s-l>", -- Resize a large amount right with bottom-right anchor
             },
         },
     },

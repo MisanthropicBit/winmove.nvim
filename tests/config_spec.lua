@@ -100,6 +100,15 @@ describe("config", function()
                     },
                 },
             },
+            {
+                modes = {
+                    resize = {
+                        keymaps = {
+                            large_down_botright = function() end,
+                        },
+                    },
+                },
+            },
         }
 
         stub(message, "error")
@@ -164,15 +173,24 @@ describe("config", function()
                 resize = {
                     highlight = "Todo",
                     default_resize_count = 3,
+                    default_large_resize_count = 10,
                     keymaps = {
                         left = "<Left>",
                         down = "<Down>",
                         up = "<Up>",
                         right = "<Right>",
+                        large_left = "H",
+                        large_down = "J",
+                        large_up = "K",
+                        large_right = "L",
                         left_botright = "<s-h>",
                         down_botright = "<s-j>",
                         up_botright = "<s-k>",
                         right_botright = "<s-l>",
+                        large_left_botright = "<c-s-h>",
+                        large_down_botright = "<c-s-j>",
+                        large_up_botright = "<c-s-k>",
+                        large_right_botright = "<c-s-l>",
                     },
                 },
             },
