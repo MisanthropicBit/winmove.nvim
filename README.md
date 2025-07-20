@@ -30,6 +30,7 @@ https://github.com/user-attachments/assets/417023dd-9d5d-4ae9-891d-514e0f3038d5
 - [Configuration](#configuration)
 - [Autocommands](#autocommands)
 - [Public API](#public-api)
+- [Integrations](#integrations)
 - [Contributing](#contributing)
 - [FAQ](#faq)
 - [Showcase](#showcase)
@@ -136,18 +137,16 @@ There are three behaviour when moving or swapping towards an edge of the editor:
 
 ## Autocommands
 
-You can define autocommands that trigger when a mode starts and ends.
+You can define an autocommand that triggers when a mode starts or ends.
 
 ```lua
-vim.api.nvim_create_autocmd("WinmoveModeStart", {
+vim.api.nvim_create_autocmd("User", {
+    pattern = { "WinmoveModeStart", "WinmoveModeEnd" },
+    ---@param event { match: string, data: { mode: winmove.Mode } }
     callback = function(event)
-        vim.print("Started ".. event.data.mode .. " mode")
-    end,
-})
+        local event_type = event.match == "WinmoveModeStart" and "started" or "ended"
 
-vim.api.nvim_create_autocmd("WinmoveModeEnd", {
-    callback = function(event)
-        vim.print("Ended ".. event.data.mode .. " mode")
+        vim.notify(("Mode %s %s"):format(event.data.mode, event_type), vim.log.levels.INFO)
     end,
 })
 ```
@@ -287,6 +286,52 @@ winmove.resize_window(win_id, dir, count, anchor)
 -- Example:
 winmove.resize_window(1000, "j", 3, winmove.ResizeAnchor.TopLeft)
 winmove.resize_window(1000, "l", 1, winmove.ResizeAnchor.BottomRight)
+```
+## Integrations
+
+### Lualine
+
+Please refer to the [lualine](https://github.com/nvim-lualine/lualine.nvim)
+repository for how to use components in general.
+
+Default options:
+
+```lua
+local default_options = {
+    -- Options for each mode
+    modes = {
+        move = {
+            icon = "󰆾",
+        },
+        swap = {
+            icon = "󰓡",
+        },
+        resize = {
+            icon = "󰩨",
+        },
+        -- Can be nil to show nothing or a string
+        none = nil,
+    },
+    -- Formatter function given the current context which is the currently
+    -- active mode (or nil if no mode) and the settings for that mode
+    formatter = function(context)
+        if not context.mode then
+            -- Do not show anything if no mode is currently active
+            return nil
+        else
+            return ("%s%s mode active"):format(context.icon and context.icon .. " " or "", context.mode)
+        end
+    end
+}
+```
+
+Example usage:
+
+```lua
+lualine_a = {
+    "winmove",
+},
+
 ```
 
 ## Contributing
