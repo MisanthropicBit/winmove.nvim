@@ -34,9 +34,12 @@ local default_options = {
             -- Do not show anything if no mode is currently active
             return nil
         else
-            return ("%s%s mode active"):format(context.icon and context.icon .. " " or "", context.mode)
+            return ("%s%s mode active"):format(
+                context.icon and context.icon .. " " or "",
+                context.mode
+            )
         end
-    end
+    end,
 }
 
 -- TODO: Highlight component based on mode
@@ -64,7 +67,9 @@ function M:init(options)
 end
 
 function M:update_status()
-    return self.options.formatter(vim.tbl_extend("force", self.options.modes[self.mode] or {}, { mode = self.mode }))
+    return self.options.formatter(
+        vim.tbl_extend("force", self.options.modes[self.mode] or {}, { mode = self.mode })
+    )
 end
 
 return M
