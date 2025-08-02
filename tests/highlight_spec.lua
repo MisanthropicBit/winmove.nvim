@@ -8,7 +8,9 @@ describe("highlight", function()
 
         ---@diagnostic disable-next-line: missing-fields
         config.configure({
+            ---@diagnostic disable-next-line: missing-fields
             modes = {
+                ---@diagnostic disable-next-line: missing-fields
                 move = {
                     highlight = "Type",
                 },
