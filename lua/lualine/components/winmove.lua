@@ -6,7 +6,6 @@ local M = lualine_require.require("lualine.component"):extend()
 ---@field move   { icon: string? }
 ---@field swap   { icon: string? }
 ---@field resize { icon: string? }
----@field none   (string | { icon: string? })?
 
 ---@class winmove.LuaLineComponentFormatterContext
 ---@field mode winmove.Mode?
@@ -27,7 +26,6 @@ local default_options = {
         resize = {
             icon = "󰩨",
         },
-        none = nil,
     },
     formatter = function(context)
         if not context.mode then
