@@ -338,6 +338,9 @@ Example usage:
 ```lua
 lualine_a = {
     "winmove",
+    modes = {
+        move = { icon: "✔" },
+    },
 },
 
 ```

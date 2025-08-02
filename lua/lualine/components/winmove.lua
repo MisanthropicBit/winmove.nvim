@@ -27,6 +27,7 @@ local default_options = {
             icon = "󰩨",
         },
     },
+    ---@param context winmove.LuaLineComponentFormatterContext
     formatter = function(context)
         if not context.mode then
             -- Do not show anything if no mode is currently active
@@ -40,7 +41,6 @@ local default_options = {
     end,
 }
 
--- TODO: Highlight component based on mode
 function M:init(options)
     M.super.init(self, options)
 
@@ -65,9 +65,10 @@ function M:init(options)
 end
 
 function M:update_status()
-    return self.options.formatter(
+    local context =
         vim.tbl_extend("force", self.options.modes[self.mode] or {}, { mode = self.mode })
-    )
+
+    return self.options.formatter(context)
 end
 
 return M
