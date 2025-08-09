@@ -25,10 +25,14 @@ local saved_win_highlights = nil
 ---@return string[]
 local function get_ibl_indent_highlights()
     local count = 10
-    local has_ibl, ibl = pcall(require, "ibl")
+    local has_ibl, ibl_config = pcall(require, "ibl.config")
 
-    if has_ibl and ibl.config and ibl.config.indent and ibl.config.indent.higlight then
-        count = #ibl.config.indent.highlight
+    if has_ibl and ibl_config.config and ibl_config.config.indent and ibl_config.config.indent.higlight then
+        if compat.tbl_islist(ibl_config.config.indent.higlight) then
+            count = #ibl_config.config.indent.highlight
+        elseif type(ibl_config.config.indent.higlight) == "string" then
+            count = 1
+        end
     end
 
     local hl_groups = {}
