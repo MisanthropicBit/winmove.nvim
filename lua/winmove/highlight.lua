@@ -27,7 +27,12 @@ local function get_ibl_indent_highlights()
     local count = 10
     local has_ibl, ibl_config = pcall(require, "ibl.config")
 
-    if has_ibl and ibl_config.config and ibl_config.config.indent and ibl_config.config.indent.higlight then
+    if
+        has_ibl
+        and ibl_config.config
+        and ibl_config.config.indent
+        and ibl_config.config.indent.higlight
+    then
         if compat.tbl_islist(ibl_config.config.indent.higlight) then
             count = #ibl_config.config.indent.highlight
         elseif type(ibl_config.config.indent.higlight) == "string" then
