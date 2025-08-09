@@ -42,14 +42,22 @@ local config_loaded = false
 ---@field keymaps   winmove.ConfigSwapModeKeymaps
 
 ---@class winmove.ConfigResizeModeKeymaps
----@field left           string
----@field down           string
----@field up             string
----@field right          string
----@field left_botright  string
----@field down_botright  string
----@field up_botright    string
----@field right_botright string
+---@field left                 string
+---@field down                 string
+---@field up                   string
+---@field right                string
+---@field large_left           string
+---@field large_down           string
+---@field large_up             string
+---@field large_right          string
+---@field left_botright        string
+---@field down_botright        string
+---@field up_botright          string
+---@field right_botright       string
+---@field large_left_botright  string
+---@field large_down_botright  string
+---@field large_up_botright    string
+---@field large_right_botright string
 
 ---@class winmove.ConfigResizeMode
 ---@field highlight                  winmove.Highlight
