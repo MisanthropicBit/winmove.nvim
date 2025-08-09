@@ -30,7 +30,7 @@ https://github.com/user-attachments/assets/417023dd-9d5d-4ae9-891d-514e0f3038d5
 - [Configuration](#configuration)
 - [Autocommands](#autocommands)
 - [Public API](#public-api)
-- [Plugin integrations](#plugin-integrations)
+- [Integrations](#integrations)
 - [Contributing](#contributing)
 - [FAQ](#faq)
 - [Showcase](#showcase)
@@ -290,11 +290,11 @@ winmove.resize_window(1000, "j", 3, winmove.ResizeAnchor.TopLeft)
 winmove.resize_window(1000, "l", 1, winmove.ResizeAnchor.BottomRight)
 ```
 
-## Plugin integrations
+## Integrations
 
-The following plugins are supported in various ways.
+### [indent-blankline.nvim](https://github.com/lukas-reineke/indent-blankline.nvim)
 
-* [indent-blankline.nvim](https://github.com/lukas-reineke/indent-blankline.nvim): Colors its highlight groups in modes.
+Colors its highlight groups in modes.
 
 ## Contributing
 
