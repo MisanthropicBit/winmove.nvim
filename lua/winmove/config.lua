@@ -42,19 +42,28 @@ local config_loaded = false
 ---@field keymaps   winmove.ConfigSwapModeKeymaps
 
 ---@class winmove.ConfigResizeModeKeymaps
----@field left           string
----@field down           string
----@field up             string
----@field right          string
----@field left_botright  string
----@field down_botright  string
----@field up_botright    string
----@field right_botright string
+---@field left                 string
+---@field down                 string
+---@field up                   string
+---@field right                string
+---@field large_left           string
+---@field large_down           string
+---@field large_up             string
+---@field large_right          string
+---@field left_botright        string
+---@field down_botright        string
+---@field up_botright          string
+---@field right_botright       string
+---@field large_left_botright  string
+---@field large_down_botright  string
+---@field large_up_botright    string
+---@field large_right_botright string
 
 ---@class winmove.ConfigResizeMode
----@field highlight            winmove.Highlight
----@field default_resize_count integer
----@field keymaps              winmove.ConfigResizeModeKeymaps
+---@field highlight                  winmove.Highlight
+---@field default_resize_count       integer
+---@field default_large_resize_count integer
+---@field keymaps                    winmove.ConfigResizeModeKeymaps
 
 ---@class winmove.ConfigModes
 ---@field move   winmove.ConfigMoveMode
@@ -115,15 +124,24 @@ local default_config = {
         resize = {
             highlight = "Todo",
             default_resize_count = 3,
+            default_large_resize_count = 10,
             keymaps = {
                 left = "h",
                 down = "j",
                 up = "k",
                 right = "l",
+                large_left = "H",
+                large_down = "J",
+                large_up = "K",
+                large_right = "L",
                 left_botright = "<c-h>",
                 down_botright = "<c-j>",
                 up_botright = "<c-k>",
                 right_botright = "<c-l>",
+                large_left_botright = "<c-s-h>",
+                large_down_botright = "<c-s-j>",
+                large_up_botright = "<c-s-k>",
+                large_right_botright = "<c-s-l>",
             },
         },
     },
@@ -167,10 +185,18 @@ local mapping_descriptions = {
                 down = "Resize window down",
                 up = "Resize window up",
                 right = "Resize window right",
+                large_left = "Resize window a large amount left",
+                large_down = "Resize window a large amount down",
+                large_up = "Resize window a large amount up",
+                large_right = "Resize window a large amount right",
                 left_botright = "Resize window left with bottom-right anchor",
                 down_botright = "Resize window down with bottom-right anchor",
                 up_botright = "Resize window up with bottom-right anchor",
                 right_botright = "Resize window right with bottom-right anchor",
+                large_left_botright = "Resize window a large amount left with bottom-right anchor",
+                large_down_botright = "Resize window a large amount down with bottom-right anchor",
+                large_up_botright = "Resize window a large amount up with bottom-right anchor",
+                large_right_botright = "Resize window a large amount right with bottom-right anchor",
             },
         },
     },
@@ -312,14 +338,22 @@ function config.validate(_config)
                 highlight = "string",
                 default_resize_count = is_positive_non_zero_number_validator,
                 keymaps = {
-                    left           = non_empty_string_validator,
-                    down           = non_empty_string_validator,
-                    up             = non_empty_string_validator,
-                    right          = non_empty_string_validator,
-                    left_botright  = non_empty_string_validator,
-                    down_botright  = non_empty_string_validator,
-                    up_botright    = non_empty_string_validator,
-                    right_botright = non_empty_string_validator,
+                    left                 = non_empty_string_validator,
+                    down                 = non_empty_string_validator,
+                    up                   = non_empty_string_validator,
+                    right                = non_empty_string_validator,
+                    large_left           = non_empty_string_validator,
+                    large_down           = non_empty_string_validator,
+                    large_up             = non_empty_string_validator,
+                    large_right          = non_empty_string_validator,
+                    left_botright        = non_empty_string_validator,
+                    down_botright        = non_empty_string_validator,
+                    up_botright          = non_empty_string_validator,
+                    right_botright       = non_empty_string_validator,
+                    large_left_botright  = non_empty_string_validator,
+                    large_down_botright  = non_empty_string_validator,
+                    large_up_botright    = non_empty_string_validator,
+                    large_right_botright = non_empty_string_validator,
                 },
             },
         },
