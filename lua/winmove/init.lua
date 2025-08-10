@@ -20,7 +20,7 @@ winmove.AtEdge = at_edge.AtEdge
 winmove.ResizeAnchor = resize.anchor
 
 local api = vim.api
-local winmove_version = "0.1.2"
+local winmove_version = "0.2.2"
 
 local augroup = api.nvim_create_augroup("Winmove", { clear = true })
 local autocmds = {}

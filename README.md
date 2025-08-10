@@ -3,7 +3,7 @@
   <h1>winmove.nvim</h1>
   <p><i>Easily move, swap, and resize windows</i></p>
   <p>
-    <img src="https://img.shields.io/badge/version-0.1.2-blue?style=flat-square" />
+    <img src="https://img.shields.io/badge/version-0.2.2-blue?style=flat-square" />
     <a href="https://luarocks.org/modules/misanthropicbit/winmove.nvim">
         <img src="https://img.shields.io/luarocks/v/misanthropicbit/winmove.nvim?logo=lua&color=purple&style=flat-square" />
     </a>
