@@ -12,18 +12,46 @@ describe("custom highlights", function()
         local template = {
             "CursorLine:%sCursorLine",
             "CursorLineNr:%sCursorLineNr",
-            "DiagnosticVirtualTextOk:%sDiagnosticVirtualTextOk",
+            "DiagnosticVirtualTextError:%sDiagnosticVirtualTextError",
             "DiagnosticVirtualTextHint:%sDiagnosticVirtualTextHint",
             "DiagnosticVirtualTextInfo:%sDiagnosticVirtualTextInfo",
+            "DiagnosticVirtualTextOk:%sDiagnosticVirtualTextOk",
             "DiagnosticVirtualTextWarn:%sDiagnosticVirtualTextWarn",
-            "DiagnosticVirtualTextError:%sDiagnosticVirtualTextError",
+            "DiagnosticVirtualLinesError:%sDiagnosticVirtualLinesError",
+            "DiagnosticVirtualLinesHint:%sDiagnosticVirtualLinesHint",
+            "DiagnosticVirtualLinesInfo:%sDiagnosticVirtualLinesInfo",
+            "DiagnosticVirtualLinesOk:%sDiagnosticVirtualLinesOk",
+            "DiagnosticVirtualLinesWarn:%sDiagnosticVirtualLinesWarn",
             "EndOfBuffer:%sEndOfBuffer",
             "FoldColumn:%sFoldColumn",
+            "IblIndent:%sIblIndent",
+            "IblScope:%sIblScope",
+            "IblWhitespace:%sIblWhitespace",
             "LineNr:%sLineNr",
             "LineNrAbove:%sLineNrAbove",
             "LineNrBelow:%sLineNrBelow",
             "Normal:%sNormal",
             "SignColumn:%sSignColumn",
+            "@ibl.indent.char.1:%s@ibl.indent.char.1",
+            "@ibl.whitespace.char.1:%s@ibl.whitespace.char.1",
+            "@ibl.indent.char.2:%s@ibl.indent.char.2",
+            "@ibl.whitespace.char.2:%s@ibl.whitespace.char.2",
+            "@ibl.indent.char.3:%s@ibl.indent.char.3",
+            "@ibl.whitespace.char.3:%s@ibl.whitespace.char.3",
+            "@ibl.indent.char.4:%s@ibl.indent.char.4",
+            "@ibl.whitespace.char.4:%s@ibl.whitespace.char.4",
+            "@ibl.indent.char.5:%s@ibl.indent.char.5",
+            "@ibl.whitespace.char.5:%s@ibl.whitespace.char.5",
+            "@ibl.indent.char.6:%s@ibl.indent.char.6",
+            "@ibl.whitespace.char.6:%s@ibl.whitespace.char.6",
+            "@ibl.indent.char.7:%s@ibl.indent.char.7",
+            "@ibl.whitespace.char.7:%s@ibl.whitespace.char.7",
+            "@ibl.indent.char.8:%s@ibl.indent.char.8",
+            "@ibl.whitespace.char.8:%s@ibl.whitespace.char.8",
+            "@ibl.indent.char.9:%s@ibl.indent.char.9",
+            "@ibl.whitespace.char.9:%s@ibl.whitespace.char.9",
+            "@ibl.indent.char.10:%s@ibl.indent.char.10",
+            "@ibl.whitespace.char.10:%s@ibl.whitespace.char.10",
         }
 
         local prefixed = vim.tbl_map(function(item)
@@ -39,7 +67,9 @@ describe("custom highlights", function()
 
         ---@diagnostic disable-next-line: missing-fields
         config.configure({
+            ---@diagnostic disable-next-line: missing-fields
             modes = {
+                ---@diagnostic disable-next-line: missing-fields
                 move = {
                     highlight = "CustomWinmoveMoveMode",
                 },

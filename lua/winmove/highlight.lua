@@ -21,24 +21,63 @@ local win_highlights = {
 ---@type string?
 local saved_win_highlights = nil
 
+--- Get highlight groups used by indent-blankline
+---@return string[]
+local function get_ibl_indent_highlights()
+    local count = 10
+    local has_ibl, ibl_config = pcall(require, "ibl.config")
+
+    if
+        has_ibl
+        and ibl_config.config
+        and ibl_config.config.indent
+        and ibl_config.config.indent.higlight
+    then
+        if compat.tbl_islist(ibl_config.config.indent.higlight) then
+            count = #ibl_config.config.indent.highlight
+        elseif type(ibl_config.config.indent.higlight) == "string" then
+            count = 1
+        end
+    end
+
+    local hl_groups = {}
+
+    for idx = 1, count do
+        table.insert(hl_groups, ("@ibl.indent.char.%d"):format(idx))
+        table.insert(hl_groups, ("@ibl.whitespace.char.%d"):format(idx))
+    end
+
+    return hl_groups
+end
+
 -- Highlight groups to create winmove versions of
 ---@type string[]
 local highlight_groups = {
     "CursorLine",
     "CursorLineNr",
-    "DiagnosticVirtualTextOk",
+    "DiagnosticVirtualTextError",
     "DiagnosticVirtualTextHint",
     "DiagnosticVirtualTextInfo",
+    "DiagnosticVirtualTextOk",
     "DiagnosticVirtualTextWarn",
-    "DiagnosticVirtualTextError",
+    "DiagnosticVirtualLinesError",
+    "DiagnosticVirtualLinesHint",
+    "DiagnosticVirtualLinesInfo",
+    "DiagnosticVirtualLinesOk",
+    "DiagnosticVirtualLinesWarn",
     "EndOfBuffer",
     "FoldColumn",
+    "IblIndent",
+    "IblScope",
+    "IblWhitespace",
     "LineNr",
     "LineNrAbove",
     "LineNrBelow",
     "Normal",
     "SignColumn",
 }
+
+vim.list_extend(highlight_groups, get_ibl_indent_highlights())
 
 --- If the highlight group only contains a foreground color, return it as
 --- the color to use for the background, otherwise use the background color
