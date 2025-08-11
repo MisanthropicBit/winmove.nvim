@@ -1,9 +1,10 @@
-local at_edge = require("winmove.at_edge")
-local config = require("winmove.config")
-local message = require("winmove.message")
-local stub = require("luassert.stub")
-
 describe("config", function()
+    local winmove = require("winmove")
+    local at_edge = require("winmove.at_edge")
+    local config = require("winmove.config")
+    local message = require("winmove.message")
+    local stub = require("luassert.stub")
+
     it("handles invalid configs", function()
         local invalid_configs = {
             {
@@ -116,6 +117,61 @@ describe("config", function()
 
         ---@diagnostic disable-next-line: undefined-field
         message.error:revert()
+    end)
+
+    it("checks if a key is a prefix", function()
+        ---@diagnostic disable-next-line: missing-fields
+        config.configure({
+            modes = {
+                ---@diagnostic disable-next-line: missing-fields
+                move = {
+                    keymaps = {
+                        left = "<left>",
+                        down = "<down>",
+                        up = "<up>",
+                        right = "<right>",
+                        far_left = "U",
+                        far_down = "I",
+                        far_up = "O",
+                        far_right = "P",
+                        split_left = "ef",
+                        split_down = "nv",
+                        split_up = "qp",
+                        split_right = "vn",
+                    },
+                },
+                ---@diagnostic disable-next-line: missing-fields
+                swap = {
+                    keymaps = {
+                        left = "<left>",
+                        down = "<down>",
+                        up = "<up>",
+                        right = "<right>",
+                    },
+                },
+                ---@diagnostic disable-next-line: missing-fields
+                resize = {
+                    keymaps = {
+                        left = "<Left>",
+                        down = "<Down>",
+                        up = "<Up>",
+                        right = "<Right>",
+                        left_botright = "<s-h>",
+                        down_botright = "<s-j>",
+                        up_botright = "<s-k>",
+                        right_botright = "<s-l>",
+                    },
+                },
+            },
+        })
+
+        assert.is_true(config.key_is_prefix("e", winmove.Mode.Move))
+        assert.is_true(config.key_is_prefix("ef", winmove.Mode.Move))
+        assert.is_false(config.key_is_prefix("", winmove.Mode.Move))
+        assert.is_false(config.key_is_prefix("e", winmove.Mode.Swap))
+        assert.is_false(config.key_is_prefix("e", winmove.Mode.Swap))
+        assert.is_true(config.key_is_prefix("<s-h>", winmove.Mode.Resize))
+        assert.is_false(config.key_is_prefix("<s-y>", winmove.Mode.Resize))
     end)
 
     it("throws no errors for a valid config", function()

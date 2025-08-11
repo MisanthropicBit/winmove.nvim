@@ -1,12 +1,12 @@
-local winmove = require("winmove")
-local vader = require("winmove.util.vader")
-local test_helpers = require("winmove.util.test_helpers")
-local stub = require("luassert.stub")
-
-local given = vader.given
-local make_layout = test_helpers.make_layout
-
 describe("swap window", function()
+    local winmove = require("winmove")
+    local vader = require("winmove.util.vader")
+    local test_helpers = require("winmove.util.test_helpers")
+    local stub = require("luassert.stub")
+
+    local given = vader.given
+    local make_layout = test_helpers.make_layout
+
     assert:set_parameter("TableFormatLevel", 10)
 
     it("swaps a window with another", function()

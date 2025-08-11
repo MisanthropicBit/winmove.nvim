@@ -176,6 +176,24 @@ local mapping_descriptions = {
     },
 }
 
+--- Check if a key is a prefix of a keymap in a given mode
+---@param key string
+---@param mode winmove.Mode
+---@return boolean
+function config.key_is_prefix(key, mode)
+    if not key or (type(key) == "string" and #key == 0) then
+        return false
+    end
+
+    for _, _key in pairs(config.modes[mode].keymaps) do
+        if vim.startswith(_key, key) then
+            return true
+        end
+    end
+
+    return false
+end
+
 --- Get the description of a keymap
 ---@param name string
 ---@param mode winmove.Mode?

@@ -1,11 +1,11 @@
-local message = require("winmove.message")
-local stub = require("luassert.stub")
-local winmove = require("winmove")
-local vader = require("winmove.util.vader")
-
-local given = vader.given
-
 describe("init", function()
+    local message = require("winmove.message")
+    local stub = require("luassert.stub")
+    local winmove = require("winmove")
+    local vader = require("winmove.util.vader")
+
+    local given = vader.given
+
     it("starts and stops a mode", function()
         given(function()
             -- Split a window so we can start move mode

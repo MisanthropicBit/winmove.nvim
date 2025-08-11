@@ -1,24 +1,24 @@
-local winmove = require("winmove")
-local config = require("winmove.config")
-local test_helpers = require("winmove.util.test_helpers")
-local vader = require("winmove.util.vader")
-
-local given = vader.given
-
-local function compare_keymap(mode, name, keymap)
-    assert.is_not_nil(keymap)
-
-    -- Do asserts separately otherwise the callback function will not match
-    assert.are.same(keymap.rhs, "")
-    assert.are.same(keymap.noremap, 1)
-    assert.are.same(keymap.script, 0)
-    assert.are.same(keymap.silent, 0)
-    assert.are.same(keymap.nowait, 1)
-    assert.are.same(keymap.desc, config.get_keymap_description(name, mode))
-end
-
 -- TODO: Test that mappings are also restored after moving the window
 describe("mode mappings", function()
+    local winmove = require("winmove")
+    local config = require("winmove.config")
+    local test_helpers = require("winmove.util.test_helpers")
+    local vader = require("winmove.util.vader")
+
+    local given = vader.given
+
+    local function compare_keymap(mode, name, keymap)
+        assert.is_not_nil(keymap)
+
+        -- Do asserts separately otherwise the callback function will not match
+        assert.are.same(keymap.rhs, "")
+        assert.are.same(keymap.noremap, 1)
+        assert.are.same(keymap.script, 0)
+        assert.are.same(keymap.silent, 0)
+        assert.are.same(keymap.nowait, 1)
+        assert.are.same(keymap.desc, config.get_keymap_description(name, mode))
+    end
+
     it("sets buffer-only mode mappings when entering move mode", function()
         given(function()
             vim.cmd("new") -- Create another buffer to activate move mode

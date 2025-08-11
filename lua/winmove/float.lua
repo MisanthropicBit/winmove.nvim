@@ -10,7 +10,10 @@ local has_title = compat.has("nvim-0.9.0")
 
 local float_win_id = nil ---@type integer?
 
----@class FloatOptions
+---@class winmove.FloatOpenOptions
+---@field on_quit fun()
+
+---@class winmove.FloatOptions
 ---@field padding integer?
 ---@field width integer
 ---@field title_alignment string?
@@ -48,7 +51,7 @@ end
 
 ---@param title string | string[]
 ---@param lines any[]
----@param options FloatOptions?
+---@param options winmove.FloatOptions?
 ---@return integer?
 ---@return integer?
 local function open_centered_float(title, lines, options)
@@ -107,7 +110,8 @@ end
 
 --- Open a float that displays help for the current mode
 ---@param mode winmove.Mode
-function float.open(mode)
+---@param options winmove.FloatOpenOptions
+function float.open(mode, options)
     local lines = {}
     local keymaps = config.modes[mode].keymaps
     local max_widths = {}
@@ -166,7 +170,10 @@ function float.open(mode)
     ---@diagnostic disable-next-line: param-type-mismatch
     api.nvim_buf_set_keymap(buffer, "n", config.keymaps["help_close"], "", {
         desc = config.get_keymap_description("help_close"),
-        callback = float.close,
+        callback = function()
+            float.close()
+            options.on_quit()
+        end,
     })
 end
 

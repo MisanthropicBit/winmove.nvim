@@ -1,16 +1,16 @@
 local winmove = {}
 
+local State = require("winmove.state")
+local _mode = require("winmove.mode")
 local at_edge = require("winmove.at_edge")
 local bufutil = require("winmove.bufutil")
 local config = require("winmove.config")
 local float = require("winmove.float")
 local highlight = require("winmove.highlight")
+local key_handler = require("winmove.key_handler")
 local layout = require("winmove.layout")
 local message = require("winmove.message")
-local _mode = require("winmove.mode")
-local State = require("winmove.state")
 local resize = require("winmove.resize")
-local str = require("winmove.util.str")
 local swap = require("winmove.swap")
 local validators = require("winmove.validators")
 local winutil = require("winmove.winutil")
@@ -31,6 +31,9 @@ local start_mode
 
 ---@type fun(mode: winmove.Mode)
 local stop_mode
+
+---@type fun(): winmove.Mode, fun(keys: string) # The next mode
+local toggle_mode
 
 function winmove.version()
     return winmove_version
@@ -343,20 +346,14 @@ local next_mode = {
     [winmove.Mode.Resize] = winmove.Mode.Move,
 }
 
-local function toggle_mode()
-    local mode = winmove.current_mode()
-    local new_mode = next_mode[mode]
-
-    stop_mode(mode)
-    start_mode(new_mode)
-end
-
 ---@param keys string
+---@return boolean
 local function move_mode_key_handler(keys)
     local keymaps = config.modes.move.keymaps
 
     ---@type integer
     local win_id = state:get("win_id")
+    local handled = true
 
     if keys == keymaps.left then
         move_window(win_id, "h")
@@ -382,7 +379,11 @@ local function move_mode_key_handler(keys)
         winmove.move_window_far(win_id, "k")
     elseif keys == keymaps.far_right then
         winmove.move_window_far(win_id, "l")
+    else
+        handled = false
     end
+
+    return handled
 end
 
 ---@param keys string
@@ -390,6 +391,7 @@ local function swap_mode_key_handler(keys)
     ---@type integer
     local win_id = state:get("win_id")
     local keymaps = config.modes.swap.keymaps
+    local handled = true
 
     if keys == keymaps.left then
         winmove.swap_window_in_direction(win_id, "h")
@@ -399,7 +401,11 @@ local function swap_mode_key_handler(keys)
         winmove.swap_window_in_direction(win_id, "k")
     elseif keys == keymaps.right then
         winmove.swap_window_in_direction(win_id, "l")
+    else
+        handled = false
     end
+
+    return handled
 end
 
 ---@param keys string
@@ -414,6 +420,7 @@ local function resize_mode_key_handler(keys)
     ---@type integer
     local win_id = state.win_id
     local keymaps = config.modes.resize.keymaps
+    local handled = true
 
     if keys == keymaps.left then
         resize.resize_window(win_id, "h", count, resize.anchor.TopLeft)
@@ -431,77 +438,11 @@ local function resize_mode_key_handler(keys)
         resize.resize_window(win_id, "k", count, resize.anchor.BottomRight)
     elseif keys == keymaps.right_botright then
         resize.resize_window(win_id, "l", count, resize.anchor.BottomRight)
-    end
-end
-
---- Set a move mode keymap for a buffer
----@param win_id integer
----@param bufnr integer
----@param lhs string
----@param rhs fun(keys: string, win_id: integer)
----@param desc string
-local function set_mode_keymap(win_id, bufnr, lhs, rhs, desc)
-    local function rhs_handler()
-        rhs(lhs, win_id)
+    else
+        handled = false
     end
 
-    -- TODO: Escape lhs(?)
-    api.nvim_buf_set_keymap(bufnr, "n", lhs, "", {
-        noremap = true,
-        desc = desc,
-        nowait = true,
-        callback = rhs_handler,
-    })
-end
-
---- Get all existing normal mode buffer keymaps as a table indexed by lhs
----@param bufnr integer
----@return table
-local function get_existing_buffer_keymaps(bufnr)
-    local existing_buf_keymaps = api.nvim_buf_get_keymap(bufnr, "n")
-    local keymaps = {}
-
-    for _, keymap in ipairs(existing_buf_keymaps) do
-        if keymap.lhs then
-            keymaps[keymap.lhs] = {
-                lhs = keymap.lhs,
-                rhs = keymap.rhs or "",
-                expr = keymap.expr == 1,
-                callback = keymap.callback,
-                noremap = keymap.noremap > 0, -- Apparently noremap is 2 when script is given
-                script = keymap.script == 1,
-                silent = keymap.silent == 1,
-                nowait = keymap.nowait == 1,
-            }
-        end
-    end
-
-    return keymaps
-end
-
----@param mode winmove.Mode?
----@param err unknown?
-local function handle_error_in_mode(mode, err)
-    -- There was an error during a mode, restore keymaps and quit current mode
-    local cur_mode = mode or winmove.current_mode()
-
-    winmove.stop_mode()
-    message.error((("Got error in '%s' mode: %s"):format(cur_mode, err)))
-end
-
----@param func function
----@param ... unknown
----@return function
-local function safe_call_autorestore_mode(func, ...)
-    local args = { ... }
-
-    return function()
-        local ok, err = pcall(func, unpack(args))
-
-        if not ok then
-            handle_error_in_mode(nil, err)
-        end
-    end
+    return handled
 end
 
 local mode_key_handlers = {
@@ -509,105 +450,6 @@ local mode_key_handlers = {
     [winmove.Mode.Swap] = swap_mode_key_handler,
     [winmove.Mode.Resize] = resize_mode_key_handler,
 }
-
----@param mode winmove.Mode
----@return fun(keys: string)
-local function create_mode_key_handler(mode)
-    local handler = mode_key_handlers[mode]
-
-    return function(keys)
-        local ok, err = pcall(handler, keys)
-
-        if not ok then
-            handle_error_in_mode(mode, err)
-        end
-    end
-end
-
---- Set move mode keymaps and save keymaps that need to be restored when we
---- exit move mode
----@param win_id integer
----@param bufnr integer
----@param mode winmove.Mode
-local function set_keymaps(win_id, bufnr, mode)
-    local existing_buf_keymaps = get_existing_buffer_keymaps(bufnr)
-    local saved_buf_keymaps = {}
-    local handler = create_mode_key_handler(mode)
-
-    for name, map in pairs(config.modes[mode].keymaps) do
-        local description = config.get_keymap_description(name, mode)
-        set_mode_keymap(win_id, bufnr, map, handler, description)
-
-        local existing_keymap = existing_buf_keymaps[map]
-
-        -- Save any existing user-defined keymap that we override so we can
-        -- restore it later
-        if existing_keymap then
-            table.insert(saved_buf_keymaps, existing_keymap)
-        end
-    end
-
-    set_mode_keymap(
-        win_id,
-        bufnr,
-        config.keymaps.help,
-        safe_call_autorestore_mode(float.open, mode),
-        config.get_keymap_description("help")
-    )
-
-    -- We cannot use safe_call_autorestore_mode here as it would call stop_mode
-    -- indefintely on error
-    set_mode_keymap(
-        win_id,
-        bufnr,
-        config.keymaps.quit,
-        winmove.stop_mode,
-        config.get_keymap_description("quit")
-    )
-
-    set_mode_keymap(
-        win_id,
-        bufnr,
-        config.keymaps.toggle_mode,
-        safe_call_autorestore_mode(toggle_mode),
-        config.get_keymap_description("toggle_mode")
-    )
-
-    return saved_buf_keymaps
-end
-
---- Delete mode keymaps and restore previous buffer keymaps
----@param mode winmove.Mode
-local function restore_keymaps(mode)
-    local bufnr = state:get("bufnr")
-
-    if not api.nvim_buf_is_valid(bufnr) then
-        return
-    end
-
-    -- Remove winmove keymaps in protected calls since the buffer might have
-    -- been deleted but the buffer can still be marked as valid
-    for _, map in pairs(config.modes[mode].keymaps) do
-        pcall(api.nvim_buf_del_keymap, bufnr, "n", map)
-    end
-
-    for _, map in pairs(config.keymaps) do
-        pcall(api.nvim_buf_del_keymap, bufnr, "n", map)
-    end
-
-    -- Restore old keymaps
-    for _, keymap in ipairs(state:get("saved_keymaps")) do
-        vim.keymap.set("n", keymap.lhs, keymap.rhs, {
-            buffer = bufnr,
-            expr = keymap.expr,
-            callback = keymap.callback,
-            noremap = keymap.noremap,
-            script = keymap.script,
-            silent = keymap.silent,
-            nowait = keymap.nowait,
-        })
-    end
-end
 
 ---@param mode winmove.Mode
 ---@param win_id integer
@@ -677,67 +519,16 @@ local function create_mode_autocmds(mode, win_id)
 end
 
 ---@param mode winmove.Mode
-start_mode = function(mode)
-    local cur_win_id = api.nvim_get_current_win()
-
-    if mode == winmove.Mode.Resize then
-        if winutil.window_count() == 1 then
-            message.error("Cannot resize window, only one window")
-            return
-        end
-    else
-        if not can_move_or_swap(cur_win_id, mode) then
-            return
-        end
-    end
-
-    if winmove.current_mode() == mode then
-        message.error(str.titlecase(mode) .. " mode already activated")
-        return
-    end
-
-    local bufnr = api.nvim_get_current_buf()
-    local saved_buf_keymaps = set_keymaps(cur_win_id, bufnr, mode)
-
-    highlight.highlight_window(cur_win_id, mode)
-    state:update({
-        mode = mode,
-        win_id = cur_win_id,
-        bufnr = bufnr,
-        saved_keymaps = saved_buf_keymaps,
-    })
-
-    api.nvim_exec_autocmds("User", {
-        pattern = "WinmoveModeStart",
-        modeline = false,
-        data = { mode = mode },
-    })
-
-    create_mode_autocmds(mode, cur_win_id)
-end
-
----@param mode winmove.Mode
-stop_mode = function(mode)
-    if winmove.current_mode() == nil then
-        message.error("No mode is currently active")
-        return
-    end
-
-    if winmove.current_mode() ~= mode then
-        message.error("Window " .. mode .. " mode is not activated")
-        return
-    end
-
+---@param use_key_handler boolean?
+local function _stop_mode(mode, use_key_handler)
     local unhighlight_ok = pcall(highlight.unhighlight_window, state:get("win_id"))
 
     if not unhighlight_ok then
         message.error("Failed to unhighlight window when stopping mode")
     end
 
-    local restore_ok = pcall(restore_keymaps, mode)
-
-    if not restore_ok then
-        message.error("Failed to restore keymaps when stopping mode")
+    if use_key_handler then
+        key_handler.stop()
     end
 
     state:reset()
@@ -753,6 +544,76 @@ stop_mode = function(mode)
         modeline = false,
         data = { mode = mode },
     })
+end
+
+---@param mode winmove.Mode
+---@param use_key_handler boolean?
+local function _start_mode(mode, use_key_handler)
+    local cur_win_id = api.nvim_get_current_win()
+    local bufnr = api.nvim_get_current_buf()
+
+    highlight.highlight_window(cur_win_id, mode)
+
+    state:update({
+        mode = mode,
+        win_id = cur_win_id,
+        bufnr = bufnr,
+    })
+
+    api.nvim_exec_autocmds("User", {
+        pattern = "WinmoveModeStart",
+        modeline = false,
+        data = { mode = mode },
+    })
+
+    create_mode_autocmds(mode, cur_win_id)
+
+    if use_key_handler then
+        key_handler.start(mode, mode_key_handlers[mode], toggle_mode, _start_mode, _stop_mode)
+    end
+end
+
+toggle_mode = function()
+    local mode = winmove.current_mode()
+    local new_mode = next_mode[mode]
+
+    _stop_mode(mode, false)
+    _start_mode(new_mode, false)
+
+    return new_mode, mode_key_handlers[new_mode]
+end
+
+---@param mode winmove.Mode
+start_mode = function(mode)
+    local cur_win_id = api.nvim_get_current_win()
+
+    if mode == winmove.Mode.Resize then
+        if winutil.window_count() == 1 then
+            message.error("Cannot resize window, only one window")
+            return
+        end
+    else
+        if not can_move_or_swap(cur_win_id, mode) then
+            return
+        end
+    end
+
+    _start_mode(mode, true)
+end
+
+---@param mode winmove.Mode
+stop_mode = function(mode)
+    if winmove.current_mode() == nil then
+        message.error("No mode is currently active")
+        return
+    end
+
+    if winmove.current_mode() ~= mode then
+        message.error("Window " .. mode .. " mode is not activated")
+        return
+    end
+
+    _stop_mode(mode, true)
 end
 
 local sorted_modes = vim.tbl_values(winmove.Mode)
