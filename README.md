@@ -144,18 +144,16 @@ There are three behaviour when moving or swapping towards an edge of the editor:
 
 ## Autocommands
 
-You can define autocommands that trigger when a mode starts and ends.
+You can define an autocommand that triggers when a mode starts or ends.
 
 ```lua
-vim.api.nvim_create_autocmd("WinmoveModeStart", {
+vim.api.nvim_create_autocmd("User", {
+    pattern = { "WinmoveModeStart", "WinmoveModeEnd" },
+    ---@param event { match: string, data: { mode: winmove.Mode } }
     callback = function(event)
-        vim.print("Started ".. event.data.mode .. " mode")
-    end,
-})
+        local event_type = event.match == "WinmoveModeStart" and "started" or "ended"
 
-vim.api.nvim_create_autocmd("WinmoveModeEnd", {
-    callback = function(event)
-        vim.print("Ended ".. event.data.mode .. " mode")
+        vim.notify(("Mode %s %s"):format(event.data.mode, event_type), vim.log.levels.INFO)
     end,
 })
 ```
