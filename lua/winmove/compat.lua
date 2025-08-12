@@ -1,8 +1,6 @@
 -- Neovim compatibility module
 local compat = {}
 
-compat.uv = vim.uv or vim.loop
-
 ---@param value string
 ---@return boolean
 function compat.has(value)

@@ -186,7 +186,7 @@ function config.key_is_prefix(key, mode)
     end
 
     for _, _key in pairs(config.modes[mode].keymaps) do
-        if vim.startswith(_key, key) then
+        if vim.startswith(_key, key:lower()) then
             return true
         end
     end

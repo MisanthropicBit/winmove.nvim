@@ -10,9 +10,6 @@ local has_title = compat.has("nvim-0.9.0")
 
 local float_win_id = nil ---@type integer?
 
----@class winmove.FloatOpenOptions
----@field on_quit fun()
-
 ---@class winmove.FloatOptions
 ---@field padding integer?
 ---@field width integer
@@ -110,8 +107,7 @@ end
 
 --- Open a float that displays help for the current mode
 ---@param mode winmove.Mode
----@param options winmove.FloatOpenOptions
-function float.open(mode, options)
+function float.open(mode)
     local lines = {}
     local keymaps = config.modes[mode].keymaps
     local max_widths = {}
@@ -170,10 +166,7 @@ function float.open(mode, options)
     ---@diagnostic disable-next-line: param-type-mismatch
     api.nvim_buf_set_keymap(buffer, "n", config.keymaps["help_close"], "", {
         desc = config.get_keymap_description("help_close"),
-        callback = function()
-            float.close()
-            options.on_quit()
-        end,
+        callback = float.close,
     })
 end
 

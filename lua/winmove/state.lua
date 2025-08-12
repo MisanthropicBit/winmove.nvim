@@ -2,6 +2,7 @@
 ---@field mode winmove.Mode?
 ---@field win_id integer?
 ---@field bufnr integer?
+---@field saved_keymaps table<string, unknown>?
 local State = {}
 
 State.__index = State
@@ -12,6 +13,7 @@ function State.new()
         mode = nil,
         win_id = nil,
         bufnr = nil,
+        saved_keymaps = nil,
     }, State)
 end
 
@@ -26,12 +28,14 @@ function State:update(changes)
     self.mode = changes.mode or self.mode
     self.win_id = changes.win_id or self.win_id
     self.bufnr = changes.bufnr or self.bufnr
+    self.saved_keymaps = changes.saved_keymaps or self.saved_keymaps
 end
 
 function State:reset()
     self.mode = nil
     self.win_id = nil
     self.bufnr = nil
+    self.saved_keymaps = nil
 end
 
 ---@return string
@@ -40,6 +44,7 @@ function State:__tostring()
         mode = self.mode,
         win_id = self.win_id,
         bufnr = self.bufnr,
+        saved_keymaps = self.saved_keymaps,
     }))
 end
 
