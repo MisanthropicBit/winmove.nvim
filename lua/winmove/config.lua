@@ -181,12 +181,12 @@ local mapping_descriptions = {
 ---@param mode winmove.Mode
 ---@return boolean
 function config.key_is_prefix(key, mode)
-    if not key or (type(key) == "string" and #key == 0) then
+    if type(key) ~= "string" or #key == 0 then
         return false
     end
 
     for _, _key in pairs(config.modes[mode].keymaps) do
-        if vim.startswith(_key, key:lower()) then
+        if vim.startswith(_key:lower(), key) then
             return true
         end
     end
