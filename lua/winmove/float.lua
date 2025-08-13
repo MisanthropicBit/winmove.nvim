@@ -22,6 +22,16 @@ local window_options = {
     foldenable = false,
 }
 
+---@type table<string, boolean | string>
+local buffer_options = {
+    buftype = "nofile",
+    bufhidden = "wipe",
+    buflisted = false,
+    -- filetype = "winmove.help",
+    modifiable = false,
+    swapfile = false,
+}
+
 --- Pad an array of lines and prepare each line for insertion into a buffer
 ---@param lines string[][]
 ---@param padding integer
@@ -98,8 +108,14 @@ local function open_centered_float(title, lines, options)
     -- https://github.com/neovim/neovim/issues/18283
     vim.wo[win_id].winhighlight = ""
 
+    api.nvim_win_set_var(win_id, "winmove_help", true)
+
     for option, value in pairs(window_options) do
         api.nvim_win_set_option(win_id, option, value)
+    end
+
+    for option, value in pairs(buffer_options) do
+        api.nvim_buf_set_option(buffer, option, value)
     end
 
     return win_id, buffer
