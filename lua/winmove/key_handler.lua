@@ -18,9 +18,14 @@ function key_handler.start(stop_mode)
             return
         end
 
-        key_buffer = key_buffer .. vim.fn.keytrans(typed):lower()
+        -- Ignore keypresses when in the floating help window
+        if float.is_help_window(vim.api.nvim_get_current_win()) then
+            return
+        end
+
         local mode = winmove.current_mode()
         local handled = false
+        key_buffer = key_buffer .. vim.fn.keytrans(typed):lower()
 
         if key_buffer == config.keymaps.quit:lower() then
             handled = true
@@ -35,9 +40,7 @@ function key_handler.start(stop_mode)
         if handled then
             key_buffer = ""
         else
-            if not float.is_help_window(vim.api.nvim_get_current_win()) then
-                stop_mode(mode)
-            end
+            stop_mode(mode)
         end
     end, key_handler_namespace)
 end
