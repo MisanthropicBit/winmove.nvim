@@ -1,13 +1,13 @@
-local winmove = require("winmove")
-local config = require("winmove.config")
-local float = require("winmove.float")
-local vader = require("winmove.util.vader")
-local test_helpers = require("winmove.util.test_helpers")
-
-local given = vader.given
-local make_layout = test_helpers.make_layout
-
 describe("shows floating window help", function()
+    local winmove = require("winmove")
+    local config = require("winmove.config")
+    local float = require("winmove.float")
+    local vader = require("winmove.util.vader")
+    local test_helpers = require("winmove.util.test_helpers")
+
+    local given = vader.given
+    local make_layout = test_helpers.make_layout
+
     -- Ensure default keymaps
     config.configure({
         keymaps = {

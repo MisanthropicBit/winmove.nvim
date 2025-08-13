@@ -1,12 +1,12 @@
-local winmove = require("winmove")
-local config = require("winmove.config")
-local vader = require("winmove.util.vader")
-local test_helpers = require("winmove.util.test_helpers")
-
-local given = vader.given
-local make_layout = test_helpers.make_layout
-
 describe("toggle mode", function()
+    local winmove = require("winmove")
+    local config = require("winmove.config")
+    local vader = require("winmove.util.vader")
+    local test_helpers = require("winmove.util.test_helpers")
+
+    local given = vader.given
+    local make_layout = test_helpers.make_layout
+
     it("toggles modes", function()
         given(function()
             ---@diagnostic disable-next-line: missing-fields

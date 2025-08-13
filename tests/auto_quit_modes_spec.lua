@@ -1,9 +1,9 @@
-local winmove = require("winmove")
-local vader = require("winmove.util.vader")
-
-local given = vader.given
-
 describe("auto-quit mode", function()
+    local winmove = require("winmove")
+    local vader = require("winmove.util.vader")
+
+    local given = vader.given
+
     it("quits current mode when entering a new window", function()
         given(function()
             vim.cmd.vnew()

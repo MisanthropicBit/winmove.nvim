@@ -1,8 +1,8 @@
-local winmove = require("winmove")
-local compat = require("winmove.compat")
-local config = require("winmove.config")
-
 describe("highlight", function()
+    local winmove = require("winmove")
+    local compat = require("winmove.compat")
+    local config = require("winmove.config")
+
     it("generates internal highlight groups for foreground-only highlights", function()
         vim.cmd.colorscheme("desert")
 
