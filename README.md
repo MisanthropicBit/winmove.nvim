@@ -30,6 +30,7 @@ https://github.com/user-attachments/assets/417023dd-9d5d-4ae9-891d-514e0f3038d5
 - [Configuration](#configuration)
 - [Autocommands](#autocommands)
 - [Public API](#public-api)
+- [Integrations](#integrations)
 - [Contributing](#contributing)
 - [FAQ](#faq)
 - [Showcase](#showcase)
@@ -293,6 +294,55 @@ winmove.resize_window(win_id, dir, count, anchor)
 -- Example:
 winmove.resize_window(1000, "j", 3, winmove.ResizeAnchor.TopLeft)
 winmove.resize_window(1000, "l", 1, winmove.ResizeAnchor.BottomRight)
+```
+## Integrations
+
+### Lualine
+
+Please refer to the [lualine](https://github.com/nvim-lualine/lualine.nvim)
+repository for how to use components in general.
+
+Default options:
+
+```lua
+local default_options = {
+    -- Options for each mode
+    modes = {
+        move = {
+            icon = "󰆾",
+        },
+        swap = {
+            icon = "󰓡",
+        },
+        resize = {
+            icon = "󰩨",
+        },
+        -- Can be nil to show nothing or a string
+        none = nil,
+    },
+    -- Formatter function given the current context which is the currently
+    -- active mode (or nil if no mode) and the settings for that mode
+    formatter = function(context)
+        if not context.mode then
+            -- Do not show anything if no mode is currently active
+            return nil
+        else
+            return ("%s%s mode active"):format(context.icon and context.icon .. " " or "", context.mode)
+        end
+    end
+}
+```
+
+Example usage:
+
+```lua
+lualine_a = {
+    "winmove",
+    modes = {
+        move = { icon: "✔" },
+    },
+},
+
 ```
 
 ## Contributing
