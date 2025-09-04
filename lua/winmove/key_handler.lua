@@ -35,6 +35,20 @@ function key_handler.start(stop_mode)
             handled = true
         elseif config.key_is_prefix(key_buffer, mode) then
             handled = true
+        elseif mode == winmove.Mode.Resize then
+            if key_buffer:match("^%d+$") then
+                -- This might be a count prefix for resize mode
+                return
+            else
+                -- Account for count prefixes in resize mode
+                local _, keys = key_buffer:match("^(%d*)(.+)")
+
+                if keys then
+                    if config.key_is_prefix(keys, mode) then
+                        handled = true
+                    end
+                end
+            end
         end
 
         if handled then
