@@ -60,6 +60,8 @@ function M:init(options)
             else
                 self.mode = nil
             end
+
+            require("lualine").refresh()
         end,
     })
 end
