@@ -1,15 +1,15 @@
-local winmove = require("winmove")
-local at_edge = require("winmove.at_edge")
-local config = require("winmove.config")
-local vader = require("winmove.util.vader")
-local test_helpers = require("winmove.util.test_helpers")
-local message = require("winmove.message")
-local stub = require("luassert.stub")
-
-local given = vader.given
-local make_layout = test_helpers.make_layout
-
 describe("moving between tabs", function()
+    local winmove = require("winmove")
+    local at_edge = require("winmove.at_edge")
+    local config = require("winmove.config")
+    local vader = require("winmove.util.vader")
+    local test_helpers = require("winmove.util.test_helpers")
+    local message = require("winmove.message")
+    local stub = require("luassert.stub")
+
+    local given = vader.given
+    local make_layout = test_helpers.make_layout
+
     ---@diagnostic disable-next-line: missing-fields
     config.configure({
         ---@diagnostic disable-next-line: missing-fields

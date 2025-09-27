@@ -1,11 +1,11 @@
-local winmove = require("winmove")
-local vader = require("winmove.util.vader")
-local test_helpers = require("winmove.util.test_helpers")
-
-local given = vader.given
-local make_layout = test_helpers.make_layout
-
 describe("basic movements", function()
+    local winmove = require("winmove")
+    local vader = require("winmove.util.vader")
+    local test_helpers = require("winmove.util.test_helpers")
+
+    local given = vader.given
+    local make_layout = test_helpers.make_layout
+
     assert:set_parameter("TableFormatLevel", 10)
 
     it("moves window far to the left", function()

@@ -1,10 +1,9 @@
-local winmove = require("winmove")
-local winutil = require("winmove.winutil")
-local vader = require("winmove.util.vader")
-
-local given = vader.given
-
 describe("no window events", function()
+    local winmove = require("winmove")
+    local winutil = require("winmove.winutil")
+    local vader = require("winmove.util.vader")
+
+    local given = vader.given
     local events = winutil.get_ignored_events()
     local triggers = {}
     local autocmd_ids = {}

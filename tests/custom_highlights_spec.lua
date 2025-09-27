@@ -1,13 +1,13 @@
-local winmove = require("winmove")
-local config = require("winmove.config")
-local highlight = require("winmove.highlight")
-local vader = require("winmove.util.vader")
-local test_helpers = require("winmove.util.test_helpers")
-
-local given = vader.given
-local make_layout = test_helpers.make_layout
-
 describe("custom highlights", function()
+    local winmove = require("winmove")
+    local config = require("winmove.config")
+    local highlight = require("winmove.highlight")
+    local vader = require("winmove.util.vader")
+    local test_helpers = require("winmove.util.test_helpers")
+
+    local given = vader.given
+    local make_layout = test_helpers.make_layout
+
     local function get_expected_winhighlight(prefix)
         local template = {
             "CursorLine:%sCursorLine",

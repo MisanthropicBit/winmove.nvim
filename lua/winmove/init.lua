@@ -1,5 +1,7 @@
 local winmove = {}
 
+local State = require("winmove.state")
+local _mode = require("winmove.mode")
 local at_edge = require("winmove.at_edge")
 local bufutil = require("winmove.bufutil")
 local config = require("winmove.config")
@@ -7,8 +9,6 @@ local float = require("winmove.float")
 local highlight = require("winmove.highlight")
 local layout = require("winmove.layout")
 local message = require("winmove.message")
-local _mode = require("winmove.mode")
-local State = require("winmove.state")
 local resize = require("winmove.resize")
 local str = require("winmove.util.str")
 local swap = require("winmove.swap")
@@ -717,6 +717,7 @@ start_mode = function(mode)
     local saved_buf_keymaps = set_keymaps(cur_win_id, bufnr, mode)
 
     highlight.highlight_window(cur_win_id, mode)
+
     state:update({
         mode = mode,
         win_id = cur_win_id,
@@ -731,6 +732,8 @@ start_mode = function(mode)
     })
 
     create_mode_autocmds(mode, cur_win_id)
+
+    require("winmove.key_handler").start(stop_mode)
 end
 
 ---@param mode winmove.Mode
@@ -770,6 +773,8 @@ stop_mode = function(mode)
         modeline = false,
         data = { mode = mode },
     })
+
+    require("winmove.key_handler").stop()
 end
 
 local sorted_modes = vim.tbl_values(winmove.Mode)

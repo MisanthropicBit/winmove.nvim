@@ -1,12 +1,12 @@
-local winmove = require("winmove")
-local vader = require("winmove.util.vader")
-local test_helpers = require("winmove.util.test_helpers")
-
-local given = vader.given
-local make_layout = test_helpers.make_layout
-local get_win_pos_and_dimensions = test_helpers.get_win_pos_and_dimensions
-
 describe("resize", function()
+    local winmove = require("winmove")
+    local vader = require("winmove.util.vader")
+    local test_helpers = require("winmove.util.test_helpers")
+
+    local given = vader.given
+    local make_layout = test_helpers.make_layout
+    local get_win_pos_and_dimensions = test_helpers.get_win_pos_and_dimensions
+
     describe("adjusts neighbors", function()
         local count = 3
         assert:set_parameter("TableFormatLevel", 10)

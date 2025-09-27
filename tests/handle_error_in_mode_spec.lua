@@ -1,14 +1,14 @@
-local float = require("winmove.float")
-local message = require("winmove.message")
-local stub = require("luassert.stub")
-local test_helpers = require("winmove.util.test_helpers")
-local vader = require("winmove.util.vader")
-local winmove = require("winmove")
-
-local given = vader.given
-local make_layout = test_helpers.make_layout
-
 describe("error handling in modes", function()
+    local float = require("winmove.float")
+    local message = require("winmove.message")
+    local stub = require("luassert.stub")
+    local test_helpers = require("winmove.util.test_helpers")
+    local vader = require("winmove.util.vader")
+    local winmove = require("winmove")
+
+    local given = vader.given
+    local make_layout = test_helpers.make_layout
+
     it("handles errors in move mode and restores mappings", function()
         given(function()
             make_layout({

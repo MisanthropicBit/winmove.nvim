@@ -1,14 +1,14 @@
-local config = require("winmove.config")
-local message = require("winmove.message")
-local stub = require("luassert.stub")
-local winmove = require("winmove")
-local vader = require("winmove.util.vader")
-local test_helpers = require("winmove.util.test_helpers")
-
-local given = vader.given
-local make_layout = test_helpers.make_layout
-
 describe("swap mode", function()
+    local config = require("winmove.config")
+    local message = require("winmove.message")
+    local stub = require("luassert.stub")
+    local winmove = require("winmove")
+    local vader = require("winmove.util.vader")
+    local test_helpers = require("winmove.util.test_helpers")
+
+    local given = vader.given
+    local make_layout = test_helpers.make_layout
+
     it("swaps window to the left", function()
         given(function()
             local windows = make_layout({

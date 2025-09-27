@@ -1,13 +1,13 @@
-local winmove = require("winmove")
-local at_edge = require("winmove.at_edge")
-local config = require("winmove.config")
-local vader = require("winmove.util.vader")
-local test_helpers = require("winmove.util.test_helpers")
-
-local given = vader.given
-local make_layout = test_helpers.make_layout
-
 describe("split_into", function()
+    local winmove = require("winmove")
+    local at_edge = require("winmove.at_edge")
+    local config = require("winmove.config")
+    local vader = require("winmove.util.vader")
+    local test_helpers = require("winmove.util.test_helpers")
+
+    local given = vader.given
+    local make_layout = test_helpers.make_layout
+
     -- Ensure default configuration
     config.configure({
         modes = {
