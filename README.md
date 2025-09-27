@@ -317,17 +317,16 @@ local default_options = {
         resize = {
             icon = "󰩨",
         },
-        -- Can be nil to show nothing or a string
-        none = nil,
     },
     -- Formatter function given the current context which is the currently
     -- active mode (or nil if no mode) and the settings for that mode
+    ---@param context winmove.LuaLineComponentFormatterContext
     formatter = function(context)
         if not context.mode then
             -- Do not show anything if no mode is currently active
             return nil
         else
-            return ("%s%s mode active"):format(context.icon and context.icon .. " " or "", context.mode)
+            return ("%s%s mode"):format(context.icon and context.icon .. " " or "", context.mode)
         end
     end
 }

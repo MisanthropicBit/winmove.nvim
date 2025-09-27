@@ -33,10 +33,7 @@ local default_options = {
             -- Do not show anything if no mode is currently active
             return nil
         else
-            return ("%s%s mode active"):format(
-                context.icon and context.icon .. " " or "",
-                context.mode
-            )
+            return ("%s%s mode"):format(context.icon and context.icon .. " " or "", context.mode)
         end
     end,
 }
