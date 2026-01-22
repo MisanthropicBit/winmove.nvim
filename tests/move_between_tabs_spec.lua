@@ -721,6 +721,34 @@ describe("moving between tabs", function()
         end)
     end)
 
+    it("moves window far if there are multiple windows but only one tab", function()
+        given(function()
+            stub(message, "error")
+
+            local win_id = make_layout({
+                "col",
+                { "leaf", "main" },
+            })["main"]
+
+            assert.matches_winlayout(
+                vim.fn.winlayout(),
+                { "col", { { "leaf" }, { "leaf", win_id } } }
+            )
+
+            winmove.move_window(win_id, "h")
+
+            assert.matches_winlayout(
+                vim.fn.winlayout(),
+                { "row", { { "leaf", win_id }, { "leaf" } } }
+            )
+
+            assert.stub(message.error).was_not_called()
+
+            ---@diagnostic disable-next-line: undefined-field
+            message.error:revert()
+        end)
+    end)
+
     it("does not start move mode if there is only one window and one tab", function()
         given(function()
             stub(message, "error")

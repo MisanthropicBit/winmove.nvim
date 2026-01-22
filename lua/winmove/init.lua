@@ -99,9 +99,17 @@ local function handle_edge(win_id, dir, mode, behaviour, split_into)
 
         return true, target_win_id, dir
     elseif behaviour == winmove.AtEdge.MoveToTab then
-        if winutil.window_count() == 1 and vim.fn.tabpagenr("$") == 1 then
-            -- Only one window and one tab, do not proceed
-            return false, nil, dir
+        if vim.fn.tabpagenr("$") == 1 then
+            if winutil.window_count() == 1 then
+                -- Only one window and one tab, do not proceed
+                return false, nil, dir
+            else
+                -- There are multiple windows but only one tab, move window far in the
+                -- given direction and do not proceed further
+                winmove.move_window_far(win_id, dir)
+
+                return false, nil, dir
+            end
         end
 
         if not winutil.is_horizontal(dir) then
